@@ -60,6 +60,7 @@ Authorization: Bearer {token}
           "id": "int",
           "email": "string",
           "nickname": "string",
+          "status": "boolean",
           "createdAt": "date"
         }
       }
@@ -169,7 +170,9 @@ Authorization: Bearer {token}
           "id": "int",
           "email": "string",
           "nickname": "string",
+          "status": "boolean",
           "createdAt": "date",
+          "updatedAt": "date",
           "token": "string"
         }
       }
@@ -208,7 +211,9 @@ Authorization: Bearer {token}
           "id": "int",
           "email": "string",
           "nickname": "string",
-          "createdAt": "date"
+          "status": "boolean",
+          "createdAt": "date",
+          "updatedAt": "date"
         }
       }
     },
@@ -251,6 +256,8 @@ Authorization: Bearer {token}
           "id": "int",
           "email": "string",
           "nickname": "string",
+          "status": "boolean",
+          "createdAt": "date",
           "updatedAt": "date"
         }
       }
@@ -273,7 +280,10 @@ Authorization: Bearer {token}
 
 #### 유저 정보 삭제
 
-> del api/pocket-archive/user/me
+> delete api/pocket-archive/user/me
+
+- put api/pocket-archive/user/me
+  - put을 사용하여 status 컬럼을 생성하여 탈퇴와 사용중으로 status를 분류 가능
 
 ```json
 {
@@ -374,25 +384,25 @@ query: page(optional), size(optional), keyword(optional), category(optional)
   "request": {
     "headers": {
       "Authorization": "Bearer {token}"
-    },
-    "body"{
-      "id": "int",
-      "title": "string",
-      "content": "string",
-      "category": "string",
-      "ImgUrls": "[string]",
-      "author":"string",
-      "viewCount": "int",
-      "favoriteCount": "int",
-      "comments": "int",
-      "createdAt": "date",
-      "updatedAt": "date"
-    },
-    "response": {
-      "200": {
-        "description": "조회 성공",
-        "body": {
-          "message": "string",
+    }
+  },
+  "response": {
+    "200": {
+      "description": "조회 성공",
+      "body": {
+        "message": "string",
+        "data": {
+          "id": "int",
+          "title": "string",
+          "content": "string",
+          "category": "string",
+          "ImgUrls": "[string]",
+          "author": "string",
+          "viewCount": "int",
+          "favoriteCount": "int",
+          "comments": "int",
+          "createdAt": "date",
+          "updatedAt": "date"
         }
       }
     },
@@ -648,13 +658,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 이미지 수정 🔒
 
-> put api/pocket-archive/posts/{id}/images/{filename}
+> put api/pocket-archive/posts/{id}/images/{imageId}
 
 ```json
 {
   "name": "이미지 수정",
   "method": "PUT",
-  "path": "/api/pocket-archive/posts/{id}/images/{filename}",
+  "path": "/api/pocket-archive/posts/{id}/images/{imageId}",
   "description": "게시글에 업로드된 이미지를 수정합니다.",
   "request": {
     "headers": {
@@ -696,13 +706,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 이미지 삭제 🔒
 
-> delete api/pocket-archive/posts/{id}/images/{filename}
+> delete api/pocket-archive/posts/{id}/images/{imageId}
 
 ```json
 {
   "name": "이미지 삭제",
   "method": "DELETE",
-  "path": "/api/pocket-archive/posts/{id}/images/{filename}",
+  "path": "/api/pocket-archive/posts/{id}/images/{imageId}",
   "description": "게시글에 업로드된 이미지를 삭제합니다.",
   "request": {
     "headers": {
@@ -1287,17 +1297,20 @@ query: limit=5
 
 #### 파티 발행 🔒
 
-> put api/pocket-archive/party/{id}/private
+> put api/pocket-archive/party/{id}/publish
 
 ```json
 {
   "name": "파티 발행",
   "method": "PUT",
-  "path": "/api/pocket-archive/party/{id}/private",
+  "path": "/api/pocket-archive/party/{id}/publish",
   "description": "포켓몬 파티를 발행(공개/비공개 전환)합니다.",
   "request": {
     "headers": {
       "Authorization": "Bearer {token}"
+    },
+    "body": {
+      "isPublished": "boolean"
     }
   },
   "response": {
@@ -1308,7 +1321,7 @@ query: limit=5
         "data": [
           {
             "id": "int",
-            "presetName": "string",
+            "deckname": "string",
             "pocketmons": "[int]"
           }
         ]
@@ -1372,44 +1385,50 @@ query: limit=5
 
 ## DB스키마
 
+> **네이밍 컨벤션**
+>
+> - DB 컬럼명: `snake_case` (예: `user_id`, `post_id`)
+> - API 요청/응답 필드명: `camelCase` (예: `authorId`, `viewCount`)
+
 ### 유저테이블
 
-| 컬럼명    | 논리명          | 타입     | PK/FK |
-| --------- | --------------- | -------- | ----- |
-| id        | 사용자 id       | int      | PK    |
-| email     | 사용자 이메일   | var(100) |       |
-| nickname  | 사용자 닉네임   | var(100) |       |
-| password  | 사용자 비밀번호 | var(255) |       |
-| createdAt | 생성날짜        | date     |       |
-| updatedAt | 수정날짜        | date     |       |
+| 컬럼명    | 논리명          | 타입         | PK/FK |
+| --------- | --------------- | ------------ | ----- |
+| id        | 사용자 id       | int          | PK    |
+| email     | 사용자 이메일   | varchar(100) |       |
+| nickname  | 사용자 닉네임   | varchar(100) |       |
+| password  | 사용자 비밀번호 | varchar(255) |       |
+| status    | 사용자 상태     | boolean      |       |
+| createdAt | 생성날짜        | date         |       |
+| updatedAt | 수정날짜        | date         |       |
 
 ### 게시판
 
-| 컬럼명        | 논리명     | 타입    | PK/FK |
-| ------------- | ---------- | ------- | ----- |
-| id            | 게시판 id  | int     | PK    |
-| user_id       | 사용자 id  | int     | FK    |
-| category      | 카테고리   | var(20) |       |
-| title         | 제목       | var(20) |       |
-| content       | 내용       | var(50) |       |
-| img           | 이미지링크 | var(50) |       |
-| favoriteCount | 좋아요     | int     |       |
-| commentCount  | 댓글수     | int     |       |
-| viewCount     | 조회수     | int     |       |
-| isPublished   | 발행여부   | boolean |       |
-| createdAt     | 생성날짜   | date    |       |
-| updatedAt     | 수정날짜   | date    |       |
+| 컬럼명        | 논리명     | 타입         | PK/FK |
+| ------------- | ---------- | ------------ | ----- |
+| id            | 게시판 id  | int          | PK    |
+| user_id       | 사용자 id  | int          | FK    |
+| category      | 카테고리   | varchar(20)  |       |
+| title         | 제목       | varchar(100) |       |
+| content       | 내용       | text         |       |
+| img           | 이미지링크 | varchar(255) |       |
+| favoriteCount | 좋아요     | int          |       |
+| commentCount  | 댓글수     | int          |       |
+| viewCount     | 조회수     | int          |       |
+| isPublished   | 발행여부   | boolean      |       |
+| createdAt     | 생성날짜   | date         |       |
+| updatedAt     | 수정날짜   | date         |       |
 
 ### 댓글
 
-| 컬럼명    | 논리명    | 타입    | PK/FK |
-| --------- | --------- | ------- | ----- |
-| id        | 댓글 id   | int     | PK    |
-| post_id   | 게시물 id | int     | FK    |
-| user_id   | 사용자 id | int     | FK    |
-| content   | 내용      | var(50) |       |
-| createdAt | 생성날짜  | date    |       |
-| updatedAt | 수정날짜  | date    |       |
+| 컬럼명    | 논리명    | 타입         | PK/FK |
+| --------- | --------- | ------------ | ----- |
+| id        | 댓글 id   | int          | PK    |
+| post_id   | 게시물 id | int          | FK    |
+| user_id   | 사용자 id | int          | FK    |
+| content   | 내용      | varchar(500) |       |
+| createdAt | 생성날짜  | date         |       |
+| updatedAt | 수정날짜  | date         |       |
 
 ### 포켓몬
 
@@ -1419,6 +1438,8 @@ query: limit=5
 
 ### 유저 보유 포켓몬
 
+> `pocketmon_id`는 우리 DB의 포켓몬 테이블 id를 FK로 참조합니다. (PokeAPI id와 동일하게 동기화 가정)
+
 | 컬럼명       | 논리명    | 타입 | PK/FK |
 | ------------ | --------- | ---- | ----- |
 | id           | id        | int  | PK    |
@@ -1427,12 +1448,15 @@ query: limit=5
 
 ### 포켓몬 파티
 
-| 컬럼명      | 논리명    | 타입    | PK/FK |
-| ----------- | --------- | ------- | ----- |
-| id          | 파티 id   | int     | PK    |
-| user_id     | 사용자 id | int     | FK    |
-| deckname    | 파티명    | var(20) |       |
-| isPublished | 발행여부  | boolean |       |
+| 컬럼명      | 논리명      | 타입        | PK/FK |
+| ----------- | ----------- | ----------- | ----- |
+| id          | 파티 id     | int         | PK    |
+| user_id     | 사용자 id   | int         | FK    |
+| slot        | 프리셋 제한 | int         |       |
+| preset      | 파티명      | varchar(20) |       |
+| isPublished | 발행여부    | boolean     |       |
+| createdAt   | 생성날짜    | date        |       |
+| updatedAt   | 수정날짜    | date        |       |
 
 ### 파티 포켓몬
 
