@@ -46,7 +46,7 @@ Authorization: Bearer {token}
   "description": "이메일, 닉네임, 비밀번호로 회원가입합니다.",
   "request": {
     "body": {
-      "email": "string",
+      "login_id": "string",
       "nickname": "string",
       "password": "string"
     }
@@ -57,8 +57,8 @@ Authorization: Bearer {token}
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
-          "email": "string",
+          "user_id": "int",
+          "login_id": "string",
           "nickname": "string",
           "status": "boolean",
           "createdAt": "date"
@@ -115,17 +115,17 @@ Authorization: Bearer {token}
 
 #### 이메일 중복확인
 
-> post api/pocket-archive/user/register/email
+> post api/pocket-archive/user/register/login_id
 
 ```json
 {
   "name": "이메일 중복확인",
   "method": "POST",
-  "path": "/api/pocket-archive/user/register/email",
+  "path": "/api/pocket-archive/user/register/login_id",
   "description": "이메일 중복 여부를 확인합니다.",
   "request": {
     "body": {
-      "email": "string"
+      "login_id": "string"
     }
   },
   "response": {
@@ -157,7 +157,7 @@ Authorization: Bearer {token}
   "description": "이메일과 비밀번호로 로그인하고 토큰을 발급받습니다.",
   "request": {
     "body": {
-      "email": "string",
+      "login_id": "string",
       "password": "string"
     }
   },
@@ -167,8 +167,8 @@ Authorization: Bearer {token}
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
-          "email": "string",
+          "user_id": "int",
+          "login_id": "string",
           "nickname": "string",
           "status": "boolean",
           "createdAt": "date",
@@ -208,8 +208,8 @@ Authorization: Bearer {token}
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
-          "email": "string",
+          "user_id": "int",
+          "login_id": "string",
           "nickname": "string",
           "status": "boolean",
           "createdAt": "date",
@@ -242,7 +242,7 @@ Authorization: Bearer {token}
       "Authorization": "Bearer {token}"
     },
     "body": {
-      "email": "string",
+      "login_id": "string",
       "nickname": "string",
       "password": "string"
     }
@@ -253,8 +253,8 @@ Authorization: Bearer {token}
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
-          "email": "string",
+          "user_id": "int",
+          "login_id": "string",
           "nickname": "string",
           "status": "boolean",
           "createdAt": "date",
@@ -346,7 +346,7 @@ query: page(optional), size(optional), keyword(optional), category(optional)
         "data": {
           "content": [
             {
-              "id": "int",
+              "post_id": "int",
               "title": "string",
               "author": "string",
               "viewCount": "int",
@@ -373,13 +373,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 게시글 상세 조회
 
-> get api/pocket-archive/posts/{id}
+> get api/pocket-archive/posts/{post_id}
 
 ```json
 {
   "name": "게시글 상세 조회",
   "method": "GET",
-  "path": "/api/pocket-archive/posts/{id}",
+  "path": "/api/pocket-archive/posts/{post_id}",
   "description": "특정 게시글의 상세 정보를 조회합니다.",
   "request": {
     "headers": {
@@ -392,7 +392,7 @@ query: page(optional), size(optional), keyword(optional), category(optional)
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
+          "post_id": "int",
           "title": "string",
           "content": "string",
           "category": "string",
@@ -455,7 +455,7 @@ query: page(optional), size(optional), keyword(optional), category(optional)
       "body": {
         "message": "string",
         "data": {
-          "id": "int"
+          "post_id": "int"
         }
       }
     },
@@ -477,13 +477,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 게시글 수정 🔒
 
-> put api/pocket-archive/posts/{id}
+> put api/pocket-archive/posts/{post_id}
 
 ```json
 {
   "name": "게시글 수정",
   "method": "PUT",
-  "path": "/api/pocket-archive/posts/{id}",
+  "path": "/api/pocket-archive/posts/{post_id}",
   "description": "작성한 게시글을 수정합니다.",
   "request": {
     "headers": {
@@ -527,13 +527,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 게시글 발행 🔒
 
-> put api/pocket-archive/posts/{id}/publish
+> put api/pocket-archive/posts/{post_id}/publish
 
 ```json
 {
   "name": "게시글 발행",
   "method": "PUT",
-  "path": "/api/pocket-archive/posts/{id}/publish",
+  "path": "/api/pocket-archive/posts/{post_id}/publish",
   "description": "작성한 게시글을 발행합니다.",
   "request": {
     "headers": {
@@ -571,13 +571,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 게시글 좋아요 (내 포켓몬 바구니에 담기) 🔒
 
-> put api/pocket-archive/posts/{id}/favorite
+> put api/pocket-archive/posts/{post_id}/favorite
 
 ```json
 {
   "name": "게시글 좋아요",
   "method": "PUT",
-  "path": "/api/pocket-archive/posts/{id}/favorite",
+  "path": "/api/pocket-archive/posts/{post_id}/favorite",
   "description": "게시글을 좋아요(내 포켓몬 바구니에 담기)합니다.",
   "request": {
     "headers": {
@@ -612,13 +612,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 이미지 업로드 🔒
 
-> post api/pocket-archive/posts/{id}/images
+> post api/pocket-archive/posts/{post_id}/images
 
 ```json
 {
   "name": "이미지 업로드",
   "method": "POST",
-  "path": "/api/pocket-archive/posts/{id}/images",
+  "path": "/api/pocket-archive/posts/{post_id}/images",
   "description": "게시글에 이미지를 업로드합니다.",
   "request": {
     "headers": {
@@ -658,13 +658,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 이미지 수정 🔒
 
-> put api/pocket-archive/posts/{id}/images/{imageId}
+> put api/pocket-archive/posts/{post_id}/images/{image_id}
 
 ```json
 {
   "name": "이미지 수정",
   "method": "PUT",
-  "path": "/api/pocket-archive/posts/{id}/images/{imageId}",
+  "path": "/api/pocket-archive/posts/{post_id}/images/{image_id}",
   "description": "게시글에 업로드된 이미지를 수정합니다.",
   "request": {
     "headers": {
@@ -706,13 +706,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 이미지 삭제 🔒
 
-> delete api/pocket-archive/posts/{id}/images/{imageId}
+> delete api/pocket-archive/posts/{post_id}/images/{image_id}
 
 ```json
 {
   "name": "이미지 삭제",
   "method": "DELETE",
-  "path": "/api/pocket-archive/posts/{id}/images/{imageId}",
+  "path": "/api/pocket-archive/posts/{post_id}/images/{image_id}",
   "description": "게시글에 업로드된 이미지를 삭제합니다.",
   "request": {
     "headers": {
@@ -744,13 +744,13 @@ query: page(optional), size(optional), keyword(optional), category(optional)
 
 #### 게시글 삭제 🔒
 
-> delete api/pocket-archive/posts/{id}
+> delete api/pocket-archive/posts/{post_id}
 
 ```json
 {
   "name": "게시글 삭제",
   "method": "DELETE",
-  "path": "/api/pocket-archive/posts/{id}",
+  "path": "/api/pocket-archive/posts/{post_id}",
   "description": "작성한 게시글을 삭제합니다.",
   "request": {
     "headers": {
@@ -814,7 +814,7 @@ query: limit=5
         "data": {
           "content": [
             {
-              "id": "int",
+              "post_id": "int",
               "title": "string",
               "category": "string",
               "favoriteCount": "int",
@@ -839,13 +839,13 @@ query: limit=5
 
 #### 해당 게시물의 댓글들 불러오기
 
-> get api/pocket-archive/posts/{postId}/comments
+> get api/pocket-archive/posts/{post_id}/comments
 
 ```json
 {
   "name": "댓글 목록 조회",
   "method": "GET",
-  "path": "/api/pocket-archive/posts/{postId}/comments",
+  "path": "/api/pocket-archive/posts/{post_id}/comments",
   "description": "해당 게시물의 댓글 목록을 불러옵니다.",
   "request": {
     "headers": {
@@ -859,9 +859,9 @@ query: limit=5
         "message": "string",
         "data": [
           {
-            "id": "int",
+            "content_id": "int",
             "content": "string",
-            "authorId": "int",
+            "user_id": "int",
             "authorNickname": "string",
             "createdAt": "date",
             "updatedAt": "date"
@@ -881,13 +881,13 @@ query: limit=5
 
 #### 해당 게시물의 댓글 생성 🔒
 
-> post api/pocket-archive/posts/{postId}/comments
+> post api/pocket-archive/posts/{post_id}/comments
 
 ```json
 {
   "name": "댓글 생성",
   "method": "POST",
-  "path": "/api/pocket-archive/posts/{postId}/comments",
+  "path": "/api/pocket-archive/posts/{post_id}/comments",
   "description": "해당 게시물에 댓글을 작성합니다.",
   "request": {
     "headers": {
@@ -903,9 +903,9 @@ query: limit=5
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
+          "content_id": "int",
           "content": "string",
-          "authorId": "int",
+          "user_id": "int",
           "authorNickname": "string",
           "createdAt": "date",
           "updatedAt": "date"
@@ -936,13 +936,13 @@ query: limit=5
 
 #### 댓글 수정 🔒
 
-> put api/pocket-archive/comments/{commentId}
+> put api/pocket-archive/comments/{content_id}
 
 ```json
 {
   "name": "댓글 수정",
   "method": "PUT",
-  "path": "/api/pocket-archive/comments/{commentId}",
+  "path": "/api/pocket-archive/comments/{content_id}",
   "description": "작성한 댓글을 수정합니다.",
   "request": {
     "headers": {
@@ -958,9 +958,9 @@ query: limit=5
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
+          "content_id": "int",
           "content": "string",
-          "authorId": "int",
+          "user_id": "int",
           "authorNickname": "string",
           "createdAt": "date",
           "updatedAt": "date"
@@ -991,13 +991,13 @@ query: limit=5
 
 #### 댓글 삭제 🔒
 
-> delete api/pocket-archive/comments/{commentId}
+> delete api/pocket-archive/comments/{content_id}
 
 ```json
 {
   "name": "댓글 삭제",
   "method": "DELETE",
-  "path": "/api/pocket-archive/comments/{commentId}",
+  "path": "/api/pocket-archive/comments/{content_id}",
   "description": "작성한 댓글을 삭제합니다.",
   "request": {
     "headers": {
@@ -1070,7 +1070,7 @@ query: limit=5
 }
 ```
 
-#### 포켓몬 등록 🔒
+#### 포켓몬 등록(북마크) 🔒
 
 > post api/pocket-archive/pocketmons
 
@@ -1085,7 +1085,7 @@ query: limit=5
       "Authorization": "Bearer {token}"
     },
     "body": {
-      "pocketmonId": "int"
+      "pocketmon_id": "int"
     }
   },
   "response": {
@@ -1116,13 +1116,13 @@ query: limit=5
 
 #### 포켓몬 삭제 🔒
 
-> delete api/pocket-archive/pocketmons/{id}
+> delete api/pocket-archive/pocketmons/{mypocketmon_id}
 
 ```json
 {
   "name": "포켓몬 삭제",
   "method": "DELETE",
-  "path": "/api/pocket-archive/pocketmons/{id}",
+  "path": "/api/pocket-archive/pocketmons/{mypocketmon_id}",
   "description": "보유 중인 포켓몬을 목록에서 삭제합니다.",
   "request": {
     "headers": {
@@ -1176,7 +1176,7 @@ query: limit=5
         "message": "string",
         "data": [
           {
-            "id": "int",
+            "party_id": "int",
             "deckname": "string",
             "pocketmons": "[int]"
           }
@@ -1218,7 +1218,7 @@ query: limit=5
       "body": {
         "message": "string",
         "data": {
-          "id": "int",
+          "party_id": "int",
           "deckname": "string",
           "pocketmons": "[int]"
         }
@@ -1242,13 +1242,13 @@ query: limit=5
 
 #### 파티 수정 🔒
 
-> put api/pocket-archive/party/{id}
+> put api/pocket-archive/party/{party_id}
 
 ```json
 {
   "name": "파티 수정",
   "method": "PUT",
-  "path": "/api/pocket-archive/party/{id}",
+  "path": "/api/pocket-archive/party/{party_id}",
   "description": "기존 포켓몬 파티를 수정합니다.",
   "request": {
     "headers": {
@@ -1266,7 +1266,7 @@ query: limit=5
         "message": "string",
         "data": [
           {
-            "id": "int",
+            "party_id": "int",
             "deckname": "string",
             "pocketmons": "[int]"
           }
@@ -1297,13 +1297,13 @@ query: limit=5
 
 #### 파티 발행 🔒
 
-> put api/pocket-archive/party/{id}/publish
+> put api/pocket-archive/party/{party_id}/publish
 
 ```json
 {
   "name": "파티 발행",
   "method": "PUT",
-  "path": "/api/pocket-archive/party/{id}/publish",
+  "path": "/api/pocket-archive/party/{party_id}/publish",
   "description": "포켓몬 파티를 발행(공개/비공개 전환)합니다.",
   "request": {
     "headers": {
@@ -1320,7 +1320,7 @@ query: limit=5
         "message": "string",
         "data": [
           {
-            "id": "int",
+            "party_id": "int",
             "deckname": "string",
             "pocketmons": "[int]"
           }
@@ -1345,13 +1345,13 @@ query: limit=5
 
 #### 파티 삭제 🔒
 
-> delete api/pocket-archive/party/{id}
+> delete api/pocket-archive/party/{party_id}
 
 ```json
 {
   "name": "파티 삭제",
   "method": "DELETE",
-  "path": "/api/pocket-archive/party/{id}",
+  "path": "/api/pocket-archive/party/{party_id}",
   "description": "포켓몬 파티를 삭제합니다.",
   "request": {
     "headers": {
@@ -1394,8 +1394,8 @@ query: limit=5
 
 | 컬럼명    | 논리명          | 타입         | PK/FK |
 | --------- | --------------- | ------------ | ----- |
-| id        | 사용자 id       | int          | PK    |
-| email     | 사용자 이메일   | varchar(100) |       |
+| user_id   | 사용자 id       | int          | PK    |
+| login_id  | 사용자 아이디   | varchar(100) |       |
 | nickname  | 사용자 닉네임   | varchar(100) |       |
 | password  | 사용자 비밀번호 | varchar(255) |       |
 | status    | 사용자 상태     | boolean      |       |
@@ -1406,7 +1406,7 @@ query: limit=5
 
 | 컬럼명        | 논리명     | 타입         | PK/FK |
 | ------------- | ---------- | ------------ | ----- |
-| id            | 게시판 id  | int          | PK    |
+| post_id       | 게시판 id  | int          | PK    |
 | user_id       | 사용자 id  | int          | FK    |
 | category      | 카테고리   | varchar(20)  |       |
 | title         | 제목       | varchar(100) |       |
@@ -1421,36 +1421,36 @@ query: limit=5
 
 ### 댓글
 
-| 컬럼명    | 논리명    | 타입         | PK/FK |
-| --------- | --------- | ------------ | ----- |
-| id        | 댓글 id   | int          | PK    |
-| post_id   | 게시물 id | int          | FK    |
-| user_id   | 사용자 id | int          | FK    |
-| content   | 내용      | varchar(500) |       |
-| createdAt | 생성날짜  | date         |       |
-| updatedAt | 수정날짜  | date         |       |
+| 컬럼명     | 논리명    | 타입         | PK/FK |
+| ---------- | --------- | ------------ | ----- |
+| content_id | 댓글 id   | int          | PK    |
+| post_id    | 게시물 id | int          | FK    |
+| user_id    | 사용자 id | int          | FK    |
+| content    | 내용      | varchar(500) |       |
+| createdAt  | 생성날짜  | date         |       |
+| updatedAt  | 수정날짜  | date         |       |
 
 ### 포켓몬
 
-| 컬럼명 | 논리명      | 타입 | PK/FK | PokeAPI 필드 |
-| ------ | ----------- | ---- | ----- | ------------ |
-| id     | 포켓몬 번호 | int  | PK    | id           |
+| 컬럼명       | 논리명      | 타입 | PK/FK |
+| ------------ | ----------- | ---- | ----- |
+| pocketmon_id | 포켓몬 번호 | int  | PK    |
 
 ### 유저 보유 포켓몬
 
 > `pocketmon_id`는 우리 DB의 포켓몬 테이블 id를 FK로 참조합니다. (PokeAPI id와 동일하게 동기화 가정)
 
-| 컬럼명       | 논리명    | 타입 | PK/FK |
-| ------------ | --------- | ---- | ----- |
-| id           | id        | int  | PK    |
-| user_id      | 사용자 id | int  | FK    |
-| pocketmon_id | 포켓몬 id | int  | FK    |
+| 컬럼명         | 논리명    | 타입 | PK/FK |
+| -------------- | --------- | ---- | ----- |
+| mypocketmon_id | id        | int  | PK    |
+| user_id        | 사용자 id | int  | FK    |
+| pocketmon_id   | 포켓몬 id | int  | FK    |
 
 ### 포켓몬 파티
 
 | 컬럼명      | 논리명      | 타입        | PK/FK |
 | ----------- | ----------- | ----------- | ----- |
-| id          | 파티 id     | int         | PK    |
+| party_id    | 파티 id     | int         | PK    |
 | user_id     | 사용자 id   | int         | FK    |
 | slot        | 프리셋 제한 | int         |       |
 | preset      | 파티명      | varchar(20) |       |
@@ -1460,8 +1460,8 @@ query: limit=5
 
 ### 파티 포켓몬
 
-| 컬럼명       | 논리명    | 타입 | PK/FK |
-| ------------ | --------- | ---- | ----- |
-| id           | id        | int  | PK    |
-| party_id     | 파티 id   | int  | FK    |
-| pocketmon_id | 포켓몬 id | int  | FK    |
+| 컬럼명              | 논리명    | 타입 | PK/FK |
+| ------------------- | --------- | ---- | ----- |
+| mypartypocketmon_id | id        | int  | PK    |
+| party_id            | 파티 id   | int  | FK    |
+| pocketmon_id        | 포켓몬 id | int  | FK    |
