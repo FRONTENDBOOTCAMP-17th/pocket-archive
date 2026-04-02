@@ -186,6 +186,7 @@ function renderPagination(data, page) {
   prevBtn.disabled = page === 1;
   prevBtn.addEventListener('click', () => {
     if (currentPage > 1) renderPosts(currentData, currentPage - 1);
+    window.scrollTo(0, 0);
   });
   pagination.appendChild(prevBtn);
 
@@ -207,7 +208,10 @@ function renderPagination(data, page) {
         i === page ? 'bg-[#22A9DA]/40 text-white font-medium' : 'border border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#22A9DA]/40'
       }`;
       pageBtn.style = 'display:flex; width:40.813px; padding:6px 0 10px 0; justify-content:center; align-items:center; flex-shrink:0;';
-      pageBtn.addEventListener('click', () => renderPosts(currentData, i));
+      pageBtn.addEventListener('click', () => {
+        renderPosts(currentData, i);
+        window.scrollTo(0, 0);
+      });
       pagination.appendChild(pageBtn);
     }
   }
@@ -222,6 +226,7 @@ function renderPagination(data, page) {
   nextBtn.disabled = page === totalPages;
   nextBtn.addEventListener('click', () => {
     if (currentPage < totalPages) renderPosts(currentData, currentPage + 1);
+    window.scrollTo(0, 0);
   });
   pagination.appendChild(nextBtn);
 }
