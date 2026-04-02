@@ -12,6 +12,7 @@ body {
   flex-direction: column;
   background: linear-gradient(180deg, #d4f0e2 0%, #f0fbf5 100%);
   font-family: 'Galmuri11';
+  overflow-x: hidden;
 }
 
 /* =========================
@@ -107,6 +108,7 @@ body {
 .content {
   grid-column: 2;
   width: 100%;
+  min-width: 0;
 }
 
 /* =========================
@@ -234,6 +236,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: 0.3s;
+  z-index: 999;
 }
 
 .overlay.active {

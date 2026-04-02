@@ -118,7 +118,7 @@ function formatDate(dateStr) {
 const postlist = document.querySelector('postlist');
 postlist.style = 'display:flex; flex-direction:column; gap:16px;';
 const pagination = document.getElementById('pagination');
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 8;
 let currentPage = 1;
 let currentData = dummyData;
 
@@ -134,7 +134,7 @@ function renderPosts(data, page = 1) {
     const postElement = document.createElement('div');
     postElement.className = 'bg-white rounded-2xl border border-[#00bba7]/15 shadow-sm cursor-pointer hover:shadow-md transition-shadow';
     postElement.style =
-      'display:flex; height:181px; padding:24px 24px 0 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;';
+      'display:flex; min-height:181px; padding:24px 24px 16px 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;';
     postElement.innerHTML = `
       <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${post.category}</span>
       <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${post.title}</p>
@@ -173,6 +173,7 @@ function renderPosts(data, page = 1) {
 // Render pagination
 function renderPagination(data, page) {
   const totalPages = Math.ceil(data.length / PAGE_SIZE);
+  const isMobile = window.innerWidth <= 391;
   pagination.innerHTML = '';
 
   // previous button
@@ -188,16 +189,27 @@ function renderPagination(data, page) {
   });
   pagination.appendChild(prevBtn);
 
-  // page number
-  for (let i = 1; i <= totalPages; i++) {
+  if (isMobile) {
+    // Mobile: Show only current page number
     const pageBtn = document.createElement('button');
-    pageBtn.textContent = i;
-    pageBtn.className = `text-sm rounded-lg transition-colors ${
-      i === page ? 'bg-[#22A9DA]/40 text-white font-medium' : 'border border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#22A9DA]/40'
-    }`;
+    pageBtn.textContent = page;
+    pageBtn.className = 'text-sm rounded-lg transition-colors bg-[#22A9DA]/40 text-white font-medium';
     pageBtn.style = 'display:flex; width:40.813px; padding:6px 0 10px 0; justify-content:center; align-items:center; flex-shrink:0;';
-    pageBtn.addEventListener('click', () => renderPosts(currentData, i));
     pagination.appendChild(pageBtn);
+  } else {
+    // Desktop: Show only 3 page numbers
+    const start = Math.max(1, page - 1);
+    const end = Math.min(totalPages, page + 1);
+    for (let i = start; i <= end; i++) {
+      const pageBtn = document.createElement('button');
+      pageBtn.textContent = i;
+      pageBtn.className = `text-sm rounded-lg transition-colors ${
+        i === page ? 'bg-[#22A9DA]/40 text-white font-medium' : 'border border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#22A9DA]/40'
+      }`;
+      pageBtn.style = 'display:flex; width:40.813px; padding:6px 0 10px 0; justify-content:center; align-items:center; flex-shrink:0;';
+      pageBtn.addEventListener('click', () => renderPosts(currentData, i));
+      pagination.appendChild(pageBtn);
+    }
   }
 
   // next button
@@ -213,6 +225,9 @@ function renderPagination(data, page) {
   });
   pagination.appendChild(nextBtn);
 }
+
+// Re-render pagination when screen size changes
+window.addEventListener('resize', () => renderPagination(currentData, currentPage));
 
 // Search
 document.getElementById('search-btn')?.addEventListener('click', () => {
@@ -266,3 +281,33 @@ categoryButtons.forEach((btn) => {
 });
 
 renderPosts(dummyData);
+
+// Category drag-to-scroll
+const categoryScroll = document.getElementById('category-scroll');
+let isDragging = false;
+let startX = 0;
+let scrollLeft = 0;
+
+categoryScroll.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startX = e.pageX - categoryScroll.offsetLeft;
+  scrollLeft = categoryScroll.scrollLeft;
+  categoryScroll.style.cursor = 'grabbing';
+});
+
+categoryScroll.addEventListener('mouseleave', () => {
+  isDragging = false;
+  categoryScroll.style.cursor = '';
+});
+
+categoryScroll.addEventListener('mouseup', () => {
+  isDragging = false;
+  categoryScroll.style.cursor = '';
+});
+
+categoryScroll.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const x = e.pageX - categoryScroll.offsetLeft;
+  categoryScroll.scrollLeft = scrollLeft - (x - startX);
+});
