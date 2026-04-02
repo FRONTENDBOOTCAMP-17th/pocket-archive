@@ -47,7 +47,7 @@ async function loadPage() {
     const html = await res.text();
 
     if (current === 'board') {
-      import('./script/board.js');
+      import('./components/board.js');
     }
 
     document.getElementById('content').innerHTML = html;
