@@ -1,0 +1,285 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #D4F0E2 0%, #F0FBF5 100%);
+    font-family: 'Galmuri11';
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+    width: 100%;
+    border-bottom: 1px solid #E5E7EB;
+    background: linear-gradient(90deg, #05B29F 0%, rgba(34, 169, 218, 0.40) 100%);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    display: grid;
+    grid-template-columns: 1fr 10fr 1fr;
+    align-items: center;
+}
+
+.header-inner {
+    grid-column : 2;
+
+    width : 100%;
+
+    min-width: 1024px;
+
+    height: 64px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+} 
+
+.logo {
+    font-weight: bold;
+    color: white;
+}
+
+.nav {
+    display: flex;
+    gap: 32px;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* 현재 페이지 활성화 텍스트 투명도 조절 */
+.nav a.active {
+    color: rgba(255, 255, 255, 0.40);
+}
+
+.login-btn {
+    background: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #05B29F;
+    font-family: Galmuri11;
+}
+
+/* =========================
+   HEADER ICONS (추가)
+========================= */
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+   
+    
+}
+
+.icon-btn,
+.menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* =========================
+   MAIN
+========================= */
+.main {
+    flex: 1;
+    min-height: calc(100vh - 200px);
+
+    display: grid;
+    
+    grid-template-columns: 1fr 10fr 1fr;
+
+    padding: 40px 0;
+}
+
+.content {
+    grid-column: 2;
+    width: 100%;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.footer {
+    width: 100%;
+    height: 165px;
+    padding: 0 67px;
+
+    border-top: 1px solid #E5E7EB;
+    background: rgba(255, 255, 255, 0.65);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.footer-inner {
+    width: 100%;
+    max-width: 1920px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+    p{
+        color: #6A7282;
+            text-align: center;
+            font-family: Galmuri11;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+
+    }
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 320px;
+    height: 100vh;
+    background: #fff;
+
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    transition: 0.3s;
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.active {
+    right: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    font-weight: bold;
+
+    border-bottom: 1px solid #E5E7EB;
+
+}
+
+.sidebar-nav a {
+    padding: 16px 20px;
+    display: block;
+    text-decoration: none;
+    color: #333;
+    .active {
+    background: #CDE5EC;
+    border-radius: 12px;
+    font-weight: bold;
+    }
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+}
+
+.sidebar-nav a.active {
+    background: #CDE5EC;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+#closeBtn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+#closeBtn:active {
+    transform: scale(0.9);
+}
+
+/* =========================
+   OVERLAY
+========================= */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.4);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* =========================
+   TABLET
+========================= */
+@media (max-width: 1024px) {
+
+    .header-inner {
+        padding: 0 16px;
+        min-width: 768px;
+    }
+
+    /* 네비 숨김 */
+    .nav {
+        display: none;
+    }
+
+    /* 로그인 숨김 */
+    .login-btn {
+        display: none;
+    }
+
+    /* 아이콘 표시 */
+    .icon-btn,
+    .menu-btn {
+        display: block;
+    }
+
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+    .header-inner {
+        height: 64px;
+        min-width: 100px;
+    }
+}
