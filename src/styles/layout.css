@@ -20,18 +20,25 @@ body {
     border-bottom: 1px solid #E5E7EB;
     background: linear-gradient(90deg, #05B29F 0%, rgba(34, 169, 218, 0.40) 100%);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    display: grid;
+    grid-template-columns: 1fr 10fr 1fr;
+    align-items: center;
 }
 
 .header-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    height: 64px;
+    grid-column : 2;
 
+    width : 100%;
+
+    min-width: 1024px;
+
+    height: 64px;
+    
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
+} 
 
 .logo {
     font-weight: bold;
@@ -71,6 +78,9 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+
+   
+    
 }
 
 .icon-btn,
@@ -87,7 +97,17 @@ body {
 .main {
     flex: 1;
     min-height: calc(100vh - 200px);
-    padding: 40px 24px;
+
+    display: grid;
+    
+    grid-template-columns: 1fr 10fr 1fr;
+
+    padding: 40px 0;
+}
+
+.content {
+    grid-column: 2;
+    width: 100%;
 }
 
 /* =========================
@@ -109,7 +129,7 @@ body {
 
 .footer-inner {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1920px;
 
     display: flex;
     flex-direction: column;
@@ -232,6 +252,7 @@ body {
 
     .header-inner {
         padding: 0 16px;
+        min-width: 768px;
     }
 
     /* 네비 숨김 */
@@ -259,5 +280,6 @@ body {
 @media (max-width: 768px) {
     .header-inner {
         height: 64px;
+        min-width: 100px;
     }
 }

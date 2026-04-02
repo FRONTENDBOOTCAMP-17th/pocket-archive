@@ -7,7 +7,9 @@ const app = document.getElementById("app");
 
 app.innerHTML = `
   ${Header()}
-  <main class="main" id="content"></main>
+  <main class="main">
+    <div id="content" class="content"></div>
+  </main>
   ${Footer()}
 `;
 
