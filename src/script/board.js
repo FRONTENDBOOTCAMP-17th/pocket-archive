@@ -142,7 +142,7 @@ function renderPosts(data, page = 1) {
         <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${post.user}</span>
         <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${formatDate(post.date)}</span>
       </div>
-      <div class="flex items-center gap-4 mt-3 text-xs text-[#6a7282]">
+      <div class="flex items-center gap-4 mt-3 text-xs text-[#6a7282]" style="border-top: 1.108px solid #F3F4F6; padding-top: 12px; width: 100%;">
         <span class="flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M1.37468 8.232C1.31912 8.08232 1.31912 7.91767 1.37468 7.768C1.91581 6.4559 2.83435 5.33402 4.01386 4.5446C5.19336 3.75517 6.58071 3.33374 8.00001 3.33374C9.41932 3.33374 10.8067 3.75517 11.9862 4.5446C13.1657 5.33402 14.0842 6.4559 14.6253 7.768C14.6809 7.91767 14.6809 8.08232 14.6253 8.232C14.0842 9.54409 13.1657 10.666 11.9862 11.4554C10.8067 12.2448 9.41932 12.6663 8.00001 12.6663C6.58071 12.6663 5.19336 12.2448 4.01386 11.4554C2.83435 10.666 1.91581 9.54409 1.37468 8.232Z" stroke="#6A7282" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
@@ -236,11 +236,17 @@ function setActiveCategoryButton(activeButton) {
   categoryButtons.forEach((button) => {
     const isActive = button === activeButton;
 
+    // 데스크탑 스타일
     button.classList.toggle('bg-[#e6f7f5]', isActive);
     button.classList.toggle('text-[#00bba7]', isActive);
     button.classList.toggle('border', !isActive);
     button.classList.toggle('border-[#00bba7]/25', !isActive);
     button.classList.toggle('text-[#4a7a72]', !isActive);
+
+    // 모바일 스타일
+    button.classList.toggle('max-[1025px]:bg-[#22A9DA]/40!', isActive);
+    button.classList.toggle('max-[1025px]:bg-[#F3F4F6]!', !isActive);
+    button.classList.toggle('max-[1025px]:border-none!', !isActive);
   });
 }
 
