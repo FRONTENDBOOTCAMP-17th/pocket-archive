@@ -1,5 +1,7 @@
+import './style.css';
 import { Header } from './components/header.js';
 import { Footer } from './components/footer.js';
+import { Login, initLogin } from './components/login.js';
 
 console.log('포켓아카이브 실행중');
 
@@ -27,8 +29,15 @@ if (menuBtn) {
 async function loadPage() {
   try {
     const path = window.location.pathname;
-    let page = './pages/pokedex.html';
     let current = 'home';
+
+    if (path.includes('login')) {
+      app.innerHTML = Login();
+      initLogin();
+      return;
+    }
+
+    let page = './pages/pokedex.html';
 
     if (path.includes('myparty')) {
       page = './pages/myparty.html';
@@ -59,6 +68,8 @@ async function loadPage() {
 }
 
 loadPage();
+
+window.addEventListener('popstate', loadPage);
 
 function setActiveMenu(current) {
   //네비게이션 페이지 활성화
