@@ -50,6 +50,10 @@ async function loadPage() {
       import('./components/board.js');
     }
 
+    if (current === 'mypage') {
+      import('./components/mypage/my.js');
+    }
+
     document.getElementById('content').innerHTML = html;
 
     setActiveMenu(current);
