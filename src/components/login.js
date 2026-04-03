@@ -2,7 +2,7 @@ export function Login() {
   return `
     <main class="w-screen min-h-screen flex flex-col items-center justify-center gap-5" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFF 50%, #FFF7ED 100%)">
 
-      <!-- 아이콘 & 헤더 -->
+      <!-- icon & header -->
       <div class="flex flex-col items-center gap-2">
         <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 39.992C0 17.905 17.905 0 39.992 0C62.079 0 79.984 17.905 79.984 39.992C79.984 62.079 62.079 79.984 39.992 79.984C17.905 79.984 0 62.079 0 39.992Z" fill="#00BBA7"/>
@@ -12,13 +12,13 @@ export function Login() {
         <p class="text-xs text-[#5a8a82] tracking-widest text-center">포켓몬 트레이너 커뮤니티에<br class="hidden max-[315px]:block"> 오신 것을 환영합니다!</p>
       </div>
 
-      <!-- 로그인 박스 -->
+      <!-- login box -->
       <div class="bg-white rounded-xl border-t-8 border-b-8 border-[#00BBA7] shadow-[0_8px_32px_rgba(0,187,167,0.15)] flex flex-col items-start gap-6 w-md max-[501px]:w-[calc(100vw-32px)] max-[501px]:h-auto max-[501px]:px-5 max-[501px]:pb-6" style="padding:32px;">
 
         <h2 class="text-2xl font-bold text-[#00BBA7] mb-1">로그인</h2>
 
         <form name="form1" class="w-full flex flex-col gap-4">
-          <!-- 아이디 -->
+<!-- ID -->
           <div style="display:flex; height:96px; flex-direction:column; align-items:flex-start; gap:8px; flex-shrink:0; align-self:stretch;">
             <p class="text-s">아이디</p>
             <input
@@ -29,7 +29,7 @@ export function Login() {
             />
           </div>
 
-          <!-- 비밀번호 + 눈 버튼 -->
+          <!-- Password -->
           <div style="display:flex; height:96px; flex-direction:column; align-items:flex-start; gap:8px; flex-shrink:0; align-self:stretch;">
             <p class="text-s">비밀번호</p>
             <div class="relative mb-3 w-full">
@@ -130,12 +130,12 @@ function checkStuff() {
   showLoginError('로그인 정보가 일치하지 않습니다.');
 }
 
-// 로그인 정보가 맞지 않을 시 에러 메세지 출력
+// An error message is displayed if the login information is incorrect.
 export function showLoginError(message) {
   alert(message);
 }
 
-// 로그인 정보가 맞을 시 메인 페이지로 이동
+// If the login information is correct, go to the main page
 export function redirectToHome() {
   history.pushState(null, '', '/');
   window.dispatchEvent(new PopStateEvent('popstate'));
