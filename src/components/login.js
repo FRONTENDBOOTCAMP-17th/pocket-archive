@@ -18,7 +18,7 @@ export function Login() {
         <h2 class="text-2xl font-bold text-[#00BBA7] mb-1">로그인</h2>
 
         <form name="form1" class="w-full flex flex-col gap-4">
-<!-- ID -->
+          <!-- ID -->
           <div style="display:flex; height:96px; flex-direction:column; align-items:flex-start; gap:8px; flex-shrink:0; align-self:stretch;">
             <p class="text-s">아이디</p>
             <input
@@ -51,7 +51,7 @@ export function Login() {
             </div>
           </div>
 
-          <!-- 에러 메시지 -->
+          <!-- Error message -->
           <p id="msg" class="hidden text-s text-red-500 bg-red-50 rounded-md px-3 py-2 mb-3" h-8></p>
 
           <!-- Remember me -->
@@ -61,13 +61,13 @@ export function Login() {
             <small class="text-m text-[#5a8a82]">Remember me</small>
           </label>
 
-          <!-- 로그인 버튼 -->
+          <!-- Login button -->
           <button type="submit"
             class="w-full h-12 bg-[#00BBA7] hover:bg-[#009e8d] text-white rounded-full text-base font-bold transition-colors cursor-pointer border-0 mb-5">
             로그인
           </button>
 
-          <!-- 회원가입 -->
+          <!-- join the membership -->
           <div class="flex items-center justify-center gap-2 text-sm">
             <p class="text-[#8a9a98] m-0">계정이 없으신가요?</p>
             <button type="button"
@@ -78,7 +78,7 @@ export function Login() {
         </form>
       </div>
 
-      <!-- 푸터 -->
+      <!-- footer -->
       <p class="text-xs text-[#8a9a98]">포켓몬 마스터가 되는 여정을 시작하세요!</p>
 
     </main>
