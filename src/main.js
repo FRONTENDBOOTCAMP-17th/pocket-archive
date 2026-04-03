@@ -1,7 +1,8 @@
 import './style.css';
 import { Header } from './components/header.js';
 import { Footer } from './components/footer.js';
-import { Login, initLogin } from './components/login.js';
+import { Login, initLogin } from './components/(Auth)/login.js';
+import { Register, initRegister } from './components/(Auth)/register.js';
 
 console.log('포켓아카이브 실행중');
 
@@ -34,6 +35,12 @@ async function loadPage() {
     if (path.includes('login')) {
       app.innerHTML = Login();
       initLogin();
+      return;
+    }
+
+    if (path.includes('register')) {
+      app.innerHTML = Register();
+      initRegister();
       return;
     }
 

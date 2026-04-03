@@ -71,7 +71,8 @@ export function Login() {
           <div class="flex items-center justify-center gap-2 text-sm">
             <p class="text-[#8a9a98] m-0">계정이 없으신가요?</p>
             <button type="button"
-              class="bg-transparent border-0 text-[#00BBA7] hover:text-[#009e8d] text-sm underline cursor-pointer p-0">
+              class="bg-transparent border-0 text-[#00BBA7] hover:text-[#009e8d] text-sm underline cursor-pointer p-0"
+              id="registerBtn">
               회원가입
             </button>
           </div>
@@ -100,6 +101,11 @@ export function initLogin() {
   document.form1.addEventListener('submit', function (e) {
     e.preventDefault();
     checkStuff();
+  });
+
+  document.getElementById('registerBtn').addEventListener('click', function () {
+    history.pushState(null, '', '/register');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 }
 
@@ -140,3 +146,4 @@ export function redirectToHome() {
   history.pushState(null, '', '/');
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
+
