@@ -78,6 +78,10 @@ async function loadPage() {
       import('./components/board.js');
     }
 
+    if (current === 'mypage') {
+      import('./components/mypage/my.js');
+    }
+
     if (page.includes("pokedex.html")) {
       initPokedex();
     }
