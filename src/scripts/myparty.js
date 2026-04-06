@@ -1,9 +1,8 @@
 import { TrainerCard } from "../components/trainerCard.js";
-import { PokemonCard } from "../components/pokedex/pokedex.js";
+import { PokemonCard } from "../components/pokedex/pokedexUi.js";
 
 const BASE_URL = "https://api.fullstackfamily.com/api/pocket-archive/v1";
 
-// --- 상태 ---
 let selectedSlot = null;
 let party = Array(6).fill(null);
 let gender = "man";
@@ -22,14 +21,14 @@ let koNameMap = {};
 // 개발용 더미 포켓몬 ID (API 미인증 시 폴백)
 const DUMMY_IDS = [1, 4, 7, 25, 39, 94];
 
-// 프리셋 행 색상 팔레트 (이모지 없음)
+// 프리셋 행 색상 팔레트 
 const PRESET_COLORS = [
   { bg: "background-color:#fff7ed; border-color:#fed7aa;", text: "color:#ea580c;" },
   { bg: "background-color:#eff6ff; border-color:#bfdbfe;", text: "color:#2563eb;" },
   { bg: "background-color:#f0fdfa; border-color:#99f6e4;", text: "color:#0d9488;" },
 ];
 
-// --- 인증 ---
+// 인증
 function getToken() {
   return localStorage.getItem("token") || "";
 }
@@ -40,7 +39,7 @@ function authHeaders() {
   };
 }
 
-// --- 초기화 ---
+// 초기화 
 export async function init() {
   root          = document.getElementById("trainer-card-root");
   listEl        = document.getElementById("pokemon-list");
@@ -75,7 +74,7 @@ export async function init() {
   bindActionButtons();
 }
 
-// --- 포켓몬 ID 배열 → PokeAPI 상세 데이터 변환 ---
+// 포켓몬 ID 배열 → PokeAPI 상세 데이터 변환
 async function fetchPokemonsByIds(ids) {
   const results = await Promise.allSettled(
     ids.map((id) =>
@@ -90,7 +89,7 @@ async function fetchPokemonsByIds(ids) {
     }));
 }
 
-// --- 북마크 포켓몬 불러오기 ---
+// 북마크 포켓몬 불러오기
 async function loadBookmarkedPokemons() {
   const token = getToken();
 
@@ -124,7 +123,7 @@ async function loadBookmarkedPokemons() {
   }
 }
 
-// --- 저장된 파티 불러오기 ---
+// 저장된 파티 불러오기
 async function loadPartyPresets() {
   const token = getToken();
   if (!token) return;
@@ -147,7 +146,7 @@ async function loadPartyPresets() {
   }
 }
 
-// --- 트레이너 카드 ---
+// 트레이너 카드
 function renderTrainerCard() {
   if (!root) return;
   root.innerHTML = TrainerCard({ gender, party });
@@ -176,7 +175,7 @@ function bindGenderSelect() {
   });
 }
 
-// --- 북마크 포켓몬 리스트 ---
+// 북마크 포켓몬 리스트
 function renderList() {
   if (!listEl) return;
 
@@ -208,10 +207,7 @@ function renderList() {
             </svg>
           </span>` : `
           <span style="position:absolute; top:10px; right:10px; z-index:10; opacity:0.2;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="#374151" stroke-width="2"/>
-              <path d="M2 12h20" stroke="#374151" stroke-width="2"/>
-              <circle cx="12" cy="12" r="3" fill="white" stroke="#374151" stroke-width="2"/>
+            
             </svg>
           </span>`}
         ${PokemonCard(pokemon, pokemon.koName)}
@@ -258,7 +254,7 @@ function updateCount() {
   countEl.textContent = `${party.filter(Boolean).length} / 6 선택됨`;
 }
 
-// --- 액션 버튼 ---
+// 액션 버튼
 function bindActionButtons() {
   document.getElementById("resetBtn")?.addEventListener("click", () => {
     party = Array(6).fill(null);
@@ -270,7 +266,7 @@ function bindActionButtons() {
   document.getElementById("saveBtn")?.addEventListener("click", openSaveModal);
 }
 
-// --- 모달 ---
+//  모달
 function openSaveModal() {
   if (party.filter(Boolean).length === 0) {
     alert("포켓몬을 하나 이상 선택한 뒤 저장해주세요.");
@@ -302,7 +298,7 @@ function closeModal() {
   document.getElementById("preset-modal")?.classList.add("hidden");
 }
 
-// --- 프리셋 CRUD ---
+//  프리셋 CRUD
 async function savePreset(presetName) {
   const pokemonIds = party.filter(Boolean).map((p) => p.id);
   try {
@@ -367,7 +363,7 @@ async function deletePreset(index) {
   }
 }
 
-// --- 프리셋 렌더링 ---
+// 프리셋 렌더링
 function renderPresets() {
   presetCountEl.textContent = `${presets.length} / 3`;
 

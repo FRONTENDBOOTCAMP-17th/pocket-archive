@@ -15,13 +15,14 @@ export function TrainerCard({ gender = "man", party = [] }) {
   ];
 
   return `
-    <div class="w-full max-w-[600px]">
+    <div class="w-full max-w-[900px]">
       
       <!-- 성별 선택 -->
-      <div class="mb-3 flex justify-end">
+      <div class=" mb-3 flex justify-end">
         <select
           id="gender-select"
           class="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none"
+          style="padding:8px 20px; font-size:14px;"
         >
           <option value="man" ${gender === "man" ? "selected" : ""}>남자 트레이너</option>
           <option value="woman" ${gender === "woman" ? "selected" : ""}>여자 트레이너</option>

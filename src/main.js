@@ -96,6 +96,10 @@ async function loadPage() {
     // }, 0);
     document.getElementById('content').innerHTML = html;
 
+    if (page.includes("myparty.html")) {
+      const { init } = await import("./scripts/myparty.js");
+      init();
+    }
     setActiveMenu(current);
   } catch (err) {
     console.error(err);
