@@ -1,7 +1,7 @@
 export function Header() {
   return `
     <header class="header">
-  <div class="header-inner">
+    <div class="header-inner">
     <div class="logo">P 포켓아카이브</div>
 
     <nav class="nav">
@@ -43,9 +43,9 @@ export function Header() {
     <div class="sidebar-header">
       <span>메뉴</span>
       <button id="closeBtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <path d="M17.9925 5.99707L5.9975 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M5.9975 5.99707L17.9925 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></button>    
+        <path d="M17.9925 5.99707L5.9975 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5.9975 5.99707L17.9925 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg></button>    
 
     </div>
 
@@ -54,6 +54,10 @@ export function Header() {
         <a href="/board" data-page="board">게시판</a>
         <a href="/myparty" data-page="myparty">나의 파티 만들기</a>
         <a href="/mypage" data-page="mypage">마이페이지</a>
+        <div style="display: flex; flex-direction: row;">
+          <img src="https://img.icons8.com/?size=100&id=vQOFSUMXPpGA&format=png&color=000000" alt="Login Icon" style="width: 24px; height: 24px; margin:12px 0px 12px 12px;"/>
+          <a href="/login" data-page="login" style="color: #e7000b;">로그인</a>
+        </div>
     </div>
   </div>
 
@@ -63,3 +67,38 @@ export function Header() {
   `;
 }
 
+// Go to login page
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('login-btn')) {
+    history.pushState(null, '', '/login');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
+});
+
+/* 로그인 API 연동 시 로그인 로직 추가
+// My party creation page requires login (pop-up information added)
+document.addEventListener('click', (e) => {
+  if (e.target.closest('a[data-page="myparty"]')) {
+    const isLoggedIn = false;
+    if (!isLoggedIn) {
+      e.preventDefault();
+      alert('나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
+      history.pushState(null, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }
+});
+
+// My Page requires login (pop-up information added)
+document.addEventListener('click', (e) => {
+  if (e.target.closest('a[data-page="mypage"]')) {
+    const isLoggedIn = false;
+    if (!isLoggedIn) {
+      e.preventDefault();
+      alert('나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
+      history.pushState(null, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }
+});
+*/
