@@ -2,8 +2,10 @@ import { SidebarItem, PokemonCard, Pagination } from "./pokedexUi";
 
 let allPokemon = [];
 let filteredPokemon = [];
+let myPocketMons = [];
 let currentPage = 1;
 const ITEMS_PER_PAGE = 12;
+const isLoggedIn = localStorage.getItem("token");
 
 export async function initPokedex() {
   //포켓몬 json 불러와서 쓰기
@@ -11,10 +13,35 @@ export async function initPokedex() {
   allPokemon = await res.json();
   //얕복해서 쓰기
   filteredPokemon = [...allPokemon];
-
+  // 로그인이 되어있으면 실행
+  if (isLoggedIn) {
+    myPocketMons = await loadPoketmons();
+  }
   setupSearch();
   renderSidebar();
   renderGrid(1);
+}
+// 나중에 api에 쑤셔 박을것
+export async function loadPoketmons() {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(
+      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    if (!res.ok) {
+      throw new Error("불러오기 실패");
+    }
+    const result = await res.json();
+    return result.data.myPocketmons;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function setupSearch() {
@@ -54,7 +81,7 @@ async function renderGrid(page) {
 
   details.forEach((data, idx) => {
     const wrapper = document.createElement("div");
-    wrapper.innerHTML = PokemonCard(data, pageItems[idx].name);
+    wrapper.innerHTML = PokemonCard(data, pageItems[idx].name, myPocketMons);
     grid.appendChild(wrapper.firstElementChild);
   });
 
@@ -139,4 +166,62 @@ window.selectPokemon = async function (no) {
       </div>
     `;
   }
+};
+// 등록 api
+export async function poketmonReg(poketmonId) {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(
+      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          pocketmonId: Number(poketmonId),
+        }),
+      },
+    );
+    if (!res.ok) {
+      throw new Error("등록 실패");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function poketmonDelete(poketmonId) {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(
+      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons/${poketmonId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    if (!res.ok) {
+      throw new Error("삭제 실패");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+window.poketmonReg = async function (event, id) {
+  event.stopPropagation(); // 카드 클릭 이벤트 전파 방지
+  await poketmonReg(id);
+
+  myPocketMons.push(id);
+  renderGrid(currentPage);
+};
+window.poketmonDelete = async function (event, id) {
+  event.stopPropagation(); // 카드 클릭 이벤트 전파 방지
+  await poketmonDelete(id);
+
+  myPocketMons = myPocketMons.filter((item) => item !== id);
+  renderGrid(currentPage);
 };

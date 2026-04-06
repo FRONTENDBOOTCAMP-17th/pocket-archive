@@ -1,4 +1,5 @@
 export function Header() {
+  const isLoggedin = localStorage.getItem("token");
   return `
     <header class="header">
     <div class="header-inner">
@@ -12,8 +13,7 @@ export function Header() {
     </nav>
 
     <div class="header-icons">
-      <button class="login-btn">로그인</button>
-
+    ${isLoggedin ? `<button class="logout-btn cursor-pointer" onclick="logout()">로그아웃</button>` : `<button class="login-btn" >로그인</button>`}
       <button class="icon-btn">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
@@ -68,13 +68,16 @@ export function Header() {
 }
 
 // Go to login page
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('login-btn')) {
-    history.pushState(null, '', '/login');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("login-btn")) {
+    history.pushState(null, "", "/login");
+    window.dispatchEvent(new PopStateEvent("popstate"));
   }
 });
-
+window.logout = function () {
+  localStorage.removeItem("token");
+  location.reload();
+};
 /* 로그인 API 연동 시 로그인 로직 추가
 // My party creation page requires login (pop-up information added)
 document.addEventListener('click', (e) => {
