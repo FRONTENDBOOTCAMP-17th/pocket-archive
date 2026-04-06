@@ -1,5 +1,7 @@
+import "./style.css";
 import { Header } from "./components/header.js";
 import { Footer } from "./components/footer.js";
+
 
 console.log("포켓아카이브 실행중");
 
@@ -33,6 +35,7 @@ async function loadPage() {
     if (path.includes("myparty")) {
       page = "./pages/myparty.html";
       current = "myparty";
+      
     }
     if (path.includes("board")) {
       page = "./pages/board.html";
@@ -43,10 +46,18 @@ async function loadPage() {
       current = "mypage";
     }
 
+
     const res = await fetch(page);
     const html = await res.text();
 
     document.getElementById("content").innerHTML = html;
+    
+    //myparty.js 추가
+    if (current === "myparty") {
+    const module = await import("./scripts/myparty.js");
+    module.init();
+    }
+
 
     setActiveMenu(current);
 
@@ -109,3 +120,4 @@ function initSidebar() {
 }
 
 initSidebar();
+
