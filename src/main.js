@@ -61,11 +61,13 @@ async function loadPage() {
     if (path.includes("myparty")) {
       page = "./pages/myparty.html";
       current = "myparty";
+      
     }
     if (path.includes("mypage")) {
       page = "./pages/mypage.html";
       current = "mypage";
     }
+
 
     const res = await fetch(page);
     if (!res.ok) {
@@ -76,10 +78,6 @@ async function loadPage() {
 
     if (current === 'board') {
       import('./components/board.js');
-    }
-
-    if (current === 'mypage') {
-      import('./components/mypage/my.js');
     }
 
     if (page.includes("pokedex.html")) {
@@ -98,6 +96,10 @@ async function loadPage() {
     // }, 0);
     document.getElementById('content').innerHTML = html;
 
+    if (page.includes("myparty.html")) {
+      const { init } = await import("./scripts/myparty.js");
+      init();
+    }
     setActiveMenu(current);
   } catch (err) {
     console.error(err);
@@ -160,3 +162,4 @@ function initSidebar() {
 }
 
 initSidebar();
+
