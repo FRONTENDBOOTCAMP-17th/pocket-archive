@@ -1,5 +1,8 @@
-import { Header } from "./components/header.js";
-import { Footer } from "./components/footer.js";
+import './style.css';
+import { Header } from './components/header.js';
+import { Footer } from './components/footer.js';
+import { Login, initLogin } from './components/(Auth)/login.js';
+import { Register, initRegister } from './components/(Auth)/register.js';
 import { initPokedex } from "./components/pokedex/pokedex.js";
 import { initPostDetail } from "./components/board/boardDetail.js";
 
@@ -29,9 +32,22 @@ if (menuBtn) {
 async function loadPage() {
   try {
     const path = window.location.pathname;
-    let page = './pages/pokedex.html';
     let current = 'home';
 
+    if (path.includes('login')) {
+      app.innerHTML = Login();
+      initLogin();
+      return;
+    }
+
+    if (path.includes('register')) {
+      app.innerHTML = Register();
+      initRegister();
+      return;
+    }
+
+    let page = './pages/pokedex.html';
+      
     const pathParts = path.split("/");
     const postId = pathParts[2];
 
@@ -85,6 +101,8 @@ async function loadPage() {
 }
 
 loadPage();
+
+window.addEventListener('popstate', loadPage);
 
 function setActiveMenu(current) {
   //네비게이션 페이지 활성화
