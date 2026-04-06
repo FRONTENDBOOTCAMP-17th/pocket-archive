@@ -1,1 +1,72 @@
-<h1>포켓몬 도감</h1>
+<link rel="stylesheet" href="/src/style.css" />
+<div
+  class="flex flex-col lg:flex-row gap-10 w-full max-w-[1920px] mx-auto items-start p-5 animate-fadeIn"
+>
+  <aside
+    id="sidebarAccordion"
+    class="w-full lg:w-[320px] bg-white rounded-[40px] shadow-xl flex flex-col lg:sticky lg:top-10 border border-gray-50 overflow-hidden order-1 transition-all"
+  >
+    <div
+      onclick="window.toggleSidebar()"
+      class="flex justify-between items-center cursor-pointer lg:cursor-default hover:bg-gray-50/50 lg:hover:bg-transparent transition-colors"
+      style="user-select: none"
+    >
+      <h2
+        class="text-2xl font-black text-[#05B29F] tracking-tight"
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 24px 24px 10px 24px;
+        "
+      >
+        포켓몬 목록
+      </h2>
+
+      <div class="lg:hidden" style="padding-right: 24px">
+        <span
+          id="sidebarArrow"
+          class="text-[#05B29F] text-xl transition-transform duration-300 inline-block"
+        >
+          ▼
+        </span>
+      </div>
+    </div>
+
+    <div
+      id="sidebarContent"
+      class="hidden lg:block border-t border-gray-50 lg:border-none"
+    >
+      <div class="p-8 pb-4">
+        <div class="relative">
+          <input
+            type="text"
+            id="sidebarSearch"
+            placeholder="이름 또는 번호 검색"
+            class="w-full p-4 pl-12 rounded-2xl bg-gray-50 border border-transparent outline-none focus:bg-white focus:ring-2 focus:ring-[#05B29F]/10 transition-all"
+            style="padding-left: 24px"
+          />
+        </div>
+      </div>
+      <div
+        id="sidebarList"
+        class="flex-1 overflow-y-auto px-6 pb-8 custom-scrollbar space-y-1"
+        style="height: 300px"
+      ></div>
+    </div>
+  </aside>
+
+  <section class="flex-1 w-full order-2">
+    <div class="flex flex-col gap-12 pb-10">
+      <div
+        id="pokemonGrid"
+        class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8"
+      ></div>
+
+      <div
+        id="pokedexPagination"
+        class="flex justify-center items-center gap-2"
+      ></div>
+    </div>
+  </section>
+</div>
