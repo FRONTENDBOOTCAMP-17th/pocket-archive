@@ -76,7 +76,25 @@ async function loadPage() {
     }
     const html = await res.text();
 
-    document.getElementById("content").innerHTML = html;
+    if (current === 'board') {
+      import('./components/board.js');
+    }
+
+    if (page.includes("pokedex.html")) {
+      initPokedex();
+    }
+    if (page.includes("detailPost.html")) {
+      // const postId = new URLSearchParams(window.location.search).get("id");
+      //테스트용으로 2번 게시물을 불러옴 수정 꼭!! 해야함!!! postId로!!!
+      console.log(`2번 게시글 상세페이지 로드 중...`);
+      initPostDetail(2);
+    }
+    // setTimeout(() => {
+    //   if (page.includes("detailPost.html")) {
+    //     initPostDetail(postId || 2);
+    //   }
+    // }, 0);
+    document.getElementById('content').innerHTML = html;
 
     setActiveMenu(current);
   } catch (err) {
