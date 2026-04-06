@@ -1,5 +1,10 @@
+import './style.css';
 import { Header } from './components/header.js';
 import { Footer } from './components/footer.js';
+import { Login, initLogin } from './components/(Auth)/login.js';
+import { Register, initRegister } from './components/(Auth)/register.js';
+import { initPokedex } from "./components/pokedex/pokedex.js";
+import { initPostDetail } from "./components/board/boardDetail.js";
 
 console.log('포켓아카이브 실행중');
 
@@ -27,23 +32,46 @@ if (menuBtn) {
 async function loadPage() {
   try {
     const path = window.location.pathname;
-    let page = './pages/pokedex.html';
     let current = 'home';
 
-    if (path.includes('myparty')) {
-      page = './pages/myparty.html';
-      current = 'myparty';
+    if (path.includes('login')) {
+      app.innerHTML = Login();
+      initLogin();
+      return;
     }
-    if (path.includes('board')) {
-      page = './pages/board.html';
-      current = 'board';
+
+    if (path.includes('register')) {
+      app.innerHTML = Register();
+      initRegister();
+      return;
     }
-    if (path.includes('mypage')) {
-      page = './pages/mypage.html';
-      current = 'mypage';
+
+    let page = './pages/pokedex.html';
+      
+    const pathParts = path.split("/");
+    const postId = pathParts[2];
+
+    if (path.startsWith("/board/") && postId) {
+      page = "/pages/detailPost.html";
+      current = "board";
+    } else if (path.includes("board")) {
+      page = "./pages/board.html";
+      current = "board";
+    }
+    if (path.includes("myparty")) {
+      page = "./pages/myparty.html";
+      current = "myparty";
+    }
+    if (path.includes("mypage")) {
+      page = "./pages/mypage.html";
+      current = "mypage";
     }
 
     const res = await fetch(page);
+    if (!res.ok) {
+      console.error("HTML 파일을 찾을 수 없습니다:", page);
+      return;
+    }
     const html = await res.text();
 
     if (current === 'board') {
@@ -54,6 +82,20 @@ async function loadPage() {
       import('./components/mypage/my.js');
     }
 
+    if (page.includes("pokedex.html")) {
+      initPokedex();
+    }
+    if (page.includes("detailPost.html")) {
+      // const postId = new URLSearchParams(window.location.search).get("id");
+      //테스트용으로 2번 게시물을 불러옴 수정 꼭!! 해야함!!! postId로!!!
+      console.log(`2번 게시글 상세페이지 로드 중...`);
+      initPostDetail(2);
+    }
+    // setTimeout(() => {
+    //   if (page.includes("detailPost.html")) {
+    //     initPostDetail(postId || 2);
+    //   }
+    // }, 0);
     document.getElementById('content').innerHTML = html;
 
     setActiveMenu(current);
@@ -64,12 +106,14 @@ async function loadPage() {
 
 loadPage();
 
+window.addEventListener('popstate', loadPage);
+
 function setActiveMenu(current) {
   //네비게이션 페이지 활성화
-  const navLinks = document.querySelectorAll('.nav a');
+  const navLinks = document.querySelectorAll(".nav a");
 
   navLinks.forEach((link) => {
-    link.classList.remove('active');
+    link.classList.remove("active");
     if (link.dataset.page === current) {
       link.classList.add('active');
     }
@@ -79,7 +123,7 @@ function setActiveMenu(current) {
   const links = document.querySelectorAll('.sidebar-nav a');
 
   links.forEach((link) => {
-    link.classList.remove('active');
+    link.classList.remove("active");
 
     if (link.dataset.page === current) {
       link.classList.add('active');
