@@ -1,7 +1,7 @@
 import { TrainerCard } from "../components/trainerCard.js";
 import { PokemonCard } from "../components/pokedex/pokedexUI.js";
 
-const BASE_URL = "https://api.fullstackfamily.com/api/pocket-archive/v1";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 let selectedSlot = null;
 let party = Array(6).fill(null);
@@ -121,7 +121,7 @@ async function loadBookmarkedPokemons() {
   const token = localStorage.getItem("token");
   try {
     const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons`,
+      `${BASE_URL}/pocketmons`,
       {
         method: "GET",
         headers: {

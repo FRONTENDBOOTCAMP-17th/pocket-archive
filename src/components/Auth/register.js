@@ -1,3 +1,5 @@
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export function Register() {
   return `
     <main class="w-screen min-h-screen flex flex-col items-center justify-center gap-5" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFF 50%, #FFF7ED 100%)">
@@ -177,7 +179,7 @@ export function initRegister() {
       const nickname = document.getElementById("register_nickname");
       try {
         const res = await fetch(
-          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/check-nickname?nickname=${nickname.value}`,
+          `${BASE_URL}/user/check-nickname?nickname=${nickname.value}`,
           {
             method: "GET",
           },
@@ -196,7 +198,7 @@ export function initRegister() {
       const id = document.getElementById("register_id");
       try {
         const res = await fetch(
-          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/check-login-id?loginId=${id.value}`,
+          `${BASE_URL}/user/check-login-id?loginId=${id.value}`,
           {
             method: "GET",
           },
@@ -213,7 +215,7 @@ export function initRegister() {
     .addEventListener("click", async function signup() {
       try {
         const res = await fetch(
-          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/register`,
+          `${BASE_URL}/user/register`,
           {
             method: "POST",
             headers: {
