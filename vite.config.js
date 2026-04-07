@@ -5,4 +5,12 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api.fullstackfamily.com',
+        changeOrigin: true,
+      },
+    },
+  },
 })
