@@ -104,15 +104,18 @@ export function Register() {
           <p id="register-msg" class="hidden text-s text-red-500 bg-red-50 rounded-md px-3 py-2 mb-3"></p>
 
           <!-- Register button -->
-          <button type="submit"
-            class="w-full h-12 bg-[#00BBA7] hover:bg-[#009e8d] text-white rounded-full text-base font-bold transition-colors cursor-pointer border-0 mb-5">
+          <button disabled type="submit"
+            class="w-full h-12 bg-[#00BBA7] hover:bg-[#009e8d] text-white rounded-full text-base font-bold transition-colors cursor-pointer border-0 mb-5"
+            id="signupBtn">
             회원가입
           </button>
 
           <!-- Back to login -->
           <div class="flex items-center justify-center gap-2 text-sm">
             <p class="text-[#8a9a98] m-0">이미 계정이 있으신가요?</p>
-            <button type="button"
+            <button
+              
+              type="button"
               class="bg-transparent border-0 text-[#00BBA7] hover:text-[#009e8d] text-sm underline cursor-pointer p-0"
               id="loginBtn">
               로그인
@@ -127,49 +130,117 @@ export function Register() {
     </main>
   `;
 }
+let validNickname = true;
+let validId = true;
 
 export function initRegister() {
-  const pwd = document.getElementById('register_password');
-  const eye = document.getElementById('eye');
-  const pwd2 = document.getElementById('register_password_confirm');
-  const eye2 = document.getElementById('eye2');
+  const pwd = document.getElementById("register_password");
+  const eye = document.getElementById("eye");
+  const pwd2 = document.getElementById("register_password_confirm");
+  const eye2 = document.getElementById("eye2");
+  const id = document.getElementById("register_id");
+  const nickname = document.getElementById("register_nickname");
 
-  eye.addEventListener('click', function () {
-    eye.classList.toggle('active');
-    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+  eye.addEventListener("click", function () {
+    eye.classList.toggle("active");
+    pwd.type = pwd.type === "password" ? "text" : "password";
 
-    const slash = document.getElementById('eye-slash');
-    slash.style.strokeDashoffset = eye.classList.contains('active') ? '0' : '24';
+    const slash = document.getElementById("eye-slash");
+    slash.style.strokeDashoffset = eye.classList.contains("active")
+      ? "0"
+      : "24";
   });
 
-  eye2.addEventListener('click', function () {
-    eye2.classList.toggle('active');
-    pwd2.type = pwd2.type === 'password' ? 'text' : 'password';
+  eye2.addEventListener("click", function () {
+    eye2.classList.toggle("active");
+    pwd2.type = pwd2.type === "password" ? "text" : "password";
 
-    const slash2 = document.getElementById('eye-slash2');
-    slash2.style.strokeDashoffset = eye2.classList.contains('active') ? '0' : '24';
+    const slash2 = document.getElementById("eye-slash2");
+    slash2.style.strokeDashoffset = eye2.classList.contains("active")
+      ? "0"
+      : "24";
   });
 
-  document.registerForm.addEventListener('submit', function (e) {
+  document.registerForm.addEventListener("submit", function (e) {
     e.preventDefault();
     checkRegister();
   });
 
-  document.getElementById('loginBtn').addEventListener('click', function () {
-    history.pushState(null, '', '/login');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+  document.getElementById("loginBtn").addEventListener("click", function () {
+    history.pushState(null, "", "/login");
+    window.dispatchEvent(new PopStateEvent("popstate"));
   });
 
-  document.getElementById('checkNicknameBtn').addEventListener('click', function () {
-    alert('닉네임 중복확인 API 연동 필요');
-  });
+  document
+    .getElementById("checkNicknameBtn")
+    .addEventListener("click", async function () {
+      const nickname = document.getElementById("register_nickname");
+      try {
+        const res = await fetch(
+          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/check-nickname?nickname=${nickname.value}`,
+          {
+            method: "GET",
+          },
+        );
+        const result = await res.json();
+        validNickname = result.data.exists;
+      } catch (error) {
+        console.error(error);
+      }
+      updateButtonState();
+    });
 
-  document.getElementById('checkIdBtn').addEventListener('click', function () {
-    alert('아이디 중복확인 API 연동 필요');
-  });
-
-  // 중복확인 버튼 확인 후 회원가입 버튼 활성화 로직 추가 필요
+  document
+    .getElementById("checkIdBtn")
+    .addEventListener("click", async function () {
+      const id = document.getElementById("register_id");
+      try {
+        const res = await fetch(
+          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/check-login-id?loginId=${id.value}`,
+          {
+            method: "GET",
+          },
+        );
+        const result = await res.json();
+        validId = result.data.exists;
+      } catch (error) {
+        console.error(error);
+      }
+      updateButtonState();
+    });
+  document
+    .getElementById("signupBtn")
+    .addEventListener("click", async function signup() {
+      try {
+        const res = await fetch(
+          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: {
+              loginId: id.value,
+              nickname: nickname.value,
+              password: pwd.value,
+            },
+          },
+        );
+        const result = res.json();
+      } catch (error) {
+        console.error(error);
+      }
+    });
 }
+function updateButtonState() {
+  const signupBtn = document.getElementById("signupBtn");
+  if (validNickname === false && validId === false) {
+    signupBtn.disabled = false;
+  } else {
+    signupBtn.disabled = true;
+  }
+}
+async function signup() {}
 
 // Form Validation
 function checkRegister() {
@@ -177,48 +248,48 @@ function checkRegister() {
   var register_id = document.registerForm.register_id;
   var password = document.registerForm.register_password;
   var passwordConfirm = document.registerForm.register_password_confirm;
-  var msg = document.getElementById('register-msg');
+  var msg = document.getElementById("register-msg");
 
-  if (nickname.value === '') {
-    msg.style.display = 'block';
-    msg.innerHTML = '닉네임을 입력해주세요';
+  if (nickname.value === "") {
+    msg.style.display = "block";
+    msg.innerHTML = "닉네임을 입력해주세요";
     nickname.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.innerHTML = "";
   }
 
-  if (register_id.value === '') {
-    msg.style.display = 'block';
-    msg.innerHTML = '아이디를 입력해주세요';
+  if (register_id.value === "") {
+    msg.style.display = "block";
+    msg.innerHTML = "아이디를 입력해주세요";
     register_id.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.innerHTML = "";
   }
 
-  if (password.value === '') {
-    msg.style.display = 'block';
-    msg.innerHTML = '비밀번호를 입력해주세요';
+  if (password.value === "") {
+    msg.style.display = "block";
+    msg.innerHTML = "비밀번호를 입력해주세요";
     password.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.innerHTML = "";
   }
 
-  if (passwordConfirm.value === '') {
-    msg.style.display = 'block';
-    msg.innerHTML = '비밀번호 확인을 입력해주세요';
+  if (passwordConfirm.value === "") {
+    msg.style.display = "block";
+    msg.innerHTML = "비밀번호 확인을 입력해주세요";
     passwordConfirm.focus();
     return false;
   }
 
   if (password.value !== passwordConfirm.value) {
-    msg.style.display = 'block';
-    msg.innerHTML = '비밀번호가 일치하지 않습니다';
+    msg.style.display = "block";
+    msg.innerHTML = "비밀번호가 일치하지 않습니다";
     passwordConfirm.focus();
     return false;
   }
 
-  msg.innerHTML = '';
+  msg.innerHTML = "";
 }
