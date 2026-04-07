@@ -105,7 +105,7 @@ async function loadPage() {
     }
 
     if (page.includes('detailPost.html')) {
-      initPostDetail(postId || 2);
+      initPostDetail(postId);
     }
 
     if (page.includes('writePost.html')) {

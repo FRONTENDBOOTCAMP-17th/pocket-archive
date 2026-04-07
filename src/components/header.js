@@ -14,9 +14,10 @@ export function Header() {
     </nav>
 
     <div class="header-icons">
-      ${isLoggedin
-        ? `<button class="logout-btn">로그아웃</button>`
-        : `<button class="login-btn">로그인</button>`
+      ${
+        isLoggedin
+          ? `<button class="logout-btn">로그아웃</button>`
+          : `<button class="login-btn">로그인</button>`
       }
 
       <button class="icon-btn">
@@ -60,9 +61,10 @@ export function Header() {
         <a href="/mypage" data-page="mypage">마이페이지</a>
         <div style="display: flex; flex-direction: row;">
           <img src="https://img.icons8.com/?size=100&id=vQOFSUMXPpGA&format=png&color=000000" alt="Login Icon" style="width: 24px; height: 24px; margin:12px 0px 12px 12px;"/>
-          ${isLoggedin
-            ? `<a class="logout-btn" style="color: #e7000b; cursor:pointer; padding: 12px;">로그아웃</a>`
-            : `<a href="/login" data-page="login" style="color: #e7000b;">로그인</a>`
+          ${
+            isLoggedin
+              ? `<a class="logout-btn" style="color: #e7000b; cursor:pointer; padding: 12px;">로그아웃</a>`
+              : `<a href="/login" data-page="login" style="color: #e7000b;">로그인</a>`
           }
         </div>
     </div>
@@ -74,43 +76,44 @@ export function Header() {
 }
 
 // 로그인 페이지 이동
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('login-btn')) {
-    history.pushState(null, '', '/login');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("login-btn")) {
+    history.pushState(null, "", "/login");
+    window.dispatchEvent(new PopStateEvent("popstate"));
   }
 });
 
 // 로그아웃
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('logout-btn')) {
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("logout-btn")) {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     location.reload();
   }
 });
 
 // 나의 파티 만들기 - 로그인 필요
-document.addEventListener('click', (e) => {
+document.addEventListener("click", (e) => {
   if (e.target.closest('a[data-page="myparty"]')) {
     const isLoggedIn = !!localStorage.getItem("token");
     if (!isLoggedIn) {
       e.preventDefault();
-      alert('나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
-      history.pushState(null, '', '/login');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      alert("나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.");
+      history.pushState(null, "", "/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
     }
   }
 });
 
 // 마이페이지 - 로그인 필요
-document.addEventListener('click', (e) => {
+document.addEventListener("click", (e) => {
   if (e.target.closest('a[data-page="mypage"]')) {
     const isLoggedIn = !!localStorage.getItem("token");
     if (!isLoggedIn) {
       e.preventDefault();
-      alert('마이페이지는 로그인 후 이용 가능합니다.');
-      history.pushState(null, '', '/login');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      alert("마이페이지는 로그인 후 이용 가능합니다.");
+      history.pushState(null, "", "/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
     }
   }
 });

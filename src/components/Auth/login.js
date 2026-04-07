@@ -106,19 +106,26 @@ export function Login() {
 
 // 커스텀 모달
 function showModal(title, desc) {
-  const modal = document.getElementById("login-modal");
-  document.getElementById("login-modal-title").textContent = title;
-  document.getElementById("login-modal-desc").textContent = desc;
-  modal.classList.remove("hidden");
+  const modal = document.getElementById('login-modal');
+  document.getElementById('login-modal-title').textContent = title;
+  document.getElementById('login-modal-desc').textContent = desc;
+  modal.classList.remove('hidden');
 
-  document.getElementById("login-modal-confirm").addEventListener("click", () => {
-    modal.classList.add("hidden");
-  }, { once: true });
-  document.getElementById("login-modal-overlay").addEventListener("click", () => {
-    modal.classList.add("hidden");
-  }, { once: true });
+  document.getElementById('login-modal-confirm').addEventListener(
+    'click',
+    () => {
+      modal.classList.add('hidden');
+    },
+    { once: true },
+  );
+  document.getElementById('login-modal-overlay').addEventListener(
+    'click',
+    () => {
+      modal.classList.add('hidden');
+    },
+    { once: true },
+  );
 }
-
 
 export function initLogin() {
   var pwd = document.getElementById('pwd');
