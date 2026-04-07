@@ -267,7 +267,11 @@ export async function initBoard() {
       renderPosts(posts);
       return;
     }
-    const filtered = posts.filter((post) => post.title.toLowerCase().includes(keyword) || post.nickname.toLowerCase().includes(keyword));
+    const filterType = document.getElementById('filter-type')?.value ?? 'title';
+    const filtered = posts.filter((post) => {
+      if (filterType === 'author') return post.nickname.toLowerCase().includes(keyword);
+      return post.title.toLowerCase().includes(keyword);
+    });
     renderPosts(filtered);
   });
 
@@ -282,14 +286,14 @@ export async function initBoard() {
     categoryButtons.forEach((button) => {
       const isActive = button === activeButton;
 
-      // 데스크탑 스타일
+      // desktop style
       button.classList.toggle('bg-[#e6f7f5]', isActive);
       button.classList.toggle('text-[#00bba7]', isActive);
       button.classList.toggle('border', !isActive);
       button.classList.toggle('border-[#00bba7]/25', !isActive);
       button.classList.toggle('text-[#4a7a72]', !isActive);
 
-      // 모바일 스타일
+      // mobile style
       button.classList.toggle('max-[1025px]:bg-[#22A9DA]/40!', isActive);
       button.classList.toggle('max-[1025px]:bg-[#F3F4F6]!', !isActive);
       button.classList.toggle('max-[1025px]:border-none!', !isActive);
@@ -343,7 +347,7 @@ export async function initBoard() {
     categoryScroll.scrollLeft = scrollLeft - (x - startX);
   });
 
-  // 게시글 클릭 시 상세 페이지로 이동
+  // Click on the post to go to the detail page
   postlist.addEventListener('click', (e) => {
     const postElement = e.target.closest('div');
     if (!postElement) return;
@@ -355,7 +359,7 @@ export async function initBoard() {
     }
   });
 
-  // 글쓰기 버튼 클릭 시 글쓰기 페이지로 이동(local토큰이 있을 때만)
+  // Go to the writing page when you click the writing button (only when there is a local token)
   document.getElementById('write-post-btn')?.addEventListener('click', () => {
     const token = localStorage.getItem('localToken');
     if (token) {
