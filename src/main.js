@@ -74,8 +74,12 @@ async function loadPage() {
     }
     const html = await res.text();
 
-    if (current === 'board') {
-      import('./components/board.js');
+    // HTML을 먼저 삽입한 후 초기화
+    document.getElementById('content').innerHTML = html;
+
+    if (current === 'board' && page.includes('board.html')) {
+      const { initBoard } = await import('./components/board/board.js');
+      initBoard();
     }
 
     if (current === 'mypage') {
@@ -85,18 +89,10 @@ async function loadPage() {
     if (page.includes('pokedex.html')) {
       initPokedex();
     }
-    // if (page.includes("detailPost.html")) {
-    //   // const postId = new URLSearchParams(window.location.search).get("id");
-    //   //테스트용으로 2번 게시물을 불러옴 수정 꼭!! 해야함!!! postId로!!!
-    //   console.log(`2번 게시글 상세페이지 로드 중...`);
-    //   initPostDetail(2);
-    // }
-    setTimeout(() => {
-      if (page.includes('detailPost.html')) {
-        initPostDetail(postId || 2);
-      }
-    }, 2);
-    document.getElementById('content').innerHTML = html;
+
+    if (page.includes('detailPost.html')) {
+      initPostDetail(postId || 2);
+    }
 
     if (page.includes('myparty.html')) {
       const { init } = await import('./scripts/myparty.js');
@@ -107,6 +103,8 @@ async function loadPage() {
     console.error(err);
   }
 }
+
+window.loadPage = loadPage;
 
 loadPage();
 
