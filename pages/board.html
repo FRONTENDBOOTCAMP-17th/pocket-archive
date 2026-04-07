@@ -1,0 +1,160 @@
+<!-- Start body element -->
+<div>
+  <!-- Bulletin board header -->
+  <div class="flex flex-col text-left">
+    <h1 class="text-3xl font-bold text-[#1a3a35]">게시판</h1>
+    <p class="text-sm text-[#5a8a82] mt-1">트레이너들과 함께 정보를 공유하고 소통하세요</p>
+  </div>
+
+  <!-- Bulletin board body -->
+  <section class="flex gap-6 w-full items-start max-[1025px]:flex-col max-[1025px]:items-stretch" style="margin-top: 24px">
+    <!-- Left: Category filter -->
+    <div
+      class="shrink-0 bg-white rounded-xl max-[1025px]:w-full! max-[1025px]:h-[51.961px]! max-[1025px]:shrink-0 max-[1025px]:self-stretch max-[1025px]:flex-row! max-[1025px]:items-center! max-[1025px]:p-2.5! max-[1025px]:gap-0! max-[1025px]:overflow-hidden max-[1025px]:bg-transparent!"
+      style="display: flex; flex-direction: column; align-items: flex-start; width: 320px; height: 370px; padding: 24px 24px 0 24px; gap: 16px"
+    >
+      <!-- Category button area (mobile: horizontal scrolling) -->
+      <div
+        id="category-scroll"
+        class="max-[1025px]:flex-row! max-[1025px]:items-center! max-[1025px]:gap-2! max-[1025px]:h-auto! max-[1025px]:flex-1 max-[1025px]:overflow-x-auto max-[1025px]:[scrollbar-width:none] max-[1025px]:[&::-webkit-scrollbar]:hidden"
+        style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; height: 100%; gap: 12px"
+      >
+        <p class="text-m font-semibold text-[#1a3a35] mb-1 max-[1025px]:hidden">카테고리</p>
+        <button
+          class="category-btn text-sm rounded-lg bg-[#e6f7f5] text-[#00bba7] transition-colors max-[1025px]:inline-flex! max-[1025px]:shrink-0 max-[1025px]:self-auto! max-[1025px]:pt-[4.881px]! max-[1025px]:pb-[7.09px]! max-[1025px]:px-3! max-[1025px]:justify-center max-[1025px]:whitespace-nowrap max-[1025px]:rounded-full! max-[1025px]:bg-[#22A9DA]/40!"
+          style="display: flex; padding: 8px 16px; align-items: center; align-self: stretch"
+          data-category="전체"
+        >
+          전체
+        </button>
+        <button
+          class="category-btn text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] hover:bg-[#e6f7f5] hover:text-[#00bba7] transition-colors max-[1025px]:inline-flex! max-[1025px]:shrink-0 max-[1025px]:self-auto! max-[1025px]:pt-[4.881px]! max-[1025px]:pb-[7.09px]! max-[1025px]:px-3! max-[1025px]:justify-center max-[1025px]:whitespace-nowrap max-[1025px]:rounded-full! max-[1025px]:bg-[#F3F4F6]! max-[1025px]:border-none!"
+          style="display: flex; padding: 8px 16px; align-items: center; align-self: stretch"
+          data-category="자유게시판"
+        >
+          자유게시판
+        </button>
+        <button
+          class="category-btn text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] hover:bg-[#e6f7f5] hover:text-[#00bba7] transition-colors max-[1025px]:inline-flex! max-[1025px]:shrink-0 max-[1025px]:self-auto! max-[1025px]:pt-[4.881px]! max-[1025px]:pb-[7.09px]! max-[1025px]:px-3! max-[1025px]:justify-center max-[1025px]:whitespace-nowrap max-[1025px]:rounded-full! max-[1025px]:bg-[#F3F4F6]! max-[1025px]:border-none!"
+          style="display: flex; padding: 8px 16px; align-items: center; align-self: stretch"
+          data-category="질문게시판"
+        >
+          질문게시판
+        </button>
+        <button
+          class="category-btn text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] hover:bg-[#e6f7f5] hover:text-[#00bba7] transition-colors max-[1025px]:inline-flex! max-[1025px]:shrink-0 max-[1025px]:self-auto! max-[1025px]:pt-[4.881px]! max-[1025px]:pb-[7.09px]! max-[1025px]:px-3! max-[1025px]:justify-center max-[1025px]:whitespace-nowrap max-[1025px]:rounded-full! max-[1025px]:bg-[#F3F4F6]! max-[1025px]:border-none!"
+          style="display: flex; padding: 8px 16px; align-items: center; align-self: stretch"
+          data-category="파티 공유"
+        >
+          파티 공유
+        </button>
+        <button
+          class="category-btn text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] hover:bg-[#e6f7f5] hover:text-[#00bba7] transition-colors max-[1025px]:inline-flex! max-[1025px]:shrink-0 max-[1025px]:self-auto! max-[1025px]:pt-[4.881px]! max-[1025px]:pb-[7.09px]! max-[1025px]:px-3! max-[1025px]:justify-center max-[1025px]:whitespace-nowrap max-[1025px]:rounded-full! max-[1025px]:bg-[#F3F4F6]! max-[1025px]:border-none!"
+          style="display: flex; padding: 8px 16px; align-items: center; align-self: stretch"
+          data-category="공략"
+        >
+          공략
+        </button>
+      </div>
+      <!-- Write a post -->
+      <button
+        id="write-post-btn"
+        type="button"
+        class="flex items-center gap-1.5 bg-[#00BBA7] text-white text-sm font-medium rounded-lg hover:bg-[#009d8c] transition-colors max-[1025px]:shrink-0 max-[1025px]:inline-flex! max-[1025px]:w-auto! max-[1025px]:h-auto! max-[1025px]:mb-0! max-[1025px]:pt-[4.881px]! max-[1025px]:pb-[7.09px]! max-[1025px]:pl-[17.848px]! max-[1025px]:pr-[16.152px]! max-[1025px]:justify-center max-[1025px]:gap-2!"
+        style="width: 100%; height: 50px; margin-bottom: 20px; justify-content: center; cursor: pointer"
+      >
+        <span class="max-[769px]:hidden! flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 11 11" fill="none">
+            <path
+              d="M7.586 1.081a2 2 0 0 1 2.828 2.828L4.401 9.923a2 2 0 0 1-.944.53l-1.915.56a.5.5 0 0 1-.618-.617l.56-1.916a2 2 0 0 1 .53-.944L7.586 1.08Z"
+              stroke="white"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          글쓰기
+        </span>
+        <span class="hidden max-[769px]:inline-flex!">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4.16492 9.99609H15.8267" stroke="white" stroke-width="1.66597" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M9.99585 4.16504V15.8268" stroke="white" stroke-width="1.66597" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <!-- Right: Search + Post list + Bottom row -->
+    <div class="flex flex-col gap-4 flex-1 min-w-0">
+      <!-- Post Search -->
+      <div
+        class="search-container bg-white rounded-xl border border-[#00bba7]/20 max-[640px]:h-auto max-[640px]:pb-4"
+        style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 78px; padding: 16px"
+      >
+        <!-- Search input row -->
+        <div class="search-row flex items-center gap-2 w-full max-[579px]:flex-col max-[579px]:items-stretch">
+          <div
+            class="search-input-wrap relative bg-[#f4faf9] rounded-lg border border-[#00bba7]/20 w-full"
+            style="display: flex; flex: 1; height: 46px; padding: 10px 16px 10px 40px; align-items: center"
+          >
+            <span class="absolute text-[#aac9c4]" style="left: 14px">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M9.167 15.833A6.667 6.667 0 1 0 9.167 2.5a6.667 6.667 0 0 0 0 13.333Z"
+                  stroke="#99A1AF"
+                  stroke-width="1.667"
+                  stroke-linecap="round"
+                />
+                <path d="M17.5 17.5l-3.583-3.583" stroke="#99A1AF" stroke-width="1.667" stroke-linecap="round" />
+              </svg>
+            </span>
+            <input
+              id="search-input"
+              type="text"
+              placeholder="게시글 검색..."
+              class="flex-1 bg-transparent text-sm text-[#1a3a35] placeholder-[#aac9c4] outline-none"
+            />
+          </div>
+          <div class="flex gap-2 w-auto max-[578px]:w-full max-[578px]:mt-2">
+            <select
+              id="filter-type"
+              class="text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] bg-white outline-none cursor-pointer min-w-20 w-auto shrink-0"
+              style="height: 45px; flex-shrink: 0; padding: 0 12px; line-height: 45px"
+            >
+              <option value="title">제목</option>
+              <option value="author">작성자</option>
+            </select>
+            <button
+              id="search-btn"
+              class="bg-[#00BBA7] text-white text-sm font-medium rounded-lg hover:bg-[#009d8c] transition-colors flex-1 min-w-17.5 justify-center"
+              style="display: flex; padding: 10.5px 25px 10.5px 16px; align-items: center; gap: 11px"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M9.167 15.833A6.667 6.667 0 1 0 9.167 2.5a6.667 6.667 0 0 0 0 13.333Z"
+                  stroke="#fff"
+                  stroke-width="1.667"
+                  stroke-linecap="round"
+                />
+                <path d="M17.5 17.5l-3.583-3.583" stroke="#fff" stroke-width="1.667" stroke-linecap="round" />
+              </svg>
+              검색
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post list -->
+      <postlist></postlist>
+
+      <!-- Pagination -->
+      <div>
+        <!-- Bottom row -->
+        <div class="grid items-center mt-2">
+          <!-- Pagination -->
+          <div id="pagination" class="flex items-center gap-1.5 justify-self-center"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
