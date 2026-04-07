@@ -1,4 +1,4 @@
-import { SidebarItem, PokemonCard, Pagination } from "./pokedexUI";
+import { SidebarItem, PokemonCard, Pagination } from './pokedexUI.js';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -7,17 +7,28 @@ let filteredPokemon = [];
 let myPocketMons = [];
 let currentPage = 1;
 const ITEMS_PER_PAGE = 12;
-const isLoggedIn = localStorage.getItem("token");
+
+// PokeAPI 데이터 캐시
+const pokemonCache = new Map();
 
 export async function initPokedex() {
-  //포켓몬 json 불러와서 쓰기
-  const res = await fetch("/pokemon_full_ko.json");
-  allPokemon = await res.json();
-  //얕복해서 쓰기
+  try {
+    const res = await fetch('/pokemon_full_ko.json');
+    if (!res.ok) throw new Error('포켓몬 데이터 로드 실패');
+    allPokemon = await res.json();
+  } catch (error) {
+    console.error('포켓몬 JSON 로드 에러:', error);
+    allPokemon = [];
+    return;
+  }
+
   filteredPokemon = [...allPokemon];
   // 로그인이 되어있으면 실행
+  const isLoggedIn = localStorage.getItem('token');
   if (isLoggedIn) {
     myPocketMons = await loadPoketmons();
+  } else {
+    myPocketMons = [];
   }
   setupSearch();
   renderSidebar();
@@ -25,36 +36,50 @@ export async function initPokedex() {
 }
 // 나중에 api에 쑤셔 박을것
 export async function loadPoketmons() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   try {
-    const res = await fetch(
-      `${BASE_URL}/pocketmons`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const res = await fetch(`${BASE_URL}/pocketmons`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
     if (!res.ok) {
-      throw new Error("불러오기 실패");
+      throw new Error('불러오기 실패');
     }
     const result = await res.json();
     return result.data.myPocketmons;
   } catch (error) {
     console.error(error);
+    return [];
+  }
+}
+
+// PokeAPI에서 포켓몬 상세 정보 가져오기 (캐싱 포함)
+async function fetchPokemonDetail(no) {
+  if (pokemonCache.has(no)) {
+    return pokemonCache.get(no);
+  }
+
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${no}`);
+    if (!res.ok) throw new Error(`API 오류: ${res.status}`);
+    const data = await res.json();
+    pokemonCache.set(no, data);
+    return data;
+  } catch (error) {
+    console.error(`포켓몬 ${no} 데이터 로드 실패:`, error);
+    return null;
   }
 }
 
 function setupSearch() {
-  const searchInput = document.getElementById("sidebarSearch");
+  const searchInput = document.getElementById('sidebarSearch');
   if (!searchInput) return;
 
-  searchInput.addEventListener("input", (e) => {
+  searchInput.addEventListener('input', (e) => {
     const keyword = e.target.value.toLowerCase().trim();
-    filteredPokemon = allPokemon.filter(
-      (p) => p.name.includes(keyword) || String(p.no).includes(keyword),
-    );
+    filteredPokemon = allPokemon.filter((p) => p.name.includes(keyword) || String(p.no).includes(keyword));
     currentPage = 1;
     renderSidebar();
     renderGrid(1);
@@ -62,36 +87,35 @@ function setupSearch() {
 }
 
 function renderSidebar() {
-  const list = document.getElementById("sidebarList");
+  const list = document.getElementById('sidebarList');
   if (!list) return;
-  list.innerHTML = filteredPokemon.map((p) => SidebarItem(p)).join("");
+  list.innerHTML = filteredPokemon.map((p) => SidebarItem(p)).join('');
 }
 
 async function renderGrid(page) {
-  const grid = document.getElementById("pokemonGrid");
+  const grid = document.getElementById('pokemonGrid');
   if (!grid) return;
-  grid.innerHTML = "";
+  grid.innerHTML = '';
 
   const start = (page - 1) * ITEMS_PER_PAGE;
   const pageItems = filteredPokemon.slice(start, start + ITEMS_PER_PAGE);
 
-  const promises = pageItems.map((p) =>
-    fetch(`https://pokeapi.co/api/v2/pokemon/${p.no}`).then((r) => r.json()),
-  );
+  const promises = pageItems.map((p) => fetchPokemonDetail(p.no));
+  const details = await Promise.allSettled(promises);
 
-  const details = await Promise.all(promises);
-
-  details.forEach((data, idx) => {
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = PokemonCard(data, pageItems[idx].name, myPocketMons);
-    grid.appendChild(wrapper.firstElementChild);
+  details.forEach((result, idx) => {
+    if (result.status === 'fulfilled' && result.value) {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = PokemonCard(result.value, pageItems[idx].name, myPocketMons);
+      grid.appendChild(wrapper.firstElementChild);
+    }
   });
 
   renderPagination();
 }
 
 function renderPagination() {
-  const pag = document.getElementById("pokedexPagination");
+  const pag = document.getElementById('pokedexPagination');
   const total = Math.ceil(filteredPokemon.length / ITEMS_PER_PAGE);
   //아이디값을 못불러오면 함수 리턴 해버림
   if (!pag) {
@@ -99,20 +123,20 @@ function renderPagination() {
   }
   // 나누기값이 1이거나 그 밑값이면 pagenation 빈값
   if (total <= 1) {
-    return (pag.innerHTML = "");
+    return (pag.innerHTML = '');
   }
 
   pag.innerHTML = Pagination(currentPage, total);
   //클릭 이벤트
   pag.onclick = (e) => {
-    const btn = e.target.closest(".page-btn") || e.target.closest("#jumpBtn");
+    const btn = e.target.closest('.page-btn') || e.target.closest('#jumpBtn');
     if (btn) {
-      movePage(btn.dataset?.page || pag.querySelector("#jumpIn").value);
+      movePage(btn.dataset?.page || pag.querySelector('#jumpIn').value);
     }
   };
 
-  pag.querySelector("#jumpIn")?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") movePage(e.target.value);
+  pag.querySelector('#jumpIn')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') movePage(e.target.value);
   });
 }
 
@@ -123,13 +147,13 @@ async function movePage(p) {
 
   currentPage = page;
   await renderGrid(page);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // 전역 윈도우 함수 (왼쪽에 포켓몬 사이드바안에 있는 포켓몬 no. 어쩌고 클릭하면 실행되는 함수임)
 window.selectPokemon = async function (no) {
-  const grid = document.getElementById("pokemonGrid");
-  const pag = document.getElementById("pokedexPagination");
+  const grid = document.getElementById('pokemonGrid');
+  const pag = document.getElementById('pokedexPagination');
 
   if (!grid) {
     return;
@@ -138,28 +162,25 @@ window.selectPokemon = async function (no) {
   try {
     const p = allPokemon.find((item) => item.no === no);
     if (!p) {
-      throw new Error("해당 포켓몬 데이터를 찾을 수 없습니다.");
+      throw new Error('해당 포켓몬 데이터를 찾을 수 없습니다.');
     }
 
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${no}`);
-
-    if (!res.ok) {
-      throw new Error("네트워크 응답이 올바르지 않습니다.");
+    const data = await fetchPokemonDetail(no);
+    if (!data) {
+      throw new Error('포켓몬 정보를 불러オ할 수 없습니다.');
     }
 
-    const data = await res.json();
-
-    const wrapper = document.createElement("div");
+    const wrapper = document.createElement('div');
     wrapper.innerHTML = PokemonCard(data, p.name);
 
-    grid.innerHTML = "";
+    grid.innerHTML = '';
     grid.appendChild(wrapper.firstElementChild);
 
-    if (pag) pag.innerHTML = "";
+    if (pag) pag.innerHTML = '';
     // 왼쪽에 있는 사이드바 클릭시 위로 이동 즉 밑에서 클릭해도 맨 위로 가짐
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (error) {
-    console.error("포켓몬 상세 정보 로드 실패:", error);
+    console.error('포켓몬 상세 정보 로드 실패:', error);
     //에러 뜨면 이런 화면 보여줄거임
     grid.innerHTML = `
       <div class="col-span-full text-center py-20">
@@ -171,46 +192,44 @@ window.selectPokemon = async function (no) {
 };
 // 등록 api
 export async function poketmonReg(poketmonId) {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   try {
-    const res = await fetch(
-      `${BASE_URL}/pocketmons`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          pocketmonId: Number(poketmonId),
-        }),
+    const res = await fetch(`${BASE_URL}/pocketmons`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-    );
+      body: JSON.stringify({
+        pocketmonId: Number(poketmonId),
+      }),
+    });
     if (!res.ok) {
-      throw new Error("등록 실패");
+      throw new Error(`등록 실패: ${res.status}`);
     }
+    return true;
   } catch (error) {
-    console.error(error);
+    console.error('포켓몬 등록 에러:', error);
+    return false;
   }
 }
 
 export async function poketmonDelete(poketmonId) {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   try {
-    const res = await fetch(
-      `${BASE_URL}/pocketmons/${poketmonId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const res = await fetch(`${BASE_URL}/pocketmons/${poketmonId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
     if (!res.ok) {
-      throw new Error("삭제 실패");
+      throw new Error(`삭제 실패: ${res.status}`);
     }
+    return true;
   } catch (error) {
-    console.error(error);
+    console.error('포켓몬 삭제 에러:', error);
+    return false;
   }
 }
 window.poketmonReg = async function (event, id) {

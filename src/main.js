@@ -1,12 +1,10 @@
 import './style.css';
 import { Header } from './components/header.js';
 import { Footer } from './components/footer.js';
-import { Login, initLogin } from './components/Auth/login.js';
-import { Register, initRegister } from './components/Auth/register.js';
+import { Login, initLogin } from './components/auth/login.js';
+import { Register, initRegister } from './components/auth/register.js';
 import { initPokedex } from './components/pokedex/pokedex.js';
 import { initPostDetail } from './components/board/boardDetail.js';
-
-console.log('포켓아카이브 실행중');
 
 const app = document.getElementById('app');
 
@@ -17,17 +15,6 @@ app.innerHTML = `
   </main>
   ${Footer()}
 `;
-
-const menuBtn = document.getElementById('menuBtn');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-
-if (menuBtn) {
-  menuBtn.addEventListener('click', () => {
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-  });
-}
 
 async function loadPage() {
   try {
@@ -94,10 +81,6 @@ async function loadPage() {
     if (current === 'board' && page.includes('board.html')) {
       const { initBoard } = await import('./components/board/board.js');
       initBoard();
-    }
-
-    if (current === 'mypage') {
-      import('./components/mypage/my.js');
     }
 
     if (page.includes('pokedex.html')) {
@@ -183,5 +166,3 @@ function initSidebar() {
     overlay.classList.remove('active');
   });
 }
-
-initSidebar();

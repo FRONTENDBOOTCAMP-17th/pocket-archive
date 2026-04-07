@@ -1,8 +1,8 @@
 export function TrainerCard({ gender = "man", party = [] }) {
   const img =
     gender === "woman"
-      ? "/public/assets/trianercard_woman.png"
-      : "/public/assets/trianercard_man.png";
+      ? "/assets/trianercard_woman.png"
+      : "/assets/trianercard_man.png";
   
 //이미지 위 슬롯 위치 설정
   const slotPositions = [

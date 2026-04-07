@@ -117,24 +117,23 @@ async function checkStuff() {
   var password = document.form1.password;
   var msg = document.getElementById('msg');
 
-  if (login_id.value == '') {
+  if (login_id.value === '') {
     msg.style.display = 'block';
-    msg.innerHTML = '아이디를 입력해주세요';
+    msg.textContent = '아이디를 입력해주세요';
     login_id.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.textContent = '';
   }
 
-  if (password.value == '') {
+  if (password.value === '') {
     msg.style.display = 'block';
-    msg.innerHTML = '비밀번호를 입력해주세요';
+    msg.textContent = '비밀번호를 입력해주세요';
     password.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.textContent = '';
   }
-  console.log(login_id.value, password.value);
   try {
     const res = await fetch(`${BASE_URL}/user/login`, {
       method: 'POST',
@@ -147,32 +146,14 @@ async function checkStuff() {
     if (!res.ok) {
       throw new Error('로그인 실패');
     }
-    console.log(res);
     const result = await res.json();
-    console.log(result.data.token);
-    localStorage.setItem('token', result.data.token);
-    location.replace('/');
-  } catch (error) {
-    showLoginError('로그인 정보가 일치하지 않습니다.');
-    console.error(error);
-  }
 
-  try {
-    const res = await fetch(`${BASE_URL}/user/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        loginId: login_id.value,
-        password: password.value,
-      }),
-    });
-    if (!res.ok) {
-      throw new Error('로그인 실패');
+    // Token 저장 (XSS 공격 방지)
+    const token = result.data?.token;
+    if (!token) {
+      throw new Error('토큰 정보 없음');
     }
-    console.log(res);
-    const result = await res.json();
-    console.log(result.data.token);
-    localStorage.setItem('token', result.data.token);
+    localStorage.setItem('token', token);
     location.replace('/');
   } catch (error) {
     showLoginError('로그인 정보가 일치하지 않습니다.');

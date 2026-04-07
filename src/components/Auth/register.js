@@ -132,117 +132,113 @@ export function Register() {
     </main>
   `;
 }
-let validNickname = true;
-let validId = true;
-
 export function initRegister() {
-  const pwd = document.getElementById("register_password");
-  const eye = document.getElementById("eye");
-  const pwd2 = document.getElementById("register_password_confirm");
-  const eye2 = document.getElementById("eye2");
-  const id = document.getElementById("register_id");
-  const nickname = document.getElementById("register_nickname");
+  let validNickname = true;
+  let validId = true;
 
-  eye.addEventListener("click", function () {
-    eye.classList.toggle("active");
-    pwd.type = pwd.type === "password" ? "text" : "password";
+  const pwd = document.getElementById('register_password');
+  const eye = document.getElementById('eye');
+  const pwd2 = document.getElementById('register_password_confirm');
+  const eye2 = document.getElementById('eye2');
+  const id = document.getElementById('register_id');
+  const nickname = document.getElementById('register_nickname');
 
-    const slash = document.getElementById("eye-slash");
-    slash.style.strokeDashoffset = eye.classList.contains("active")
-      ? "0"
-      : "24";
+  eye.addEventListener('click', function () {
+    eye.classList.toggle('active');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+
+    const slash = document.getElementById('eye-slash');
+    slash.style.strokeDashoffset = eye.classList.contains('active') ? '0' : '24';
   });
 
-  eye2.addEventListener("click", function () {
-    eye2.classList.toggle("active");
-    pwd2.type = pwd2.type === "password" ? "text" : "password";
+  eye2.addEventListener('click', function () {
+    eye2.classList.toggle('active');
+    pwd2.type = pwd2.type === 'password' ? 'text' : 'password';
 
-    const slash2 = document.getElementById("eye-slash2");
-    slash2.style.strokeDashoffset = eye2.classList.contains("active")
-      ? "0"
-      : "24";
+    const slash2 = document.getElementById('eye-slash2');
+    slash2.style.strokeDashoffset = eye2.classList.contains('active') ? '0' : '24';
   });
 
-  document.registerForm.addEventListener("submit", function (e) {
+  document.registerForm.addEventListener('submit', function (e) {
     e.preventDefault();
     checkRegister();
   });
 
-  document.getElementById("loginBtn").addEventListener("click", function () {
-    history.pushState(null, "", "/login");
-    window.dispatchEvent(new PopStateEvent("popstate"));
+  document.getElementById('loginBtn').addEventListener('click', function () {
+    history.pushState(null, '', '/login');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
-  document
-    .getElementById("checkNicknameBtn")
-    .addEventListener("click", async function () {
-      const nickname = document.getElementById("register_nickname");
-      try {
-        const res = await fetch(
-          `${BASE_URL}/user/check-nickname?nickname=${nickname.value}`,
-          {
-            method: "GET",
-          },
-        );
-        const result = await res.json();
-        validNickname = result.data.exists;
-      } catch (error) {
-        console.error(error);
-      }
-      updateButtonState();
-    });
+  document.getElementById('checkNicknameBtn').addEventListener('click', async function () {
+    const nickname = document.getElementById('register_nickname');
+    try {
+      const res = await fetch(`${BASE_URL}/user/check-nickname?nickname=${nickname.value}`, {
+        method: 'GET',
+      });
+      const result = await res.json();
+      validNickname = !result.data.exists;
+    } catch (error) {
+      console.error(error);
+    }
+    updateButtonState();
+  });
 
-  document
-    .getElementById("checkIdBtn")
-    .addEventListener("click", async function () {
-      const id = document.getElementById("register_id");
-      try {
-        const res = await fetch(
-          `${BASE_URL}/user/check-login-id?loginId=${id.value}`,
-          {
-            method: "GET",
-          },
-        );
-        const result = await res.json();
-        validId = result.data.exists;
-      } catch (error) {
-        console.error(error);
-      }
-      updateButtonState();
-    });
-  document
-    .getElementById("signupBtn")
-    .addEventListener("click", async function signup() {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/user/register`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              loginId: id.value,
-              nickname: nickname.value,
-              password: pwd.value,
-            }),
-          },
-        );
-        const result = await res.json();
-      } catch (error) {
-        console.error(error);
-      }
-    });
-}
-function updateButtonState() {
-  const signupBtn = document.getElementById("signupBtn");
-  if (validNickname === false && validId === false) {
-    signupBtn.disabled = false;
-  } else {
-    signupBtn.disabled = true;
+  document.getElementById('checkIdBtn').addEventListener('click', async function () {
+    const id = document.getElementById('register_id');
+    try {
+      const res = await fetch(`${BASE_URL}/user/check-login-id?loginId=${id.value}`, {
+        method: 'GET',
+      });
+      const result = await res.json();
+      validId = !result.data.exists;
+    } catch (error) {
+      console.error(error);
+    }
+    updateButtonState();
+  });
+  nickname.addEventListener('input', () => {
+    validNickname = true;
+    updateButtonState();
+  });
+
+  id.addEventListener('input', () => {
+    validId = true;
+    updateButtonState();
+  });
+
+  document.getElementById('signupBtn').addEventListener('click', async function () {
+    try {
+      const res = await fetch(`${BASE_URL}/user/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          loginId: id.value,
+          nickname: nickname.value,
+          password: pwd.value,
+        }),
+      });
+      if (!res.ok) throw new Error('회원가입 실패');
+      await res.json();
+      alert('회원가입 성공! 로그인 페이지로 이동합니다.');
+      history.pushState(null, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    } catch (error) {
+      console.error(error);
+      alert('회원가입에 실패했어요. 다시 시도해주세요.');
+    }
+  });
+
+  function updateButtonState() {
+    const signupBtn = document.getElementById('signupBtn');
+    if (validNickname === true && validId === true) {
+      signupBtn.disabled = false;
+    } else {
+      signupBtn.disabled = true;
+    }
   }
 }
-async function signup() {}
 
 // Form Validation
 function checkRegister() {
@@ -250,48 +246,48 @@ function checkRegister() {
   var register_id = document.registerForm.register_id;
   var password = document.registerForm.register_password;
   var passwordConfirm = document.registerForm.register_password_confirm;
-  var msg = document.getElementById("register-msg");
+  var msg = document.getElementById('register-msg');
 
-  if (nickname.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "닉네임을 입력해주세요";
+  if (nickname.value === '') {
+    msg.style.display = 'block';
+    msg.textContent = '닉네임을 입력해주세요';
     nickname.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.textContent = '';
   }
 
-  if (register_id.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "아이디를 입력해주세요";
+  if (register_id.value === '') {
+    msg.style.display = 'block';
+    msg.textContent = '아이디를 입력해주세요';
     register_id.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.textContent = '';
   }
 
-  if (password.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "비밀번호를 입력해주세요";
+  if (password.value === '') {
+    msg.style.display = 'block';
+    msg.textContent = '비밀번호를 입력해주세요';
     password.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.textContent = '';
   }
 
-  if (passwordConfirm.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "비밀번호 확인을 입력해주세요";
+  if (passwordConfirm.value === '') {
+    msg.style.display = 'block';
+    msg.textContent = '비밀번호 확인을 입력해주세요';
     passwordConfirm.focus();
     return false;
   }
 
   if (password.value !== passwordConfirm.value) {
-    msg.style.display = "block";
-    msg.innerHTML = "비밀번호가 일치하지 않습니다";
+    msg.style.display = 'block';
+    msg.textContent = '비밀번호가 일치하지 않습니다';
     passwordConfirm.focus();
     return false;
   }
 
-  msg.innerHTML = "";
+  msg.textContent = '';
 }

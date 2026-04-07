@@ -1,4 +1,6 @@
 // dummy data
+import { escapeHtml } from '../../utils/escapeHtml.js';
+
 const dummyData = [
   {
     postId: 1,
@@ -141,7 +143,7 @@ const PAGE_SIZE = 8;
 
 export async function initBoard() {
   const posts = await getPosts();
-  const postlist = document.querySelector('postlist');
+  const postlist = document.getElementById('postlist');
   if (!postlist) return;
   postlist.style = 'display:flex; flex-direction:column; gap:16px;';
   const pagination = document.getElementById('pagination');
@@ -163,10 +165,10 @@ export async function initBoard() {
       postElement.style =
         'display:flex; min-height:181px; padding:24px 24px 16px 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;';
       postElement.innerHTML = `
-        <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${category}</span>
-        <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${post.title}</p>
+        <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${escapeHtml(category)}</span>
+        <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${escapeHtml(post.title)}</p>
         <div class="flex items-center gap-3" style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">
-          <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${post.nickname}</span>
+          <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${escapeHtml(post.nickname)}</span>
           <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${formatDate(post.createdAt)}</span>
         </div>
         <div class="flex items-center gap-4 mt-3 text-xs text-[#6a7282]" style="border-top: 1.108px solid #F3F4F6; padding-top: 12px; width: 100%;">
