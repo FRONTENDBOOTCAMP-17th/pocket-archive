@@ -1,5 +1,5 @@
 import { TrainerCard } from "../components/trainerCard.js";
-import { PokemonCard } from "../components/pokedex/pokedexUi.js";
+import { PokemonCard } from "../components/pokedex/pokedexUI.js";
 
 const BASE_URL = "https://api.fullstackfamily.com/api/pocket-archive/v1";
 
