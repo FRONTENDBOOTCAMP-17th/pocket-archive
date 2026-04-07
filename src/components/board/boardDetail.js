@@ -2,8 +2,8 @@ import { BoardDetailContent, CommentSection } from "./boardDetailUI.js";
 
 export async function initPostDetail(postId) {
   console.log("여기 실행?");
-  const postData = {};
-  const commentData = [];
+  let postData = {};
+  let commentData = [];
   try {
     const postRes = await fetch(
       `https://api.fullstackfamily.com/api/pocket-archive/v1/posts/${postId}`,
@@ -24,8 +24,8 @@ export async function initPostDetail(postId) {
       throw new Error("게시물 불러오기 실패");
     }
 
-    postData = await res.json();
-    commentData = await res.json();
+    postData = await postRes.json();
+    commentData = await commentRes.json();
   } catch (error) {
     console.error(error);
   }

@@ -31,7 +31,7 @@ export const SidebarItem = (p) => `
 `;
 
 // 포켓몬 카드 재활용되는 곳은 도감
-export const PokemonCard = (data, koName) => {
+export const PokemonCard = (data, koName, myPocketMons = []) => {
    if (!data || !data.types) {
     console.warn("PokemonCard: 데이터 없음", data);
     return '';
