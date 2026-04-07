@@ -1,4 +1,4 @@
-import { SidebarItem, PokemonCard, Pagination } from "./pokedexUi";
+import { SidebarItem, PokemonCard, Pagination } from "./pokedexUI";
 
 let allPokemon = [];
 let filteredPokemon = [];
