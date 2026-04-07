@@ -132,7 +132,7 @@ export function Register() {
 }
 let validNickname = true;
 let validId = true;
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export function initRegister() {
   const pwd = document.getElementById("register_password");
   const eye = document.getElementById("eye");
@@ -177,7 +177,7 @@ export function initRegister() {
       const nickname = document.getElementById("register_nickname");
       try {
         const res = await fetch(
-          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/check-nickname?nickname=${nickname.value}`,
+          `${BASE_URL}user/check-nickname?nickname=${nickname.value}`,
           {
             method: "GET",
           },
@@ -196,7 +196,7 @@ export function initRegister() {
       const id = document.getElementById("register_id");
       try {
         const res = await fetch(
-          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/check-login-id?loginId=${id.value}`,
+          `${BASE_URL}user/check-login-id?loginId=${id.value}`,
           {
             method: "GET",
           },
@@ -212,20 +212,17 @@ export function initRegister() {
     .getElementById("signupBtn")
     .addEventListener("click", async function signup() {
       try {
-        const res = await fetch(
-          `https://api.fullstackfamily.com/api/pocket-archive/v1/user/register`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              loginId: id.value,
-              nickname: nickname.value,
-              password: pwd.value,
-            }),
+        const res = await fetch(`${BASE_URL}user/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            loginId: id.value,
+            nickname: nickname.value,
+            password: pwd.value,
+          }),
+        });
         const result = await res.json();
       } catch (error) {
         console.error(error);
@@ -240,7 +237,6 @@ function updateButtonState() {
     signupBtn.disabled = true;
   }
 }
-async function signup() {}
 
 // Form Validation
 function checkRegister() {

@@ -85,7 +85,7 @@ export function Login() {
     </main>
   `;
 }
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export function initLogin() {
   var pwd = document.getElementById("pwd");
   var eye = document.getElementById("eye");
@@ -136,17 +136,14 @@ async function checkStuff() {
   }
   console.log(login_id.value, password.value);
   try {
-    const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/user/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          loginId: login_id.value,
-          password: password.value,
-        }),
-      },
-    );
+    const res = await fetch(`${BASE_URL}user/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        loginId: login_id.value,
+        password: password.value,
+      }),
+    });
     if (!res.ok) {
       throw new Error("로그인 실패");
     }
@@ -154,6 +151,7 @@ async function checkStuff() {
     const result = await res.json();
     console.log(result.data.token);
     localStorage.setItem("token", result.data.token);
+    localStorage.setItem("userId", result.data.user.userId);
     location.replace("/");
   } catch (error) {
     showLoginError("로그인 정보가 일치하지 않습니다.");
@@ -162,17 +160,14 @@ async function checkStuff() {
 
   console.log(login_id.value, password.value);
   try {
-    const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/user/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          loginId: login_id.value,
-          password: password.value,
-        }),
-      },
-    );
+    const res = await fetch(`${BASE_URL}user/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        loginId: login_id.value,
+        password: password.value,
+      }),
+    });
     if (!res.ok) {
       throw new Error("로그인 실패");
     }
@@ -180,9 +175,10 @@ async function checkStuff() {
     const result = await res.json();
     console.log(result.data.token);
     localStorage.setItem("token", result.data.token);
+
     location.replace("/");
   } catch (error) {
-    showLoginError("로그인 정보가 일치하지 않습니다.");
+    // showLoginError("로그인 정보가 일치하지 않습니다.");
     console.error(error);
   }
 }
