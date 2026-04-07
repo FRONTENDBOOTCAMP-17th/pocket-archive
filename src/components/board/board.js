@@ -121,6 +121,7 @@ const categoryMap = {
   free: '자유게시판',
   guide: '질문게시판',
   battle: '공략',
+  party: '파티 공유',
 };
 
 const categoryColors = {
@@ -361,9 +362,14 @@ export async function initBoard() {
 
   // Go to the writing page when you click the writing button (only when there is a local token)
   document.getElementById('write-post-btn')?.addEventListener('click', () => {
-    const token = localStorage.getItem('localToken');
+    const token = localStorage.getItem('token');
     if (token) {
-      window.location.href = '/write-post';
+      history.pushState(null, '', '/write-post');
+      window.loadPage();
+    } else {
+      alert('로그인이 필요한 서비스입니다.');
+      history.pushState(null, '', '/login');
+      window.loadPage();
     }
   });
 }

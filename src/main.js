@@ -51,7 +51,10 @@ async function loadPage() {
     const pathParts = path.split('/');
     const postId = pathParts[2];
 
-    if (path.startsWith('/board/') && postId) {
+    if (path.includes('write-post')) {
+      page = './pages/writePost.html';
+      current = 'board';
+    } else if (path.startsWith('/board/') && postId) {
       page = '/pages/detailPost.html';
       current = 'board';
     } else if (path.includes('board')) {
@@ -92,6 +95,11 @@ async function loadPage() {
 
     if (page.includes('detailPost.html')) {
       initPostDetail(postId || 2);
+    }
+
+    if (page.includes('writePost.html')) {
+      const { initWrite } = await import('./components/board/write.js');
+      initWrite();
     }
 
     if (page.includes('myparty.html')) {
