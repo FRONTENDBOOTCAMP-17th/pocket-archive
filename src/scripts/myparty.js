@@ -18,6 +18,9 @@ let pokemons = [];
 let presets = [];
 let koNameMap = {};
 
+let searchQuery = "";
+
+
 // 개발용 더미 포켓몬 ID (API 미인증 시 폴백)
 const DUMMY_IDS = [1, 4, 7, 25, 39, 94];
 
@@ -59,6 +62,7 @@ export async function init() {
   renderList();
   renderPresets();
   bindActionButtons();
+  bindSearch();
 }
 
 // 한국어 이름 맵 로드
@@ -84,6 +88,18 @@ async function fetchKoNames(list) {
   }
 }
 
+//북마크 내 검색
+function bindSearch() {
+  const searchInput = document.getElementById("pokemon-search");
+  console.log("검색창 찾음:", searchInput); // ← null이면 id 문제
+  if (!searchInput) return;
+  
+  searchInput.addEventListener("input", async (e) => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    console.log("검색어:", searchQuery);
+    await renderList();
+  });
+}
 
 // 포켓몬 ID 배열 → PokeAPI 상세 데이터 변환
 async function fetchPokemonsByIds(ids) {
@@ -218,8 +234,28 @@ async function renderList() {
     return;
   }
 
+  //검색 기능
+  const filtered = searchQuery ? pokemons.filter((p) =>
+    p.koName?.toLowerCase().includes(searchQuery) ||
+    p.name?.toLowerCase().includes(searchQuery) ||
+    String(p.id).includes(searchQuery)
+  ) : pokemons;
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = `
+    <div style= "gird-column:1/-1; tezt-align:center; color:#9ca3af; padding:40px 0;">
+      검색 결과가 없습니다 😢
+    </div>
+    `;
+    updateCount();
+    return;
+    
+  }
+
+
+
   // koNames 별도 fetch 제거 — pokemons에 이미 koName이 있음
-  listEl.innerHTML = pokemons.map((pokemon) => {
+  listEl.innerHTML = filtered.map((pokemon) => {
     const isInParty = party.some((p) => p?.id === pokemon.id);
     return `
       <div

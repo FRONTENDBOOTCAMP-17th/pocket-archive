@@ -15,7 +15,7 @@ export function TrainerCard({ gender = "man", party = [] }) {
   ];
 
   return `
-    <div class="w-full max-w-[900px]">
+    <div class="w-full max-w-[600px]">
       
       <!-- 성별 선택 -->
       <div class=" mb-3 flex justify-end">

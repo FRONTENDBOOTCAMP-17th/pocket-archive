@@ -22,29 +22,52 @@
     gap: 20px;
   }
 
-  .myparty-pokemon-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 275px);
-    gap: 16px;
+  /* 포켓몬 목록 스크롤 컨테이너 */
+  .myparty-pokemon-scroll {
+    height: 600px;
+    overflow-y: auto;
     padding: 0 32px 32px 32px;
-    justify-content: center;
+    /* 스크롤바 스타일 */
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+  .myparty-pokemon-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .myparty-pokemon-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 999px;
   }
 
-  /* 태블릿 이하 */
+  /* 카드 그리드  */
+  .myparty-pokemon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 기본 4열 */
+    gap: 16px;
+  }
+
+  /* 태블릿 */
+  @media (max-width: 1280px) {
+    .myparty-pokemon-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   @media (max-width: 1024px) {
     .myparty-trainer-grid {
       grid-template-columns: 1fr;
       padding: 0 20px 24px 20px;
     }
-
     .myparty-trainer-card-area {
       margin-right: 0;
       margin-bottom: 20px;
     }
-
-    .myparty-pokemon-grid {
-      grid-template-columns: repeat(3, 275);
+    .myparty-pokemon-scroll {
       padding: 0 20px 24px 20px;
+      height: 500px;
+    }
+    .myparty-pokemon-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
@@ -54,29 +77,32 @@
       grid-template-columns: 1fr;
       padding: 0 16px 20px 16px;
     }
-
     .myparty-trainer-card-area {
       margin-right: 0;
       margin-bottom: 16px;
     }
-
-    .myparty-pokemon-grid {
-      grid-template-columns: repeat(2, 275);
+    .myparty-pokemon-scroll {
       padding: 0 16px 20px 16px;
+      height: 400px;
     }
-
+    .myparty-pokemon-grid {
+      grid-template-columns: repeat(2, 1fr); /* 모바일 2열 */
+    }
     .myparty-section-header {
       padding: 20px 16px 16px 16px !important;
     }
-
     .myparty-page-wrapper {
       padding: 20px 12px !important;
+    }
+
+    #pokemon-search {
+      padding: 0 16px 16px 16px;
     }
   }
 
   @media (max-width: 400px) {
     .myparty-pokemon-grid {
-      grid-template-columns: repeat(1, 275);
+      grid-template-columns: repeat(1, 1fr); /* 최소 2열 유지 */
     }
   }
 </style>
@@ -199,62 +225,80 @@
       <h2 class="text-2xl font-black text-slate-900">북마크한 포켓몬 선택</h2>
       <span id="count" class="text-sm text-slate-400">0 / 6 선택됨</span>
     </div>
-    <div id="pokemon-list" class="myparty-pokemon-grid"></div>
-  </div>
-</div>
 
-<!-- 파티 이름 입력 모달 -->
-<div
-  id="preset-modal"
-  class="fixed inset-0 z-50 flex items-center justify-center hidden"
->
-  <div
-    id="modal-overlay"
-    class="absolute inset-0 bg-black/40 backdrop-blur-sm"
-  ></div>
-  <div
-    class="relative bg-white rounded-2xl shadow-xl"
-    style="
-      width: 100%;
-      max-width: 400px;
-      margin: 0 16px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    "
-  >
-    <div>
-      <h3 id="modal-title" class="text-lg font-black text-slate-900">
-        파티 이름 저장
-      </h3>
-      <p id="modal-desc" class="text-sm text-slate-400" style="margin-top: 4px">
-        나만의 파티 이름을 입력해주세요
-      </p>
+    <!-- 검색창 -->
+    <div style="padding: 0 32px 16px 32px">
+      <input
+        id="pokemon-search"
+        type="text"
+        placeholder="포켓몬 이름 또는 도감 번호로 검색"
+        class="w-full rounded-xl border border-gray-200 text-sm text-slate-700 outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition"
+        style="padding: 12px 16px"
+      />
     </div>
-    <input
-      id="preset-name-input"
-      type="text"
-      maxlength="20"
-      placeholder="예) 불꽃 타입 파티"
-      class="w-full rounded-xl border border-gray-200 text-sm text-slate-700 outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition"
-      style="padding: 12px 16px"
-    />
-    <div style="display: flex; gap: 12px">
-      <button
-        id="modal-cancel"
-        class="flex-1 rounded-xl border border-gray-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
-        style="padding: 10px 16px"
-      >
-        취소
-      </button>
-      <button
-        id="modal-confirm"
-        class="flex-1 rounded-xl bg-teal-500 text-white text-sm font-semibold hover:bg-teal-600 transition"
-        style="padding: 10px 16px"
-      >
-        저장
-      </button>
+
+    <div class="myparty-pokemon-scroll">
+      <div id="pokemon-list" class="myparty-pokemon-grid"></div>
+    </div>
+  </div>
+
+  <!-- 파티 이름 입력 모달 -->
+  <div
+    id="preset-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center hidden"
+  >
+    <div
+      id="modal-overlay"
+      class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+    ></div>
+    <div
+      class="relative bg-white rounded-2xl shadow-xl"
+      style="
+        width: 100%;
+        max-width: 400px;
+        margin: 0 16px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      "
+    >
+      <div>
+        <h3 id="modal-title" class="text-lg font-black text-slate-900">
+          파티 이름 저장
+        </h3>
+        <p
+          id="modal-desc"
+          class="text-sm text-slate-400"
+          style="margin-top: 4px"
+        >
+          나만의 파티 이름을 입력해주세요
+        </p>
+      </div>
+      <input
+        id="preset-name-input"
+        type="text"
+        maxlength="20"
+        placeholder="예) 불꽃 타입 파티"
+        class="w-full rounded-xl border border-gray-200 text-sm text-slate-700 outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition"
+        style="padding: 12px 16px"
+      />
+      <div style="display: flex; gap: 12px">
+        <button
+          id="modal-cancel"
+          class="flex-1 rounded-xl border border-gray-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
+          style="padding: 10px 16px"
+        >
+          취소
+        </button>
+        <button
+          id="modal-confirm"
+          class="flex-1 rounded-xl bg-teal-500 text-white text-sm font-semibold hover:bg-teal-600 transition"
+          style="padding: 10px 16px"
+        >
+          저장
+        </button>
+      </div>
     </div>
   </div>
 </div>
