@@ -305,7 +305,7 @@ export async function initBoard() {
       if (category === '전체') {
         renderPosts(posts);
       } else {
-        const filtered = posts.filter((post) => post.category === category);
+        const filtered = posts.filter((post) => (categoryMap[post.category] ?? post.category) === category);
         renderPosts(filtered);
       }
     });
