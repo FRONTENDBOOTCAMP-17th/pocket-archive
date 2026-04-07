@@ -21,7 +21,6 @@ async function submitPost({ title, category, content }) {
 
   if (!response.ok) throw new Error('게시글 작성 실패');
   const data = await response.json();
-  console.log('게시글 생성 응답:', data);
 
   const postId = data.data?.postId;
   if (postId) {
@@ -143,7 +142,6 @@ export async function initWrite() {
 
   // 폼 제출
   document.getElementById('write-submit-btn')?.addEventListener('click', async () => {
-    console.log('submit 클릭됨');
     const title = document.getElementById('write-title')?.value.trim();
     const content = document.getElementById('write-content')?.value.trim();
     const selectedCategory = document.getElementById('write-category')?.value;

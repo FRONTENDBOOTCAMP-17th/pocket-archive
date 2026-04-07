@@ -1,8 +1,16 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { escapeHtml } from '../../utils/escapeHtml.js';
 
 function getToken() {
   return localStorage.getItem('token') || '';
 }
+
+const categoryMap = {
+  free: '자유게시판',
+  guide: '질문게시판',
+  battle: '공략',
+  party: '파티 공유',
+};
 
 const categoryColors = {
   자유게시판: 'text-[#00bba7] bg-[#e6f7f5]',
@@ -25,15 +33,18 @@ function renderMyPosts(postlist, data) {
   }
 
   data.forEach((post) => {
-    const badgeClass = categoryColors[post.category] || 'text-gray-500 bg-gray-100';
+    const category = categoryMap[post.category] ?? post.category;
+    const badgeClass = categoryColors[category] || 'text-gray-500 bg-gray-100';
     const postElement = document.createElement('div');
+    postElement.dataset.postId = post.post_id || post.postId;
     postElement.className = 'bg-white rounded-2xl border border-[#00bba7]/15 shadow-sm cursor-pointer hover:shadow-md transition-shadow';
-    postElement.style = 'display:flex; min-height:181px; padding:24px 24px 16px 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;';
+    postElement.style =
+      'display:flex; min-height:181px; padding:24px 24px 16px 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;';
     postElement.innerHTML = `
-      <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${post.category}</span>
-      <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${post.title}</p>
+      <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${escapeHtml(category)}</span>
+      <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${escapeHtml(post.title)}</p>
       <div class="flex items-center gap-3" style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">
-        <span>${post.nickname ?? post.user ?? ''}</span>
+        <span>${escapeHtml(post.nickname ?? post.user ?? '')}</span>
         <span>${formatDate(post.createdAt ?? post.date)}</span>
       </div>
       <div class="flex items-center gap-4 mt-3 text-xs text-[#6a7282]" style="border-top: 1.108px solid #F3F4F6; padding-top: 12px; width: 100%;">
@@ -80,6 +91,17 @@ export async function initMyBoard() {
     const result = await res.json();
     const posts = result.data?.posts ?? result.data ?? [];
     renderMyPosts(postlist, posts);
+
+    // Click on the post to go to the detail page
+    postlist.addEventListener('click', (e) => {
+      const postElement = e.target.closest('div[data-post-id]');
+      if (!postElement) return;
+      const postId = postElement.dataset.postId;
+      if (postId) {
+        history.pushState(null, '', `/board/${postId}`);
+        window.loadPage();
+      }
+    });
   } catch (e) {
     console.error(e);
     postlist.innerHTML = `<p style="text-align:center; padding:40px; color:red;">게시글을 불러오지 못했습니다.</p>`;

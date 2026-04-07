@@ -19,10 +19,14 @@ export async function initPostDetail(postId) {
       throw new Error('게시물 불러오기 실패');
     }
 
-    postData = await postRes.json();
-    commentData = await commentRes.json();
+    const postData = await postRes.json();
+    const commentData = await commentRes.json();
+
+    post = postData.data;
+    comments = Array.isArray(commentData.data) ? commentData.data : [];
   } catch (error) {
     console.error(error);
+    // 에러 발생 시 더미 데이터 사용
   }
   const contentArea = document.getElementById('postDetailContent');
   const commentArea = document.getElementById('commentSection');

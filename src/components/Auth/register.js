@@ -132,10 +132,10 @@ export function Register() {
     </main>
   `;
 }
-let validNickname = true;
-let validId = true;
-
 export function initRegister() {
+  let validNickname = true;
+  let validId = true;
+
   const pwd = document.getElementById('register_password');
   const eye = document.getElementById('eye');
   const pwd2 = document.getElementById('register_password_confirm');
@@ -176,7 +176,7 @@ export function initRegister() {
         method: 'GET',
       });
       const result = await res.json();
-      validNickname = result.data.exists;
+      validNickname = !result.data.exists;
     } catch (error) {
       console.error(error);
     }
@@ -190,15 +190,25 @@ export function initRegister() {
         method: 'GET',
       });
       const result = await res.json();
-      validId = result.data.exists;
+      validId = !result.data.exists;
     } catch (error) {
       console.error(error);
     }
     updateButtonState();
   });
-  document.getElementById('signupBtn').addEventListener('click', async function signup() {
+  nickname.addEventListener('input', () => {
+    validNickname = true;
+    updateButtonState();
+  });
+
+  id.addEventListener('input', () => {
+    validId = true;
+    updateButtonState();
+  });
+
+  document.getElementById('signupBtn').addEventListener('click', async function () {
     try {
-      const res = await fetch(`${BASE_URL}user/register`, {
+      const res = await fetch(`${BASE_URL}/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -209,18 +219,24 @@ export function initRegister() {
           password: pwd.value,
         }),
       });
-      const result = await res.json();
+      if (!res.ok) throw new Error('회원가입 실패');
+      await res.json();
+      alert('회원가입 성공! 로그인 페이지로 이동합니다.');
+      history.pushState(null, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     } catch (error) {
       console.error(error);
+      alert('회원가입에 실패했어요. 다시 시도해주세요.');
     }
   });
-}
-function updateButtonState() {
-  const signupBtn = document.getElementById('signupBtn');
-  if (validNickname === false && validId === false) {
-    signupBtn.disabled = false;
-  } else {
-    signupBtn.disabled = true;
+
+  function updateButtonState() {
+    const signupBtn = document.getElementById('signupBtn');
+    if (validNickname === true && validId === true) {
+      signupBtn.disabled = false;
+    } else {
+      signupBtn.disabled = true;
+    }
   }
 }
 
@@ -234,44 +250,44 @@ function checkRegister() {
 
   if (nickname.value === '') {
     msg.style.display = 'block';
-    msg.innerHTML = '닉네임을 입력해주세요';
+    msg.textContent = '닉네임을 입력해주세요';
     nickname.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.textContent = '';
   }
 
   if (register_id.value === '') {
     msg.style.display = 'block';
-    msg.innerHTML = '아이디를 입력해주세요';
+    msg.textContent = '아이디를 입력해주세요';
     register_id.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.textContent = '';
   }
 
   if (password.value === '') {
     msg.style.display = 'block';
-    msg.innerHTML = '비밀번호를 입력해주세요';
+    msg.textContent = '비밀번호를 입력해주세요';
     password.focus();
     return false;
   } else {
-    msg.innerHTML = '';
+    msg.textContent = '';
   }
 
   if (passwordConfirm.value === '') {
     msg.style.display = 'block';
-    msg.innerHTML = '비밀번호 확인을 입력해주세요';
+    msg.textContent = '비밀번호 확인을 입력해주세요';
     passwordConfirm.focus();
     return false;
   }
 
   if (password.value !== passwordConfirm.value) {
     msg.style.display = 'block';
-    msg.innerHTML = '비밀번호가 일치하지 않습니다';
+    msg.textContent = '비밀번호가 일치하지 않습니다';
     passwordConfirm.focus();
     return false;
   }
 
-  msg.innerHTML = '';
+  msg.textContent = '';
 }

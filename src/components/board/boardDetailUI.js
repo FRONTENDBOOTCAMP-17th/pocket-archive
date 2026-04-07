@@ -56,18 +56,23 @@ export const BoardDetailContent = (post) => {
       <div class="flex flex-col w-full" style="gap: 16px;">
         <div class="flex flex-col items-start" style="gap: 8px;">
           <span class="inline-block px-3 py-1 bg-red-50 text-red-400 text-[11px] font-bold rounded-md">
-            ${post.category}
+            ${escapeHtml(post.category)}
           </span>
           <h1 class="text-3xl font-bold text-[#1a3a35] leading-tight">
             ${post.title}
           </h1>
         </div>
-        
+
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-black text-gray-900 leading-tight"
+            style="margin-bottom: 30px; text-align: left; width: 100%;">
+          ${escapeHtml(post.title)}
+        </h1>
+
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full text-gray-400 text-sm gap-2">
           <div class="flex items-center gap-4">
-            <span class="font-bold text-gray-700 text-[16px]">${post.nickname}</span>
+            <span class="font-bold text-gray-700 text-[16px]">${escapeHtml(post.author)}</span>
             <span class="text-gray-200">|</span>
-            <span class="font-medium">${post.createdAt ? post.createdAt.split('T')[0] : ''}</span>
+            <span class="font-medium">${post.createdAt ? escapeHtml(post.createdAt.split('T')[0]) : ''}</span>
           </div>
           <div class="font-medium">
             조회수 <span class="text-gray-600 font-bold ml-1">${post.viewCount?.toLocaleString()}</span>
@@ -75,10 +80,20 @@ export const BoardDetailContent = (post) => {
         </div>
       </div>
 
-      <div class="w-full border-t border-gray-50"></div>
+    <div class="px-6 md:px-10 lg:px-[60px]" style="padding-top: 40px; padding-bottom: 60px; display: block; min-height: 400px; position: relative;">
+      
+      <div class="text-gray-700 leading-relaxed text-[16px] md:text-[17px] whitespace-pre-wrap" 
+           style="margin-top: 0; margin-bottom: 60px; text-align: left; width: 100%; display: block;">
+${escapeHtml(post.content.trim())}</div>
 
-      <div class="flex flex-col w-full" style="gap: 24px;">
-        <div class="text-gray-700 leading-relaxed text-[16px] md:text-[17px] whitespace-pre-wrap text-left w-full">${post.content.trim()}</div>
+      ${
+        post.ImgUrls && post.ImgUrls.length > 0
+          ? `<div class="w-full rounded-[24px] md:rounded-[32px] overflow-hidden border border-gray-100" 
+                  style="margin-bottom: 60px; display: block;">
+               <img src="${post.ImgUrls[0]}" alt="게시글 이미지" style="width: 100%; height: auto; display: block;">
+             </div>`
+          : ''
+      }
 
         ${
           post.ImgUrls && post.ImgUrls.length > 0
@@ -111,11 +126,7 @@ export const CommentSection = (comments = [], currentUserId) => `
     </h3>
     
     <div style="margin-bottom: 40px;">
-      ${
-        comments.length > 0
-          ? comments.map((c) => Comment(c, currentUserId)).join('')
-          : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"
-      }
+      ${comments.length > 0 ? comments.map((c) => Comment(c)).join('') : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"}
     </div>
 
     <div class="rounded-2xl border border-gray-200 overflow-hidden bg-white" 
