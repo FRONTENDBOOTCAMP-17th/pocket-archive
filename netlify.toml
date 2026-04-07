@@ -1,8 +1,9 @@
 [build]
   publish = "dist"
 
-[functions]
-  directory = "netlify/functions"
+[[edge_functions]]
+  path = "/api/*"
+  function = "proxy"
 
 [[redirects]]
   from = "/*"

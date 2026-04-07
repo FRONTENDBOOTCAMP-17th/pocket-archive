@@ -1,7 +1,6 @@
-export default async (request, context) => {
+export default async (request) => {
   const url = new URL(request.url);
-  const targetPath = url.pathname.replace('/api', '/api');
-  const targetUrl = `https://api.fullstackfamily.com${targetPath}${url.search}`;
+  const targetUrl = `https://api.fullstackfamily.com${url.pathname}${url.search}`;
 
   const headers = {
     'Content-Type': 'application/json',
