@@ -1,18 +1,20 @@
 import { BoardDetailContent, CommentSection } from "./boardDetailUI.js";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export async function initPostDetail(postId) {
   console.log("여기 실행?");
   let postData = {};
   let commentData = [];
   try {
     const postRes = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/posts/${postId}`,
+      `${BASE_URL}/posts/${postId}`,
       {
         method: "GET",
       },
     );
     const commentRes = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/posts/${postId}/comments`,
+      `${BASE_URL}/posts/${postId}/comments`,
       {
         method: "GET",
       },
@@ -103,7 +105,7 @@ async function setupCommentEvents() {
       }
       try {
         const res = await fetch(
-          `https://api.fullstackfamily.com/api/pocket-archive/v1/posts/${commentId}/comments`,
+          `${BASE_URL}/posts/${commentId}/comments`,
           {
             method: "POST",
             headers: {
