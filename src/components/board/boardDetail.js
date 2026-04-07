@@ -2,6 +2,33 @@ import { BoardDetailContent, CommentSection } from "./boardDetailUI.js";
 
 export async function initPostDetail(postId) {
   console.log("여기 실행?");
+  const postData = {};
+  const commentData = [];
+  try {
+    const postRes = await fetch(
+      `https://api.fullstackfamily.com/api/pocket-archive/v1/posts/${postId}`,
+      {
+        method: "GET",
+      },
+    );
+    const commentRes = await fetch(
+      `https://api.fullstackfamily.com/api/pocket-archive/v1/posts/${postId}/comments`,
+      {
+        method: "GET",
+      },
+    );
+    if (!postRes.ok) {
+      throw new Error("게시물 불러오기 실패");
+    }
+    if (!commentRes.ok) {
+      throw new Error("게시물 불러오기 실패");
+    }
+
+    postData = await res.json();
+    commentData = await res.json();
+  } catch (error) {
+    console.error(error);
+  }
   const dummyComment = [
     {
       content_id: 1,
@@ -44,7 +71,6 @@ export async function initPostDetail(postId) {
     createdAt: "2026-04-03T10:00:00Z",
     updatedAt: "2026-04-03T10:30:00Z",
   };
-  console.log(typeof dummyComment, dummydetailPost);
   const contentArea = document.getElementById("postDetailContent");
   const commentArea = document.getElementById("commentSection");
   console.log("게시글 영역 찾기 결과:", contentArea);
@@ -63,16 +89,37 @@ export async function initPostDetail(postId) {
   }
   console.log(commentArea, contentArea);
 
-  // setupCommentEvents();
+  setupCommentEvents();
 }
 
-function setupCommentEvents() {
+async function setupCommentEvents() {
   const submitBtn = document.getElementById("submitComment");
+
   if (submitBtn) {
-    submitBtn.onclick = () => {
+    submitBtn.onclick = async () => {
       const text = document.getElementById("commentInput").value;
-      if (!text.trim()) return alert("내용을 입력하세요");
-      alert("댓글 등록: " + text);
+      if (!text.trim()) {
+        return alert("내용을 입력하세요");
+      }
+      try {
+        const res = await fetch(
+          `https://api.fullstackfamily.com/api/pocket-archive/v1/posts/${commentId}/comments`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: {
+              content: text,
+            },
+          },
+        );
+        const data = await res.json();
+        commentData.push(data);
+      } catch (error) {
+        console.error(error);
+      }
       document.getElementById("commentInput").value = "";
     };
   }
