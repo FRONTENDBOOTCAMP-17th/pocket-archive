@@ -1,4 +1,4 @@
-@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+@import url("https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css");
 
 * {
   margin: 0;
@@ -11,7 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   background: linear-gradient(180deg, #d4f0e2 0%, #f0fbf5 100%);
-  font-family: 'Galmuri11';
+  font-family: "Galmuri11";
   overflow-x: hidden;
 }
 
@@ -262,7 +262,9 @@ body {
   .login-btn {
     display: none;
   }
-
+  .logout-btn {
+    display: none;
+  }
   /* 아이콘 표시 */
   .icon-btn,
   .menu-btn {
