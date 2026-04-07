@@ -7,7 +7,7 @@ export const Comment = (comment, currentUserId) => {
         <div class="flex items-center gap-2">
           <span class="font-bold text-gray-800 text-[15px]">${comment.nickname}</span>
           <span class="text-xs text-gray-400 font-medium">
-            ${comment.createdAt ? comment.createdAt.split("T")[0].replace(/-/g, ".") : ""}
+            ${comment.createdAt ? comment.createdAt.split('T')[0].replace(/-/g, '.') : ''}
           </span>
           
           ${
@@ -21,7 +21,7 @@ export const Comment = (comment, currentUserId) => {
                       class="text-[11px] text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
             </div>
           `
-              : ""
+              : ''
           }
         </div>
       </div>
@@ -33,7 +33,7 @@ export const Comment = (comment, currentUserId) => {
 export const BoardDetailContent = (post) => {
   const isLiked = post.isFavorited === true;
 
-  const currentUserId = localStorage.getItem("userId");
+  const currentUserId = localStorage.getItem('userId');
   const isMyPost = String(post.userId) === String(currentUserId);
 
   return `
@@ -51,7 +51,7 @@ export const BoardDetailContent = (post) => {
                 <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
            </div>
             `
-        : ""
+        : ''
     }
       <div class="flex flex-col w-full" style="gap: 16px;">
         <div class="flex flex-col items-start" style="gap: 8px;">
@@ -67,7 +67,7 @@ export const BoardDetailContent = (post) => {
           <div class="flex items-center gap-4">
             <span class="font-bold text-gray-700 text-[16px]">${post.nickname}</span>
             <span class="text-gray-200">|</span>
-            <span class="font-medium">${post.createdAt ? post.createdAt.split("T")[0] : ""}</span>
+            <span class="font-medium">${post.createdAt ? post.createdAt.split('T')[0] : ''}</span>
           </div>
           <div class="font-medium">
             조회수 <span class="text-gray-600 font-bold ml-1">${post.viewCount?.toLocaleString()}</span>
@@ -85,14 +85,14 @@ export const BoardDetailContent = (post) => {
             ? `<div class="w-full rounded-2xl overflow-hidden border border-gray-100">
                  <img src="${post.ImgUrls[0]}" alt="게시글 이미지" class="w-full h-auto block">
                </div>`
-            : ""
+            : ''
         }
       </div>
 
       <div class="flex w-full" style="gap: 16px;">
         <button id="post-like-btn" class="flex-1 flex items-center justify-center gap-3 rounded-lg border border-[#D1D5DC] bg-white hover:bg-gray-50 transition-all active:scale-[0.98] group" style="height: 60px;">
           <span class="text-xl md:text-2xl" style="line-height: 1;">
-             ${isLiked ? "❤️" : "🤍"}
+             ${isLiked ? '❤️' : '🤍'}
           </span>
           <span class="font-black text-[#1a3a35] text-[18px]">
              ${post.favoriteCount || 0}
@@ -105,7 +105,7 @@ export const BoardDetailContent = (post) => {
 };
 
 export const CommentSection = (comments = [], currentUserId) => `
-  <div class="px-6 md:px-10 lg:px-[60px]" style="padding-bottom: 60px;">
+  <div class="px-6 md:px-10 lg:px-15" style="padding-bottom: 60px;">
     <h3 class="font-black text-gray-900 text-lg md:text-xl" style="margin-bottom: 32px;">
       댓글 <span class="text-gray-400 font-medium ml-1">${comments.length}</span>
     </h3>
@@ -113,7 +113,7 @@ export const CommentSection = (comments = [], currentUserId) => `
     <div style="margin-bottom: 40px;">
       ${
         comments.length > 0
-          ? comments.map((c) => Comment(c, currentUserId)).join("")
+          ? comments.map((c) => Comment(c, currentUserId)).join('')
           : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"
       }
     </div>

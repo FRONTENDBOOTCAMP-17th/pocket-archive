@@ -1,3 +1,5 @@
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export function Register() {
   return `
     <main class="w-screen min-h-screen flex flex-col items-center justify-center gap-5" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFF 50%, #FFF7ED 100%)">
@@ -132,105 +134,89 @@ export function Register() {
 }
 let validNickname = true;
 let validId = true;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export function initRegister() {
-  const pwd = document.getElementById("register_password");
-  const eye = document.getElementById("eye");
-  const pwd2 = document.getElementById("register_password_confirm");
-  const eye2 = document.getElementById("eye2");
-  const id = document.getElementById("register_id");
-  const nickname = document.getElementById("register_nickname");
+  const pwd = document.getElementById('register_password');
+  const eye = document.getElementById('eye');
+  const pwd2 = document.getElementById('register_password_confirm');
+  const eye2 = document.getElementById('eye2');
+  const id = document.getElementById('register_id');
+  const nickname = document.getElementById('register_nickname');
 
-  eye.addEventListener("click", function () {
-    eye.classList.toggle("active");
-    pwd.type = pwd.type === "password" ? "text" : "password";
+  eye.addEventListener('click', function () {
+    eye.classList.toggle('active');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
 
-    const slash = document.getElementById("eye-slash");
-    slash.style.strokeDashoffset = eye.classList.contains("active")
-      ? "0"
-      : "24";
+    const slash = document.getElementById('eye-slash');
+    slash.style.strokeDashoffset = eye.classList.contains('active') ? '0' : '24';
   });
 
-  eye2.addEventListener("click", function () {
-    eye2.classList.toggle("active");
-    pwd2.type = pwd2.type === "password" ? "text" : "password";
+  eye2.addEventListener('click', function () {
+    eye2.classList.toggle('active');
+    pwd2.type = pwd2.type === 'password' ? 'text' : 'password';
 
-    const slash2 = document.getElementById("eye-slash2");
-    slash2.style.strokeDashoffset = eye2.classList.contains("active")
-      ? "0"
-      : "24";
+    const slash2 = document.getElementById('eye-slash2');
+    slash2.style.strokeDashoffset = eye2.classList.contains('active') ? '0' : '24';
   });
 
-  document.registerForm.addEventListener("submit", function (e) {
+  document.registerForm.addEventListener('submit', function (e) {
     e.preventDefault();
     checkRegister();
   });
 
-  document.getElementById("loginBtn").addEventListener("click", function () {
-    history.pushState(null, "", "/login");
-    window.dispatchEvent(new PopStateEvent("popstate"));
+  document.getElementById('loginBtn').addEventListener('click', function () {
+    history.pushState(null, '', '/login');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
-  document
-    .getElementById("checkNicknameBtn")
-    .addEventListener("click", async function () {
-      const nickname = document.getElementById("register_nickname");
-      try {
-        const res = await fetch(
-          `${BASE_URL}user/check-nickname?nickname=${nickname.value}`,
-          {
-            method: "GET",
-          },
-        );
-        const result = await res.json();
-        validNickname = result.data.exists;
-      } catch (error) {
-        console.error(error);
-      }
-      updateButtonState();
-    });
+  document.getElementById('checkNicknameBtn').addEventListener('click', async function () {
+    const nickname = document.getElementById('register_nickname');
+    try {
+      const res = await fetch(`${BASE_URL}/user/check-nickname?nickname=${nickname.value}`, {
+        method: 'GET',
+      });
+      const result = await res.json();
+      validNickname = result.data.exists;
+    } catch (error) {
+      console.error(error);
+    }
+    updateButtonState();
+  });
 
-  document
-    .getElementById("checkIdBtn")
-    .addEventListener("click", async function () {
-      const id = document.getElementById("register_id");
-      try {
-        const res = await fetch(
-          `${BASE_URL}user/check-login-id?loginId=${id.value}`,
-          {
-            method: "GET",
-          },
-        );
-        const result = await res.json();
-        validId = result.data.exists;
-      } catch (error) {
-        console.error(error);
-      }
-      updateButtonState();
-    });
-  document
-    .getElementById("signupBtn")
-    .addEventListener("click", async function signup() {
-      try {
-        const res = await fetch(`${BASE_URL}user/register`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            loginId: id.value,
-            nickname: nickname.value,
-            password: pwd.value,
-          }),
-        });
-        const result = await res.json();
-      } catch (error) {
-        console.error(error);
-      }
-    });
+  document.getElementById('checkIdBtn').addEventListener('click', async function () {
+    const id = document.getElementById('register_id');
+    try {
+      const res = await fetch(`${BASE_URL}/user/check-login-id?loginId=${id.value}`, {
+        method: 'GET',
+      });
+      const result = await res.json();
+      validId = result.data.exists;
+    } catch (error) {
+      console.error(error);
+    }
+    updateButtonState();
+  });
+  document.getElementById('signupBtn').addEventListener('click', async function signup() {
+    try {
+      const res = await fetch(`${BASE_URL}user/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          loginId: id.value,
+          nickname: nickname.value,
+          password: pwd.value,
+        }),
+      });
+      const result = await res.json();
+    } catch (error) {
+      console.error(error);
+    }
+  });
 }
 function updateButtonState() {
-  const signupBtn = document.getElementById("signupBtn");
+  const signupBtn = document.getElementById('signupBtn');
   if (validNickname === false && validId === false) {
     signupBtn.disabled = false;
   } else {
@@ -244,48 +230,48 @@ function checkRegister() {
   var register_id = document.registerForm.register_id;
   var password = document.registerForm.register_password;
   var passwordConfirm = document.registerForm.register_password_confirm;
-  var msg = document.getElementById("register-msg");
+  var msg = document.getElementById('register-msg');
 
-  if (nickname.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "닉네임을 입력해주세요";
+  if (nickname.value === '') {
+    msg.style.display = 'block';
+    msg.innerHTML = '닉네임을 입력해주세요';
     nickname.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.innerHTML = '';
   }
 
-  if (register_id.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "아이디를 입력해주세요";
+  if (register_id.value === '') {
+    msg.style.display = 'block';
+    msg.innerHTML = '아이디를 입력해주세요';
     register_id.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.innerHTML = '';
   }
 
-  if (password.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "비밀번호를 입력해주세요";
+  if (password.value === '') {
+    msg.style.display = 'block';
+    msg.innerHTML = '비밀번호를 입력해주세요';
     password.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.innerHTML = '';
   }
 
-  if (passwordConfirm.value === "") {
-    msg.style.display = "block";
-    msg.innerHTML = "비밀번호 확인을 입력해주세요";
+  if (passwordConfirm.value === '') {
+    msg.style.display = 'block';
+    msg.innerHTML = '비밀번호 확인을 입력해주세요';
     passwordConfirm.focus();
     return false;
   }
 
   if (password.value !== passwordConfirm.value) {
-    msg.style.display = "block";
-    msg.innerHTML = "비밀번호가 일치하지 않습니다";
+    msg.style.display = 'block';
+    msg.innerHTML = '비밀번호가 일치하지 않습니다';
     passwordConfirm.focus();
     return false;
   }
 
-  msg.innerHTML = "";
+  msg.innerHTML = '';
 }
