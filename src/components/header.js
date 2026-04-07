@@ -1,5 +1,6 @@
 export function Header() {
   const isLoggedin = localStorage.getItem("token");
+
   return `
     <header class="header">
     <div class="header-inner">
@@ -13,7 +14,11 @@ export function Header() {
     </nav>
 
     <div class="header-icons">
-    ${isLoggedin ? `<button class="logout-btn cursor-pointer" onclick="logout()">로그아웃</button>` : `<button class="login-btn" >로그인</button>`}
+      ${isLoggedin
+        ? `<button class="logout-btn">로그아웃</button>`
+        : `<button class="login-btn">로그인</button>`
+      }
+
       <button class="icon-btn">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
@@ -45,8 +50,7 @@ export function Header() {
       <button id="closeBtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path d="M17.9925 5.99707L5.9975 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M5.9975 5.99707L17.9925 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg></button>    
-
+      </svg></button>
     </div>
 
     <div class="sidebar-nav">
@@ -56,33 +60,39 @@ export function Header() {
         <a href="/mypage" data-page="mypage">마이페이지</a>
         <div style="display: flex; flex-direction: row;">
           <img src="https://img.icons8.com/?size=100&id=vQOFSUMXPpGA&format=png&color=000000" alt="Login Icon" style="width: 24px; height: 24px; margin:12px 0px 12px 12px;"/>
-          <a href="/login" data-page="login" style="color: #e7000b;">로그인</a>
+          ${isLoggedin
+            ? `<a class="logout-btn" style="color: #e7000b; cursor:pointer; padding: 12px;">로그아웃</a>`
+            : `<a href="/login" data-page="login" style="color: #e7000b;">로그인</a>`
+          }
         </div>
     </div>
   </div>
 
   <div class="overlay" id="overlay"></div>
 </header>
-
   `;
 }
 
-// Go to login page
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("login-btn")) {
-    history.pushState(null, "", "/login");
-    window.dispatchEvent(new PopStateEvent("popstate"));
+// 로그인 페이지 이동
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('login-btn')) {
+    history.pushState(null, '', '/login');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   }
 });
-window.logout = function () {
-  localStorage.removeItem("token");
-  location.reload();
-};
-/* 로그인 API 연동 시 로그인 로직 추가
-// My party creation page requires login (pop-up information added)
+
+// 로그아웃
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('logout-btn')) {
+    localStorage.removeItem("token");
+    location.reload();
+  }
+});
+
+// 나의 파티 만들기 - 로그인 필요
 document.addEventListener('click', (e) => {
   if (e.target.closest('a[data-page="myparty"]')) {
-    const isLoggedIn = false;
+    const isLoggedIn = !!localStorage.getItem("token");
     if (!isLoggedIn) {
       e.preventDefault();
       alert('나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
@@ -92,16 +102,15 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// My Page requires login (pop-up information added)
+// 마이페이지 - 로그인 필요
 document.addEventListener('click', (e) => {
   if (e.target.closest('a[data-page="mypage"]')) {
-    const isLoggedIn = false;
+    const isLoggedIn = !!localStorage.getItem("token");
     if (!isLoggedIn) {
       e.preventDefault();
-      alert('나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
+      alert('마이페이지는 로그인 후 이용 가능합니다.');
       history.pushState(null, '', '/login');
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   }
 });
-*/

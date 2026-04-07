@@ -46,6 +46,17 @@ async function loadPage() {
       return;
     }
 
+    if (!document.getElementById('content')) {
+      app.innerHTML = `
+        ${Header()}
+        <main class="main">
+          <div id="content" class="content"></div>
+        </main>
+        ${Footer()}
+      `;
+      initSidebar();
+    }
+
     let page = './pages/pokedex.html';
 
     const pathParts = path.split('/');

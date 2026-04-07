@@ -159,6 +159,32 @@ async function checkStuff() {
     showLoginError("로그인 정보가 일치하지 않습니다.");
     console.error(error);
   }
+
+  console.log(login_id.value, password.value);
+  try {
+    const res = await fetch(
+      `https://api.fullstackfamily.com/api/pocket-archive/v1/user/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          loginId: login_id.value,
+          password: password.value,
+        }),
+      },
+    );
+    if (!res.ok) {
+      throw new Error("로그인 실패");
+    }
+    console.log(res);
+    const result = await res.json();
+    console.log(result.data.token);
+    localStorage.setItem("token", result.data.token);
+    location.replace("/");
+  } catch (error) {
+    showLoginError("로그인 정보가 일치하지 않습니다.");
+    console.error(error);
+  }
 }
 
 // An error message is displayed if the login information is incorrect.
