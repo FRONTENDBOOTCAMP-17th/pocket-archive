@@ -113,6 +113,10 @@ async function loadPage() {
       const { init } = await import('./scripts/myparty.js');
       init();
     }
+    if (page.includes("mypage.html")) {
+      const { init } = await import("./components/mypage/my.js");
+      init();
+    }
     setActiveMenu(current);
   } catch (err) {
     console.error(err);
