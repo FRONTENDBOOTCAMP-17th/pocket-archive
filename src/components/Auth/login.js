@@ -1,3 +1,5 @@
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export function Login() {
   return `
     <main class="w-screen min-h-screen flex flex-col items-center justify-center gap-5" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFF 50%, #FFF7ED 100%)">
@@ -87,27 +89,25 @@ export function Login() {
 }
 
 export function initLogin() {
-  var pwd = document.getElementById("pwd");
-  var eye = document.getElementById("eye");
+  var pwd = document.getElementById('pwd');
+  var eye = document.getElementById('eye');
 
-  eye.addEventListener("click", function () {
-    eye.classList.toggle("active");
-    pwd.type = pwd.type === "password" ? "text" : "password";
+  eye.addEventListener('click', function () {
+    eye.classList.toggle('active');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
 
-    const slash = document.getElementById("eye-slash");
-    slash.style.strokeDashoffset = eye.classList.contains("active")
-      ? "0"
-      : "24";
+    const slash = document.getElementById('eye-slash');
+    slash.style.strokeDashoffset = eye.classList.contains('active') ? '0' : '24';
   });
 
-  document.form1.addEventListener("submit", function (e) {
+  document.form1.addEventListener('submit', function (e) {
     e.preventDefault();
     checkStuff();
   });
 
-  document.getElementById("registerBtn").addEventListener("click", function () {
-    history.pushState(null, "", "/register");
-    window.dispatchEvent(new PopStateEvent("popstate"));
+  document.getElementById('registerBtn').addEventListener('click', function () {
+    history.pushState(null, '', '/register');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 }
 
@@ -115,74 +115,67 @@ export function initLogin() {
 async function checkStuff() {
   var login_id = document.form1.login_id;
   var password = document.form1.password;
-  var msg = document.getElementById("msg");
+  var msg = document.getElementById('msg');
 
-  if (login_id.value == "") {
-    msg.style.display = "block";
-    msg.innerHTML = "아이디를 입력해주세요";
+  if (login_id.value == '') {
+    msg.style.display = 'block';
+    msg.innerHTML = '아이디를 입력해주세요';
     login_id.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.innerHTML = '';
   }
 
-  if (password.value == "") {
-    msg.style.display = "block";
-    msg.innerHTML = "비밀번호를 입력해주세요";
+  if (password.value == '') {
+    msg.style.display = 'block';
+    msg.innerHTML = '비밀번호를 입력해주세요';
     password.focus();
     return false;
   } else {
-    msg.innerHTML = "";
+    msg.innerHTML = '';
   }
   console.log(login_id.value, password.value);
   try {
-    const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/user/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          loginId: login_id.value,
-          password: password.value,
-        }),
-      },
-    );
+    const res = await fetch(`${BASE_URL}/user/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        loginId: login_id.value,
+        password: password.value,
+      }),
+    });
     if (!res.ok) {
-      throw new Error("로그인 실패");
+      throw new Error('로그인 실패');
     }
     console.log(res);
     const result = await res.json();
     console.log(result.data.token);
-    localStorage.setItem("token", result.data.token);
-    location.replace("/");
+    localStorage.setItem('token', result.data.token);
+    location.replace('/');
   } catch (error) {
-    showLoginError("로그인 정보가 일치하지 않습니다.");
+    showLoginError('로그인 정보가 일치하지 않습니다.');
     console.error(error);
   }
 
-  console.log(login_id.value, password.value);
   try {
-    const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/user/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          loginId: login_id.value,
-          password: password.value,
-        }),
-      },
-    );
+    const res = await fetch(`${BASE_URL}/user/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        loginId: login_id.value,
+        password: password.value,
+      }),
+    });
     if (!res.ok) {
-      throw new Error("로그인 실패");
+      throw new Error('로그인 실패');
     }
     console.log(res);
     const result = await res.json();
     console.log(result.data.token);
-    localStorage.setItem("token", result.data.token);
-    location.replace("/");
+    localStorage.setItem('token', result.data.token);
+    location.replace('/');
   } catch (error) {
-    showLoginError("로그인 정보가 일치하지 않습니다.");
+    showLoginError('로그인 정보가 일치하지 않습니다.');
     console.error(error);
   }
 }
@@ -194,6 +187,6 @@ export function showLoginError(message) {
 
 // If the login information is correct, go to the main page
 export function redirectToHome() {
-  history.pushState(null, "", "/");
-  window.dispatchEvent(new PopStateEvent("popstate"));
+  history.pushState(null, '', '/');
+  window.dispatchEvent(new PopStateEvent('popstate'));
 }

@@ -1,8 +1,8 @@
 import './style.css';
 import { Header } from './components/header.js';
 import { Footer } from './components/footer.js';
-import { Login, initLogin } from './components/(Auth)/login.js';
-import { Register, initRegister } from './components/(Auth)/register.js';
+import { Login, initLogin } from './components/Auth/login.js';
+import { Register, initRegister } from './components/Auth/register.js';
 import { initPokedex } from './components/pokedex/pokedex.js';
 import { initPostDetail } from './components/board/boardDetail.js';
 
@@ -117,8 +117,8 @@ async function loadPage() {
       const { init } = await import('./scripts/myparty.js');
       init();
     }
-    if (page.includes("mypage.html")) {
-      const { init } = await import("./components/mypage/my.js");
+    if (page.includes('mypage.html')) {
+      const { init } = await import('./components/mypage/my.js');
       init();
     }
     setActiveMenu(current);

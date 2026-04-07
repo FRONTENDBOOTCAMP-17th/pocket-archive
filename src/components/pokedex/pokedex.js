@@ -1,5 +1,7 @@
 import { SidebarItem, PokemonCard, Pagination } from "./pokedexUI";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 let allPokemon = [];
 let filteredPokemon = [];
 let myPocketMons = [];
@@ -26,7 +28,7 @@ export async function loadPoketmons() {
   const token = localStorage.getItem("token");
   try {
     const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons`,
+      `${BASE_URL}/pocketmons`,
       {
         method: "GET",
         headers: {
@@ -172,7 +174,7 @@ export async function poketmonReg(poketmonId) {
   const token = localStorage.getItem("token");
   try {
     const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons`,
+      `${BASE_URL}/pocketmons`,
       {
         method: "POST",
         headers: {
@@ -196,7 +198,7 @@ export async function poketmonDelete(poketmonId) {
   const token = localStorage.getItem("token");
   try {
     const res = await fetch(
-      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons/${poketmonId}`,
+      `${BASE_URL}/pocketmons/${poketmonId}`,
       {
         method: "DELETE",
         headers: {
