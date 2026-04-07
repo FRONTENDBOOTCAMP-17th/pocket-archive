@@ -31,7 +31,14 @@ export const SidebarItem = (p) => `
 
 // 포켓몬 카드 재활용되는 곳은 도감
 export const PokemonCard = (data, koName) => {
+   if (!data || !data.types) {
+    console.warn("PokemonCard: 데이터 없음", data);
+    return '';
+  }
   const types = data.types.map((t) => t.type.name);
+ 
+
+
   //ai 안에 보면 고화질 이미지가 이거임 이거 앞모습 가져오는거임
   const img = data.sprites.other["official-artwork"].front_default;
   //이건 로그인 넣으면 로컬스토리지에 토큰값 넣기인데 나중에 넣으면 로직 변경예정

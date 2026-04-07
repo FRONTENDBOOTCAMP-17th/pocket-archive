@@ -24,9 +24,10 @@
 
   .myparty-pokemon-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 275px);
     gap: 16px;
     padding: 0 32px 32px 32px;
+    justify-content: center;
   }
 
   /* 태블릿 이하 */
@@ -42,7 +43,7 @@
     }
 
     .myparty-pokemon-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 275);
       padding: 0 20px 24px 20px;
     }
   }
@@ -60,7 +61,7 @@
     }
 
     .myparty-pokemon-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, 275);
       padding: 0 16px 20px 16px;
     }
 
@@ -70,6 +71,12 @@
 
     .myparty-page-wrapper {
       padding: 20px 12px !important;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .myparty-pokemon-grid {
+      grid-template-columns: repeat(1, 275);
     }
   }
 </style>
@@ -218,8 +225,10 @@
     "
   >
     <div>
-      <h3 class="text-lg font-black text-slate-900">파티 이름 저장</h3>
-      <p class="text-sm text-slate-400" style="margin-top: 4px">
+      <h3 id="modal-title" class="text-lg font-black text-slate-900">
+        파티 이름 저장
+      </h3>
+      <p id="modal-desc" class="text-sm text-slate-400" style="margin-top: 4px">
         나만의 파티 이름을 입력해주세요
       </p>
     </div>

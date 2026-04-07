@@ -52,19 +52,6 @@ export async function init() {
     return;
   }
 
-  // 한국어 이름 맵 로드
-  try {
-    const res = await fetch("/public/pokemon_full_ko.json");
-    const json = await res.json();
-    if (Array.isArray(json)) {
-      json.forEach((p) => { koNameMap[p.id] = p.name; });
-    } else {
-      koNameMap = json;
-    }
-  } catch (e) {
-    console.warn("한국어 이름 파일 로드 실패:", e);
-  }
-
   await loadBookmarkedPokemons();
   await loadPartyPresets();
 
@@ -73,6 +60,30 @@ export async function init() {
   renderPresets();
   bindActionButtons();
 }
+
+// 한국어 이름 맵 로드
+async function fetchKoNames(list) {
+  try {
+    const res = await fetch("/public/pokemon_full_ko.json");
+    const json = await res.json();
+    
+    console.log(list);
+
+    const mybookmarkpokemon = json.filter(p => list.includes(p.no));
+
+    
+    console.log(mybookmarkpokemon);
+    return mybookmarkpokemon;
+    // if (Array.isArray(json)) {
+    //   json.forEach((p) => { koNameMap[p.id] = p.name; });
+    // } else {
+    //   koNameMap = json;
+    // }
+  } catch (e) {
+    console.warn("한국어 이름 파일 로드 실패:", e);
+  }
+}
+
 
 // 포켓몬 ID 배열 → PokeAPI 상세 데이터 변환
 async function fetchPokemonsByIds(ids) {
@@ -91,39 +102,48 @@ async function fetchPokemonsByIds(ids) {
 
 // 북마크 포켓몬 불러오기
 async function loadBookmarkedPokemons() {
-  const token = getToken();
-
-  // 토큰 없으면 바로 더미데이터
-  if (!token) {
-    console.info("[dev] 토큰 없음 → 더미 포켓몬 사용");
-    pokemons = await fetchPokemonsByIds(DUMMY_IDS);
-    return;
-  }
-
+  const token = localStorage.getItem("token");
   try {
-    const res = await fetch(`${BASE_URL}/pocketmons`, { headers: authHeaders() });
-
+    const res = await fetch(
+      `https://api.fullstackfamily.com/api/pocket-archive/v1/pocketmons`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
     if (!res.ok) {
-      console.warn(`북마크 조회 실패(${res.status}) → 더미 포켓몬 사용`);
-      pokemons = await fetchPokemonsByIds(DUMMY_IDS);
-      return;
+      throw new Error("불러오기 실패");
     }
+    const result = await res.json();
+    const ids = [...result.data.myPocketmons]; // 숫자 ID 배열
 
-    const { myPocketmons } = await res.json();
+    // PokeAPI에서 상세 데이터 받기
+    const pokemonDetails = await fetchPokemonsByIds(ids);
 
-    if (!myPocketmons || myPocketmons.length === 0) {
-      pokemons = [];
-      return;
-    }
+    // 한글 이름 매핑 데이터 받기 ({no, name} 배열)
+    const koList = await fetchKoNames(ids);
+    const koMap = {};
+    koList.forEach((p) => { koMap[p.no] = p.name; });
 
-    pokemons = await fetchPokemonsByIds(myPocketmons);
-  } catch (err) {
-    console.error("북마크 로드 에러 → 더미 포켓몬 사용:", err);
-    pokemons = await fetchPokemonsByIds(DUMMY_IDS);
+    //  합치기: PokeAPI 객체에 koName 붙이기
+    pokemons = pokemonDetails.map((p) => ({
+      ...p,
+      koName: koMap[p.id] || p.name,
+    }));
+
+    console.log("최종 pokemons:", pokemons);
+  } catch (error) {
+    console.error(error);
+    pokemons = [];
   }
+
 }
 
 // 저장된 파티 불러오기
+// loadPartyPresets — API 응답 구조 확인 후 배열 접근
+//너였냐~~~~~~~~젠자앙~~~~~~~~
 async function loadPartyPresets() {
   const token = getToken();
   if (!token) return;
@@ -132,14 +152,22 @@ async function loadPartyPresets() {
     const res = await fetch(`${BASE_URL}/party`, { headers: authHeaders() });
     if (!res.ok) throw new Error(`파티 목록 조회 실패: ${res.status}`);
     const data = await res.json();
+    
+    console.log("파티 API 원본 응답:", JSON.stringify(data)); 
+    
+    const list = Array.isArray(data) ? data : data.data ?? [];
+    console.log("파티 list:", list); 
 
-    presets = data.map((p) => ({
-      apiId: p.id,
+    presets = list.map((p) => ({
+      apiId: p.partyId,
       name: p.deckname,
       gender: "man",
       pokemonIds: p.pocketmons,
+      // pokemons가 완성된 후 호출되므로 id 기준으로 매핑
       party: p.pocketmons.map((id) => pokemons.find((pk) => pk.id === id) || null),
     }));
+    
+    console.log("최종 presets:", presets);
   } catch (err) {
     console.error("파티 목록 로드 에러:", err);
     presets = [];
@@ -176,7 +204,8 @@ function bindGenderSelect() {
 }
 
 // 북마크 포켓몬 리스트
-function renderList() {
+// renderList에서 koNames를 별도로 받을 필요 없이 pokemons 그대로 사용
+async function renderList() {
   if (!listEl) return;
 
   if (pokemons.length === 0) {
@@ -189,6 +218,7 @@ function renderList() {
     return;
   }
 
+  // koNames 별도 fetch 제거 — pokemons에 이미 koName이 있음
   listEl.innerHTML = pokemons.map((pokemon) => {
     const isInParty = party.some((p) => p?.id === pokemon.id);
     return `
@@ -205,11 +235,7 @@ function renderList() {
             <svg width="14" height="14" fill="none" stroke="white" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
             </svg>
-          </span>` : `
-          <span style="position:absolute; top:10px; right:10px; z-index:10; opacity:0.2;">
-            
-            </svg>
-          </span>`}
+          </span>` : ``}
         ${PokemonCard(pokemon, pokemon.koName)}
       </div>
     `;
@@ -262,36 +288,82 @@ function bindActionButtons() {
     loadedPresetIndex = null;
     renderTrainerCard();
     renderList();
+    renderPresets();
   });
-  document.getElementById("saveBtn")?.addEventListener("click", openSaveModal);
+
+  document.getElementById("saveBtn")?.addEventListener("click", () => {
+    if (party.filter(Boolean).length === 0) {
+      alert("포켓몬을 하나 이상 선택해주세요.");
+      return;
+    }
+    if (loadedPresetIndex === null) {
+      alert("저장할 슬롯을 선택해주세요.");
+      return;
+    }
+
+    const preset = presets[loadedPresetIndex];
+    if (preset) {
+      openOverwriteModal();
+    } else {
+      openNewSaveModal();
+    }
+  });
 }
 
-//  모달
+//  완성버튼을 클릭 시 로드된 프리셋이 있으면 덮어쓰기 + 없으면 새저장 ㄲ
 function openSaveModal() {
   if (party.filter(Boolean).length === 0) {
     alert("포켓몬을 하나 이상 선택한 뒤 저장해주세요.");
     return;
   }
-  if (presets.length >= 3) {
-    alert("파티는 최대 3개까지 저장할 수 있습니다.");
-    return;
-  }
 
   const modal = document.getElementById("preset-modal");
   const input = document.getElementById("preset-name-input");
+  const modalTitle = document.getElementById("modal-title");
+  const modalDesc = document.getElementById("modal-desc");
   if (!modal || !input) return;
 
-  input.value = "";
-  modal.classList.remove("hidden");
-  input.focus();
+  // 로드된 프리셋이 있으면 덮어쓰기 모드
+  if (loadedPresetIndex !== null) {
+    const preset = presets[loadedPresetIndex];
 
-  document.getElementById("modal-overlay")?.addEventListener("click", closeModal, { once: true });
-  document.getElementById("modal-cancel")?.addEventListener("click", closeModal, { once: true });
-  document.getElementById("modal-confirm")?.addEventListener("click", () => {
-    const name = input.value.trim() || `나의 파티 ${presets.length + 1}`;
-    closeModal();
-    savePreset(name);
-  }, { once: true });
+    const modalTitle = document.getElementById("modal-title");
+const modalDesc = document.getElementById("modal-desc");
+
+    modalTitle.textContent = "파티 덮어쓰기";
+    modalDesc.textContent = `"${preset.name}" 파티에 현재 구성을 덮어씁니다.`;
+    input.value = preset.name;
+    input.style.display = "none"; // 이름 수정 불필요하면 숨김
+    modal.classList.remove("hidden");
+
+    document.getElementById("modal-overlay")?.addEventListener("click", closeModal, { once: true });
+    document.getElementById("modal-cancel")?.addEventListener("click", closeModal, { once: true });
+    document.getElementById("modal-confirm")?.addEventListener("click", () => {
+      closeModal();
+      updatePreset(loadedPresetIndex);
+    }, { once: true });
+
+  } else {
+    // 새 저장 모드
+    if (presets.length >= 3) {
+      alert("파티는 최대 3개까지 저장할 수 있습니다.");
+      return;
+    }
+    modalTitle.textContent = "파티 이름 저장";
+    modalDesc.textContent = "나만의 파티 이름을 입력해주세요";
+    input.value = "";
+    input.style.display = "block";
+    modal.classList.remove("hidden");
+    input.focus();
+
+    document.getElementById("modal-overlay")?.addEventListener("click", closeModal, { once: true });
+    document.getElementById("modal-cancel")?.addEventListener("click", closeModal, { once: true });
+    document.getElementById("modal-confirm")?.addEventListener("click", () => {
+      const name = input.value.trim() || `나의 파티 ${presets.length + 1}`;
+      closeModal();
+      savePreset(name);
+    }, { once: true });
+  }
 }
 
 function closeModal() {
@@ -308,15 +380,9 @@ async function savePreset(presetName) {
       body: JSON.stringify({ deckname: presetName, pocketmons: pokemonIds }),
     });
     if (!res.ok) throw new Error(`파티 저장 실패: ${res.status}`);
-    const created = await res.json();
 
-    presets.push({
-      apiId: created.id,
-      name: created.deckname,
-      gender,
-      pokemonIds: created.pocketmons,
-      party: [...party],
-    });
+    // 저장 응답 파싱 대신 목록 전체를 다시 불러오기
+    await loadPartyPresets();
     renderPresets();
   } catch (err) {
     console.error("파티 저장 에러:", err);
@@ -335,8 +401,12 @@ async function updatePreset(index) {
       body: JSON.stringify({ deckname: preset.name, pocketmons: pokemonIds }),
     });
     if (!res.ok) throw new Error(`파티 수정 실패: ${res.status}`);
+    
+    const updated = await res.json();
     presets[index].party = [...party];
-    presets[index].pokemonIds = pokemonIds;
+
+    // 응답에서 뼝
+    presets[index].pokemonIds = updated.pocketmons; 
     presets[index].gender = gender;
     renderPresets();
   } catch (err) {
@@ -354,9 +424,12 @@ async function deletePreset(index) {
       headers: authHeaders(),
     });
     if (!res.ok) throw new Error(`파티 삭제 실패: ${res.status}`);
-    presets.splice(index, 1);
+    
     if (loadedPresetIndex === index) loadedPresetIndex = null;
+
+    await loadPartyPresets(); 
     renderPresets();
+
   } catch (err) {
     console.error("파티 삭제 에러:", err);
     alert("파티 삭제에 실패했습니다.");
@@ -367,19 +440,25 @@ async function deletePreset(index) {
 function renderPresets() {
   presetCountEl.textContent = `${presets.length} / 3`;
 
-  if (presets.length === 0) {
-    presetListEl.innerHTML = `
-      <div style="border-radius:12px; background:#f8fafc; border:1px solid #e2e8f0;
-                  padding:12px 16px; font-size:14px; color:#94a3b8; text-align:center;">
-        아직 저장된 파티가 없습니다.
-      </div>
-    `;
-    return;
-  }
+  presetListEl.innerHTML = [0, 1, 2].map((slotIndex) => {
+    const preset = presets[slotIndex];
+    const isLoaded = loadedPresetIndex === slotIndex;
 
-  presetListEl.innerHTML = presets.map((preset, index) => {
-    const color = PRESET_COLORS[index % PRESET_COLORS.length];
-    const isLoaded = loadedPresetIndex === index;
+    if (!preset) {
+      return `
+        <button type="button" data-new-slot="${slotIndex}"
+          style="width:100%; padding:10px; border-radius:12px; border:1.5px dashed #d1d5db;
+                 background:#f8fafc; color:#9ca3af; font-size:13px; font-weight:600;
+                 cursor:pointer; transition:all 0.15s; text-align:center;
+                 ${isLoaded ? "outline:2px solid #5eead4; outline-offset:1px;" : ""}"
+          onmouseover="this.style.borderColor='#5eead4'; this.style.color='#0d9488'; this.style.background='#f0fdfa';"
+          onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#9ca3af'; this.style.background='#f8fafc';">
+          + 새 파티 저장
+        </button>
+      `;
+    }
+
+    const color = PRESET_COLORS[slotIndex % PRESET_COLORS.length];
     return `
       <div style="display:flex; align-items:center; justify-content:space-between;
                   border-radius:12px; padding:10px 12px; border:1px solid;
@@ -387,22 +466,16 @@ function renderPresets() {
                   ${isLoaded ? "outline:2px solid #5eead4; outline-offset:1px;" : ""}">
         <button type="button"
           style="display:flex; align-items:center; gap:8px; text-align:left; flex:1; min-width:0; background:none; border:none; cursor:pointer;"
-          data-load-index="${index}">
+          data-load-index="${slotIndex}">
           <span style="font-size:13px; font-weight:600; ${color.text} white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
             ${escapeHtml(preset.name)}
           </span>
         </button>
         <div style="display:flex; align-items:center; gap:4px; margin-left:8px; flex-shrink:0;">
-          ${isLoaded ? `
-            <button type="button"
-              style="font-size:12px; font-weight:600; color:#0d9488; padding:4px 8px;
-                     border-radius:8px; border:none; background:none; cursor:pointer;"
-              data-update-index="${index}">수정</button>
-          ` : ""}
           <button type="button"
             style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;
                    color:#d1d5db; border:none; background:none; cursor:pointer; border-radius:8px; font-size:14px;"
-            data-delete-index="${index}">✕</button>
+            data-delete-index="${slotIndex}">✕</button>
         </div>
       </div>
     `;
@@ -412,15 +485,75 @@ function renderPresets() {
 }
 
 function bindPresetEvents() {
+  // 채워진 슬롯 클릭 → 파티 로드
   document.querySelectorAll("[data-load-index]").forEach((btn) =>
     btn.addEventListener("click", () => loadPreset(Number(btn.dataset.loadIndex)))
   );
-  document.querySelectorAll("[data-update-index]").forEach((btn) =>
-    btn.addEventListener("click", () => updatePreset(Number(btn.dataset.updateIndex)))
-  );
+
+  // 삭제
   document.querySelectorAll("[data-delete-index]").forEach((btn) =>
     btn.addEventListener("click", () => deletePreset(Number(btn.dataset.deleteIndex)))
   );
+
+  // 빈 슬롯 클릭 → 트레이너 카드 초기화 + 해당 슬롯 선택
+  document.querySelectorAll("[data-new-slot]").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const slotIndex = Number(btn.dataset.newSlot);
+      party = Array(6).fill(null);
+      selectedSlot = null;
+      loadedPresetIndex = slotIndex; // 빈 슬롯도 선택 상태로
+      renderTrainerCard();
+      renderList();
+      renderPresets();
+    })
+  );
+}
+
+
+
+// 덮어쓰기 모달
+function openOverwriteModal() {
+  const preset = presets[loadedPresetIndex];
+  const modal = document.getElementById("preset-modal");
+  const input = document.getElementById("preset-name-input");
+  const modalTitle = document.getElementById("modal-title");
+  const modalDesc = document.getElementById("modal-desc");
+
+  if (modalTitle) modalTitle.textContent = "파티 덮어쓰기";
+  if (modalDesc) modalDesc.textContent = `"${preset.name}" 파티에 현재 구성을 덮어씁니다.`;
+  input.style.display = "none";
+  modal.classList.remove("hidden");
+
+  document.getElementById("modal-overlay")?.addEventListener("click", () => { input.style.display = "block"; closeModal(); }, { once: true });
+  document.getElementById("modal-cancel")?.addEventListener("click", () => { input.style.display = "block"; closeModal(); }, { once: true });
+  document.getElementById("modal-confirm")?.addEventListener("click", () => {
+    input.style.display = "block";
+    closeModal();
+    updatePreset(loadedPresetIndex);
+  }, { once: true });
+}
+
+// 새 저장 모달
+function openNewSaveModal() {
+  const modal = document.getElementById("preset-modal");
+  const input = document.getElementById("preset-name-input");
+  const modalTitle = document.getElementById("modal-title");
+  const modalDesc = document.getElementById("modal-desc");
+
+  if (modalTitle) modalTitle.textContent = "파티 이름 저장";
+  if (modalDesc) modalDesc.textContent = "나만의 파티 이름을 입력해주세요";
+  input.value = "";
+  input.style.display = "block";
+  modal.classList.remove("hidden");
+  input.focus();
+
+  document.getElementById("modal-overlay")?.addEventListener("click", closeModal, { once: true });
+  document.getElementById("modal-cancel")?.addEventListener("click", closeModal, { once: true });
+  document.getElementById("modal-confirm")?.addEventListener("click", () => {
+    const name = input.value.trim() || `나의 파티 ${presets.length + 1}`;
+    closeModal();
+    savePreset(name);
+  }, { once: true });
 }
 
 function loadPreset(index) {
