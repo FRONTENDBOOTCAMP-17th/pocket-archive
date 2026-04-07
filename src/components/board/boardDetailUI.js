@@ -1,7 +1,5 @@
 export const Comment = (comment, currentUserId) => {
-  // localStorage의 userId와 댓글 작성자 ID 비교 (문자열 타입 일치화)
   const isMyComment = String(comment.userId) === String(currentUserId);
-  console.log(currentUserId);
   return `
     <div id="comment-container-${comment.commentId}" class="bg-[#F8F9FA] rounded-2xl border border-gray-100" 
          style="padding: 20px 24px; margin-bottom: 5px;">
@@ -33,7 +31,6 @@ export const Comment = (comment, currentUserId) => {
 };
 
 export const BoardDetailContent = (post) => {
-  console.log(post);
   const isLiked = post.isFavorited === true;
 
   const currentUserId = localStorage.getItem("userId");

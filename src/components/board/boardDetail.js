@@ -24,7 +24,6 @@ export async function initPostDetail(postId) {
   } catch (error) {
     console.error(error);
   }
-  console.log(currentUserId, "cu");
   const contentArea = document.getElementById("postDetailContent");
   const commentArea = document.getElementById("commentSection");
 
@@ -192,5 +191,5 @@ window.handleDeletePost = async (postId) => {
   }
 };
 window.handleEditPost = (postId) => {
-  location.href = `/write?edit=${postId}`;
+  location.href = `/write-post?edit=${postId}`;
 };
