@@ -1,6 +1,5 @@
-<link rel="stylesheet" href="/src/style.css" />
 <!-- Start body element -->
-<main>
+<div>
   <!-- Bulletin board header -->
   <div class="flex flex-col text-left">
     <h1 class="text-3xl font-bold text-[#1a3a35]">게시판</h1>
@@ -8,7 +7,7 @@
   </div>
 
   <!-- Bulletin board body -->
-  <section class="flex gap-6 w-full items-start max-[1025px]:flex-col max-[1025px]:items-stretch">
+  <section class="flex gap-6 w-full items-start max-[1025px]:flex-col max-[1025px]:items-stretch" style="margin-top: 24px">
     <!-- Left: Category filter -->
     <div
       class="shrink-0 bg-white rounded-xl max-[1025px]:w-full! max-[1025px]:h-[51.961px]! max-[1025px]:shrink-0 max-[1025px]:self-stretch max-[1025px]:flex-row! max-[1025px]:items-center! max-[1025px]:p-2.5! max-[1025px]:gap-0! max-[1025px]:overflow-hidden max-[1025px]:bg-transparent!"
@@ -58,10 +57,11 @@
         </button>
       </div>
       <!-- Write a post -->
-      <a
-        href=""
+      <button
+        id="write-post-btn"
+        type="button"
         class="flex items-center gap-1.5 bg-[#00BBA7] text-white text-sm font-medium rounded-lg hover:bg-[#009d8c] transition-colors max-[1025px]:shrink-0 max-[1025px]:inline-flex! max-[1025px]:w-auto! max-[1025px]:h-auto! max-[1025px]:mb-0! max-[1025px]:pt-[4.881px]! max-[1025px]:pb-[7.09px]! max-[1025px]:pl-[17.848px]! max-[1025px]:pr-[16.152px]! max-[1025px]:justify-center max-[1025px]:gap-2!"
-        style="width: 100%; height: 50px; margin-bottom: 20px; justify-content: center"
+        style="width: 100%; height: 50px; margin-bottom: 20px; justify-content: center; cursor: pointer"
       >
         <span class="max-[769px]:hidden! flex items-center gap-1.5">
           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 11 11" fill="none">
@@ -81,7 +81,7 @@
             <path d="M9.99585 4.16504V15.8268" stroke="white" stroke-width="1.66597" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </span>
-      </a>
+      </button>
     </div>
 
     <!-- Right: Search + Post list + Bottom row -->
@@ -118,7 +118,7 @@
           <div class="flex gap-2 w-auto max-[578px]:w-full max-[578px]:mt-2">
             <select
               id="filter-type"
-              class="text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] bg-white outline-none cursor-pointer min-w-[80px] w-auto flex-shrink-0"
+              class="text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] bg-white outline-none cursor-pointer min-w-20 w-auto shrink-0"
               style="height: 45px; flex-shrink: 0; padding: 0 12px; line-height: 45px"
             >
               <option value="title">제목</option>
@@ -126,7 +126,7 @@
             </select>
             <button
               id="search-btn"
-              class="bg-[#00BBA7] text-white text-sm font-medium rounded-lg hover:bg-[#009d8c] transition-colors flex-1 min-w-[70px] justify-center"
+              class="bg-[#00BBA7] text-white text-sm font-medium rounded-lg hover:bg-[#009d8c] transition-colors flex-1 min-w-17.5 justify-center"
               style="display: flex; padding: 10.5px 25px 10.5px 16px; align-items: center; gap: 11px"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none">
@@ -157,4 +157,4 @@
       </div>
     </div>
   </section>
-</main>
+</div>

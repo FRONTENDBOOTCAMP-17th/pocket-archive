@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 //이건 저희가 피그마에서 TYPE_COLOR를 정해놓은것
 export const TYPE_COLORS = {
   grass: "bg-[#7AC74C]",
@@ -30,14 +31,20 @@ export const SidebarItem = (p) => `
 `;
 
 // 포켓몬 카드 재활용되는 곳은 도감
-export const PokemonCard = (data, koName) => {
+export const PokemonCard = (data, koName, myPocketMons = []) => {
+   if (!data || !data.types) {
+    console.warn("PokemonCard: 데이터 없음", data);
+    return '';
+  }
   const types = data.types.map((t) => t.type.name);
+ 
+
+
   //ai 안에 보면 고화질 이미지가 이거임 이거 앞모습 가져오는거임
   const img = data.sprites.other["official-artwork"].front_default;
-  //이건 로그인 넣으면 로컬스토리지에 토큰값 넣기인데 나중에 넣으면 로직 변경예정
-  // 그리고 토큰값 들어오면 삼항 연산자로 몬스터볼 svg 바꿔야함
-  // const isLoggedIn = localStorage.getItem("token");
-  //padStart는 앞자리부터 0값이 채워지는거임 3자리까지 빈값이면 0을 채우는거임 예) 1번이면 001이런식
+  // const apiUrl = process.env.BASE_URL;
+  const isLoggedIn = localStorage.getItem("token");
+
   return `
     <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
       <div class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0">
@@ -50,7 +57,13 @@ export const PokemonCard = (data, koName) => {
               </span>
               <div class="flex justify-between items-center" style="padding: 5px">
                   <h3 class="text-xl font-black text-gray-800 leading-tight">${koName}</h3>
-                  <div class="w-7 h-7 flex items-center justify-center">${pokeBallOff}</div>
+                  ${
+                    isLoggedIn
+                      ? myPocketMons.includes(data.id)
+                        ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" id="poketmonDelete" onclick="poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
+                        : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" id="poketmonReg" onclick="poketmonReg(event,${data.id})">${pokeBallOff}</div>`
+                      : ""
+                  }
               </div>
           </div>
           <div class="flex flex-wrap gap-2" style="padding: 5px">
