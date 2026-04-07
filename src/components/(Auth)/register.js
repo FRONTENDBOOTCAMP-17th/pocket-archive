@@ -219,11 +219,11 @@ export function initRegister() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: {
+            body: JSON.stringify({
               loginId: id.value,
               nickname: nickname.value,
               password: pwd.value,
-            },
+            }),
           },
         );
         const result = res.json();
