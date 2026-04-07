@@ -150,7 +150,7 @@ export async function initBoard() {
 
   // Render posts
   function renderPosts(data, page = 1) {
-    const sorted = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const sorted = [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     currentData = sorted;
     currentPage = page;
     const start = (page - 1) * PAGE_SIZE;
