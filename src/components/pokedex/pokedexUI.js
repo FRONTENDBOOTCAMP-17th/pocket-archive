@@ -152,7 +152,7 @@ window.addEventListener("resize", () => {
   }
 });
 // 북마크(도감에서 좋아요? 누르는 투명 포켓몬볼) SVG 아이콘 로그인이 안되어있으면 안보여줄거임
-const pokeBallOff = `
+export const pokeBallOff = `
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#clip0_405_18)">
       <path d="M15 28.5C22.4558 28.5 28.5 22.4558 28.5 15C28.5 7.54416 22.4558 1.5 15 1.5C7.54416 1.5 1.5 7.54416 1.5 15C1.5 22.4558 7.54416 28.5 15 28.5Z" stroke="#B8B8B8" stroke-width="3"/>
@@ -163,7 +163,7 @@ const pokeBallOff = `
   </svg>
 `;
 //이것도 똑같음 근데 이건 색상있는 SVG 아이콘임 좀 따 삼항연산자 쓰면서 쓸거
-const pokeBallOn = `
+export const pokeBallOn = `
 <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_405_24)">
 <path d="M15 18.75C17.0711 18.75 18.75 17.0711 18.75 15C18.75 12.9289 17.0711 11.25 15 11.25C12.9289 11.25 11.25 12.9289 11.25 15C11.25 17.0711 12.9289 18.75 15 18.75Z" stroke="#121212" stroke-width="3"/>
