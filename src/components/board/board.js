@@ -1,4 +1,6 @@
 // dummy data
+import { escapeHtml } from '../../utils/escapeHtml.js';
+
 const dummyData = [
   {
     postId: 1,
@@ -107,10 +109,13 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 // API 연결 오류 시 임시데이터로 변환
 const getPosts = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/posts`);
+    const response = await fetch(`${BASE_URL}/posts`, {
+      method: 'GET',
+    });
     if (!response.ok) throw new Error('Failed to fetch posts');
     const data = await response.json();
-    return data.data?.content ?? dummyData;
+    const posts = data.data?.content ?? data.data ?? dummyData;
+    return Array.isArray(posts) ? posts : dummyData;
   } catch (error) {
     console.error('Error fetching posts:', error);
     return dummyData;
@@ -141,7 +146,7 @@ const PAGE_SIZE = 8;
 
 export async function initBoard() {
   const posts = await getPosts();
-  const postlist = document.querySelector('postlist');
+  const postlist = document.getElementById('postlist');
   if (!postlist) return;
   postlist.style = 'display:flex; flex-direction:column; gap:16px;';
   const pagination = document.getElementById('pagination');
@@ -159,14 +164,15 @@ export async function initBoard() {
       const category = categoryMap[post.category] ?? post.category;
       const badgeClass = categoryColors[category] || 'text-gray-500 bg-gray-100';
       const postElement = document.createElement('div');
+      postElement.dataset.postId = post.postId;
       postElement.className = 'bg-white rounded-2xl border border-[#00bba7]/15 shadow-sm cursor-pointer hover:shadow-md transition-shadow';
       postElement.style =
         'display:flex; min-height:181px; padding:24px 24px 16px 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;';
       postElement.innerHTML = `
-        <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${category}</span>
-        <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${post.title}</p>
+        <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${escapeHtml(category)}</span>
+        <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${escapeHtml(post.title)}</p>
         <div class="flex items-center gap-3" style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">
-          <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${post.nickname}</span>
+          <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${escapeHtml(post.nickname)}</span>
           <span style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">${formatDate(post.createdAt)}</span>
         </div>
         <div class="flex items-center gap-4 mt-3 text-xs text-[#6a7282]" style="border-top: 1.108px solid #F3F4F6; padding-top: 12px; width: 100%;">
@@ -350,12 +356,11 @@ export async function initBoard() {
 
   // Click on the post to go to the detail page
   postlist.addEventListener('click', (e) => {
-    const postElement = e.target.closest('div');
+    const postElement = e.target.closest('[data-post-id]');
     if (!postElement) return;
-    const index = Array.from(postlist.children).indexOf(postElement);
-    const post = currentData[(currentPage - 1) * PAGE_SIZE + index];
-    if (post) {
-      history.pushState(null, '', `/board/${post.postId}`);
+    const postId = postElement.dataset.postId;
+    if (postId) {
+      history.pushState(null, '', `/board/${postId}`);
       window.loadPage();
     }
   });

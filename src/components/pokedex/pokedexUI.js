@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 //이건 저희가 피그마에서 TYPE_COLOR를 정해놓은것
 export const TYPE_COLORS = {
   grass: "bg-[#7AC74C]",

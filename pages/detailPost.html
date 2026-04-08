@@ -1,33 +1,12 @@
-<link rel="stylesheet" href="/src/style.css" />
-<div class="min-h-screen bg-[#F0F9F7] py-10 px-4 flex justify-center">
-  <div class="w-full max-w-4xl">
-    <div>
-      <button
-        onclick="history.back()"
-        class="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-500 hover:bg-[#05B29F]/10 hover:text-[#05B29F] transition-all text-sm font-bold"
-      >
-        <svg
-          class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        목록으로 돌아가기
-      </button>
-    </div>
+<div class="min-h-screen py-10 px-4 flex justify-center">
+  <div class="w-full max-w-4xl flex flex-col" style="gap: 24px">
+    <div id="postDetailContent"></div>
+
     <div
       id="postDetailWrapper"
-      class="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden"
+      class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
       style="padding: 10px"
     >
-      <div id="postDetailContent"></div>
       <div
         id="commentSection"
         class="border-t border-gray-50"
