@@ -1,5 +1,5 @@
 export function Header() {
-  const isLoggedin = localStorage.getItem("token");
+  const isLoggedin = localStorage.getItem('token');
 
   return `
     <header class="header">
@@ -14,11 +14,7 @@ export function Header() {
     </nav>
 
     <div class="header-icons">
-      ${
-        isLoggedin
-          ? `<button class="logout-btn">로그아웃</button>`
-          : `<button class="login-btn">로그인</button>`
-      }
+      ${isLoggedin ? `<button class="logout-btn">로그아웃</button>` : `<button class="login-btn">로그인</button>`}
 
       <button class="icon-btn">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -76,44 +72,47 @@ export function Header() {
 }
 
 // 로그인 페이지 이동
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("login-btn")) {
-    history.pushState(null, "", "/login");
-    window.dispatchEvent(new PopStateEvent("popstate"));
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('login-btn')) {
+    history.pushState(null, '', '/login');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   }
 });
 
 // 로그아웃
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("logout-btn")) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('logout-btn')) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     location.reload();
+
+    // 로그아웃 후 홈으로 이동
+    window.location.href = '/';
   }
 });
 
 // 나의 파티 만들기 - 로그인 필요
-document.addEventListener("click", (e) => {
+document.addEventListener('click', (e) => {
   if (e.target.closest('a[data-page="myparty"]')) {
-    const isLoggedIn = !!localStorage.getItem("token");
+    const isLoggedIn = !!localStorage.getItem('token');
     if (!isLoggedIn) {
       e.preventDefault();
-      alert("나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.");
-      history.pushState(null, "", "/login");
-      window.dispatchEvent(new PopStateEvent("popstate"));
+      alert('나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
+      history.pushState(null, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   }
 });
 
 // 마이페이지 - 로그인 필요
-document.addEventListener("click", (e) => {
+document.addEventListener('click', (e) => {
   if (e.target.closest('a[data-page="mypage"]')) {
-    const isLoggedIn = !!localStorage.getItem("token");
+    const isLoggedIn = !!localStorage.getItem('token');
     if (!isLoggedIn) {
       e.preventDefault();
-      alert("마이페이지는 로그인 후 이용 가능합니다.");
-      history.pushState(null, "", "/login");
-      window.dispatchEvent(new PopStateEvent("popstate"));
+      alert('마이페이지는 로그인 후 이용 가능합니다.');
+      history.pushState(null, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   }
 });
