@@ -1,6 +1,7 @@
 import { TrainerCard } from '../components/trainerCard.js';
 import { PokemonCard } from '../components/pokedex/pokedexUI.js';
 
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 let selectedSlot = null;
@@ -62,6 +63,7 @@ export async function init() {
   renderPresets();
   bindActionButtons();
   bindSearch();
+  bindBookmarkEvents()
 }
 
 // 한국어 이름 맵 로드
@@ -234,19 +236,15 @@ async function renderList() {
         style="position:relative; cursor:pointer; border-radius:16px; transition:all 0.2s;
                ${isInParty ? 'opacity:0.6; cursor:not-allowed; outline:2px solid #5eead4; outline-offset:2px;' : ''}"
       >
-        ${
-          isInParty
-            ? `
-          <span style="position:absolute; top:10px; right:10px; z-index:10;
+        ${isInParty ? `
+          <span style="position:absolute; top:10px; left:10px; z-index:10;
                        width:24px; height:24px; background:#14b8a6; border-radius:50%;
                        display:flex; align-items:center; justify-content:center; box-shadow:0 1px 4px rgba(0,0,0,0.2);">
             <svg width="14" height="14" fill="none" stroke="white" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
             </svg>
-          </span>`
-            : ``
-        }
-        ${PokemonCard(pokemon, pokemon.koName)}
+          </span>` : ``}
+        ${PokemonCard(pokemon, pokemon.koName, [pokemon.id])}
       </div>
     `;
     })
@@ -609,4 +607,30 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+
+// init() 안에 추가
+function bindBookmarkEvents() {
+  window.poketmonDelete = async function(event, id) {
+    event.stopPropagation();
+    try {
+      const res = await fetch(`${BASE_URL}/pocketmons/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error("삭제 실패");
+      
+      // 로컬 목록에서 제거 후 다시 렌더링
+      pokemons = pokemons.filter((p) => p.id !== id);
+      
+      // 파티에서도 제거
+      party = party.map((p) => p?.id === id ? null : p);
+      
+      renderTrainerCard();
+      renderList();
+    } catch (err) {
+      console.error("북마크 삭제 에러:", err);
+    }
+  };
 }
