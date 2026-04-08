@@ -72,7 +72,7 @@ export const BoardDetailContent = (post, currentUserId) => {
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full text-gray-400 text-sm gap-2">
           <div class="flex items-center gap-4">
-            <span class="font-bold text-gray-700 text-[16px]">${escapeHtml(post.author)}</span>
+            <span class="font-bold text-gray-700 text-[16px]">${escapeHtml(post.nickname)}</span>
             <span class="text-gray-200">|</span>
             <span class="font-medium">${post.createdAt ? escapeHtml(post.createdAt.split('T')[0]) : ''}</span>
           </div>
