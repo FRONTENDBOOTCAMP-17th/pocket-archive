@@ -4,7 +4,7 @@ export function Login() {
   return `
     <main class="w-screen min-h-screen flex flex-col items-center justify-center gap-5" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFF 50%, #FFF7ED 100%)">
     <!-- 에러 커스텀 에러 모달 -->
-      <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+      <div id="login-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
         <div id="login-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
         <div class="relative bg-white rounded-2xl shadow-xl"
           style="width:100%; max-width:360px; margin:0 16px; padding:24px; display:flex; flex-direction:column; gap:20px;">
@@ -110,11 +110,13 @@ function showModal(title, desc) {
   document.getElementById('login-modal-title').textContent = title;
   document.getElementById('login-modal-desc').textContent = desc;
   modal.classList.remove('hidden');
+  modal.classList.add('flex');
 
   document.getElementById('login-modal-confirm').addEventListener(
     'click',
     () => {
       modal.classList.add('hidden');
+      modal.classList.remove('flex');
     },
     { once: true },
   );
@@ -122,6 +124,7 @@ function showModal(title, desc) {
     'click',
     () => {
       modal.classList.add('hidden');
+      modal.classList.remove('flex');
     },
     { once: true },
   );
@@ -193,6 +196,8 @@ async function checkStuff() {
       throw new Error('토큰 정보 없음');
     }
     localStorage.setItem('token', token);
+    const userId = result.data?.userId ?? result.data?.id;
+    if (userId != null) localStorage.setItem('userId', String(userId));
     location.replace('/');
   } catch (error) {
     showLoginError('로그인 정보가 일치하지 않습니다.');
