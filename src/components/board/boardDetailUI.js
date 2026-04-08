@@ -1,10 +1,10 @@
-import { escapeHtml } from '../../utils/escapeHtml.js';
+import { escapeHtml } from "../../utils/escapeHtml.js";
 
 const categoryMap = {
-  free: '자유게시판',
-  guide: '질문게시판',
-  battle: '공략',
-  party: '파티 공유',
+  free: "자유게시판",
+  guide: "질문게시판",
+  battle: "공략",
+  party: "파티 공유",
 };
 
 export const Comment = (comment, currentUserId) => {
@@ -16,7 +16,7 @@ export const Comment = (comment, currentUserId) => {
         <div class="flex items-center gap-2">
           <span class="font-bold text-gray-800 text-[15px]">${comment.nickname}</span>
           <span class="text-xs text-gray-400 font-medium">
-            ${comment.createdAt ? comment.createdAt.split('T')[0].replace(/-/g, '.') : ''}
+            ${comment.createdAt ? comment.createdAt.split("T")[0].replace(/-/g, ".") : ""}
           </span>
           
           ${
@@ -30,7 +30,7 @@ export const Comment = (comment, currentUserId) => {
                       class="text-[11px] text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
             </div>
           `
-              : ''
+              : ""
           }
         </div>
       </div>
@@ -42,7 +42,7 @@ export const Comment = (comment, currentUserId) => {
 export const BoardDetailContent = (post, currentUserId) => {
   const isLiked = post.isFavorited === true;
   const isMyPost = String(post.userId) === String(currentUserId);
-
+  console.log(post);
   return `
    <div class="flex w-full flex-col items-start shrink-0 rounded-2xl bg-white shadow" style="padding: 32px; gap: 32px;">
       
@@ -58,7 +58,7 @@ export const BoardDetailContent = (post, currentUserId) => {
                 <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
            </div>
             `
-        : ''
+        : ""
     }
       <div class="flex flex-col w-full" style="gap: 16px;">
         <div class="flex flex-col items-start" style="gap: 8px;">
@@ -72,9 +72,9 @@ export const BoardDetailContent = (post, currentUserId) => {
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full text-gray-400 text-sm gap-2">
           <div class="flex items-center gap-4">
-            <span class="font-bold text-gray-700 text-[16px]">${escapeHtml(post.author)}</span>
+            <span class="font-bold text-gray-700 text-[16px]">${escapeHtml(post.nickname)}</span>
             <span class="text-gray-200">|</span>
-            <span class="font-medium">${post.createdAt ? escapeHtml(post.createdAt.split('T')[0]) : ''}</span>
+            <span class="font-medium">${post.createdAt ? escapeHtml(post.createdAt.split("T")[0]) : ""}</span>
           </div>
           <div class="font-medium">
             조회수 <span class="text-gray-600 font-bold ml-1">${post.viewCount?.toLocaleString()}</span>
@@ -94,7 +94,7 @@ ${escapeHtml(post.content.trim())}</div>
                   style="margin-bottom: 60px; display: block;">
                <img src="${post.ImgUrls[0]}" alt="게시글 이미지" style="width: 100%; height: auto; display: block;">
              </div>`
-          : ''
+          : ""
       }
 
         ${
@@ -102,14 +102,14 @@ ${escapeHtml(post.content.trim())}</div>
             ? `<div class="w-full rounded-2xl overflow-hidden border border-gray-100">
                  <img src="${post.ImgUrls[0]}" alt="게시글 이미지" class="w-full h-auto block">
                </div>`
-            : ''
+            : ""
         }
       </div>
 
       <div class="flex w-full" style="gap: 16px;">
         <button id="post-like-btn" class="flex-1 flex items-center justify-center gap-3 rounded-lg border border-[#D1D5DC] bg-white hover:bg-gray-50 transition-all active:scale-[0.98] group" style="height: 60px;">
           <span class="text-xl md:text-2xl" style="line-height: 1;">
-             ${isLiked ? '❤️' : '🤍'}
+             ${isLiked ? "❤️" : "🤍"}
           </span>
           <span class="font-black text-[#1a3a35] text-[18px]">
              ${post.favoriteCount || 0}
@@ -128,7 +128,7 @@ export const CommentSection = (comments = [], currentUserId) => `
     </h3>
     
     <div style="margin-bottom: 40px;">
-      ${comments.length > 0 ? comments.map((c) => Comment(c, currentUserId)).join('') : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"}
+      ${comments.length > 0 ? comments.map((c) => Comment(c, currentUserId)).join("") : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"}
     </div>
 
     <div class="rounded-2xl border border-gray-200 overflow-hidden bg-white" 
