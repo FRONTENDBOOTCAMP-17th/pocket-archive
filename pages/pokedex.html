@@ -1,6 +1,12 @@
-<div
-  class="flex flex-col lg:flex-row gap-10 w-full max-w-[1920px] mx-auto items-start p-5 animate-fadeIn"
->
+<style>
+  @media (max-width: 422px) {
+    #pokemonGrid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+</style>
+
+<div class="flex flex-col lg:flex-row gap-10 w-full max-w-480 mx-auto items-start p-5 animate-fadeIn">
   <aside
     id="sidebarAccordion"
     class="w-full lg:w-[320px] bg-white rounded-[40px] shadow-xl flex flex-col lg:sticky lg:top-10 border border-gray-50 overflow-hidden order-1 transition-all"
@@ -12,30 +18,17 @@
     >
       <h2
         class="text-2xl font-black text-[#05B29F] tracking-tight"
-        style="
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          padding: 24px 24px 10px 24px;
-        "
+        style="display: flex; flex-direction: column; align-items: flex-start; padding: 20px 24px"
       >
         포켓몬 목록
       </h2>
 
       <div class="lg:hidden" style="padding-right: 24px">
-        <span
-          id="sidebarArrow"
-          class="text-[#05B29F] text-xl transition-transform duration-300 inline-block"
-        >
-          ▼
-        </span>
+        <span id="sidebarArrow" class="text-[#05B29F] text-xl transition-transform duration-300 inline-block"> ▼ </span>
       </div>
     </div>
 
-    <div
-      id="sidebarContent"
-      class="hidden lg:block border-t border-gray-50 lg:border-none"
-    >
+    <div id="sidebarContent" class="hidden lg:block border-t border-gray-50 lg:border-none">
       <div class="p-8 pb-4">
         <div class="relative">
           <input
@@ -47,25 +40,15 @@
           />
         </div>
       </div>
-      <div
-        id="sidebarList"
-        class="flex-1 overflow-y-auto px-6 pb-8 custom-scrollbar space-y-1"
-        style="height: 300px"
-      ></div>
+      <div id="sidebarList" class="flex-1 overflow-y-auto px-6 pb-8 custom-scrollbar space-y-1" style="height: 300px"></div>
     </div>
   </aside>
 
   <section class="flex-1 w-full order-2">
     <div class="flex flex-col gap-12 pb-10">
-      <div
-        id="pokemonGrid"
-        class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8"
-      ></div>
+      <div id="pokemonGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8"></div>
 
-      <div
-        id="pokedexPagination"
-        class="flex justify-center items-center gap-2"
-      ></div>
+      <div id="pokedexPagination" class="flex justify-center items-center gap-2"></div>
     </div>
   </section>
 </div>

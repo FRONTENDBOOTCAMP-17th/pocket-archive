@@ -88,7 +88,7 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
               ${types
                 .map(
                   (t) => `
-                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white text-md uppercase tracking-tight ${TYPE_COLORS[t] || 'bg-gray-400'} shadow-sm min-w-[60px]">
+                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white text-md uppercase tracking-tight ${TYPE_COLORS[t] || 'bg-gray-400'} shadow-sm min-w-15" style="padding: 5px">
                   ${K_TYPE[t.toUpperCase()] || t}
                 </span>
               `,
