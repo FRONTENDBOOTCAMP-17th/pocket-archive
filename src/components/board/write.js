@@ -19,8 +19,6 @@ const token = localStorage.getItem("token");
 async function submitPost({ title, category, content, preset }) {
   const token = localStorage.getItem("token");
 
-  console.log(preset);
-  console.log(title, category, content);
   const response = await fetch(`${BASE_URL}/posts`, {
     method: "POST",
     headers: {
@@ -38,7 +36,6 @@ async function submitPost({ title, category, content, preset }) {
 
   if (!response.ok) throw new Error("게시글 작성 실패");
   const data = await response.json();
-  console.log(data);
   const postId = data.data?.postId;
 
   if (postId) {
@@ -292,6 +289,5 @@ export async function initWrite() {
         data: { imageUrl },
       } = await uploadRes.json();
       uploadImgUrl = imageUrl;
-      console.log(uploadImgUrl);
     });
 }
