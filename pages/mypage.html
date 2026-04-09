@@ -1,25 +1,103 @@
 <div>
+  <!-- 로그아웃 확인 모달 -->
+  <div id="logout-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
+    <div id="logout-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div
+      class="relative bg-white rounded-2xl shadow-xl"
+      style="width: 100%; max-width: 360px; margin: 0 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px"
+    >
+      <div>
+        <h3 class="text-lg font-black text-slate-900">로그아웃</h3>
+        <p class="text-sm text-slate-400" style="margin-top: 4px">로그아웃 하시겠습니까?</p>
+      </div>
+      <div style="display: flex; gap: 8px">
+        <button
+          id="logout-modal-cancel"
+          class="flex-1 rounded-xl text-sm font-semibold transition"
+          style="padding: 10px 16px; border: 1px solid #d1d5db; background: #fff; color: #6a7282; cursor: pointer"
+        >
+          취소
+        </button>
+        <button
+          id="logout-modal-confirm"
+          class="flex-1 rounded-xl text-white text-sm font-semibold transition"
+          style="padding: 10px 16px; background: #e7000b; cursor: pointer"
+        >
+          로그아웃
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 회원탈퇴 모달 -->
+  <div id="withdraw-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
+    <div id="withdraw-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div
+      class="relative bg-white rounded-2xl shadow-xl"
+      style="width: 100%; max-width: 360px; margin: 0 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px"
+    >
+      <div>
+        <h3 class="text-lg font-black text-slate-900">회원탈퇴</h3>
+        <p class="text-sm text-slate-400" style="margin-top: 4px">탈퇴 시 모든 데이터가 삭제됩니다. 계속하려면 비밀번호를 입력하세요.</p>
+      </div>
+      <input
+        type="password"
+        id="withdraw-password"
+        placeholder="비밀번호를 입력하세요"
+        class="w-full rounded-xl text-sm outline-none"
+        style="padding: 10px 14px; border: 1px solid #e6f7f5; background: #f9fafb; color: #1a3a35"
+      />
+      <p id="withdraw-msg" class="text-sm text-red-500 hidden" style="margin-top: -12px"></p>
+      <div style="display: flex; gap: 8px">
+        <button
+          id="withdraw-modal-cancel"
+          class="flex-1 rounded-xl text-sm font-semibold transition"
+          style="padding: 10px 16px; border: 1px solid #d1d5db; background: #fff; color: #6a7282; cursor: pointer"
+        >
+          취소
+        </button>
+        <button
+          id="withdraw-modal-confirm"
+          class="flex-1 rounded-xl text-white text-sm font-semibold transition"
+          style="padding: 10px 16px; background: #e7000b; cursor: pointer"
+        >
+          탈퇴하기
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="flex flex-col text-left">
     <h1 class="text-3xl font-bold text-[#1a3a35]">마이페이지</h1>
     <p class="text-sm text-[#5a8a82] mt-1">내 정보와 활동 내역을 관리하세요</p>
   </div>
 
-  <section class="flex gap-6 w-full items-start max-[1025px]:flex-col max-[1025px]:items-stretch" style="margin-top: 24px">
+  <section class="flex gap-6 w-full items-start max-[1084px]:flex-col max-[1084px]:items-stretch" style="margin-top: 24px">
     <!-- left : mypage category -->
     <div
-      class="shrink-0 bg-white rounded-xl max-[1025px]:w-full! max-[1025px]:h-auto! max-[1025px]:shrink-0 max-[1025px]:self-stretch max-[1025px]:p-4! max-[1025px]:gap-0! max-[1025px]:order-2"
+      class="shrink-0 bg-white rounded-xl max-[1084px]:w-full! max-[1084px]:h-auto! max-[1084px]:shrink-0 max-[1084px]:self-stretch max-[1084px]:p-4! max-[1084px]:gap-0! max-[1084px]:order-2"
       style="display: flex; flex-direction: column; align-items: flex-start; width: 320px; padding: 24px; gap: 16px"
     >
       <div
         id="mypage-category-scroll"
-        class="max-[1025px]:gap-2! max-[1025px]:flex-1 max-[1025px]:overflow-y-auto max-[1025px]:[scrollbar-width:none] max-[1025px]:[&::-webkit-scrollbar]:hidden"
+        class="max-[1084px]:gap-2! max-[1084px]:flex-1 max-[1084px]:overflow-y-auto max-[1084px]:[scrollbar-width:none] max-[1084px]:[&::-webkit-scrollbar]:hidden"
         style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; gap: 12px"
       >
-        <p class="text-m font-semibold text-[#1a3a35] mb-1 max-[1025px]:hidden">카테고리</p>
+        <p class="text-m font-semibold text-[#1a3a35] mb-1 max-[1084px]:hidden">카테고리</p>
         <button
           id="btn-myinfo"
           class="text-sm rounded-lg bg-[#e6f7f5] text-[#00bba7] transition-colors"
-          style="display: flex; width: 100%; height: 57px; padding: 0 16px; justify-content: flex-start; align-items: center; flex-shrink: 0; align-self: stretch; gap: 8px;"
+          style="
+            display: flex;
+            width: 100%;
+            height: 57px;
+            padding: 0 16px;
+            justify-content: flex-start;
+            align-items: center;
+            flex-shrink: 0;
+            align-self: stretch;
+            gap: 8px;
+          "
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path
@@ -42,7 +120,17 @@
         <button
           id="btn-myboard"
           class="text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] hover:bg-[#e6f7f5] hover:text-[#00bba7] transition-colors"
-          style="display: flex; width: 100%; height: 57px; padding: 0 16px; justify-content: flex-start; align-items: center; flex-shrink: 0; align-self: stretch; gap: 8px;"
+          style="
+            display: flex;
+            width: 100%;
+            height: 57px;
+            padding: 0 16px;
+            justify-content: flex-start;
+            align-items: center;
+            flex-shrink: 0;
+            align-self: stretch;
+            gap: 8px;
+          "
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path
@@ -66,9 +154,44 @@
           <p>작성 게시글</p>
         </button>
         <button
+          id="btn-pokemon"
+          class="text-sm rounded-lg border border-[#00bba7]/25 text-[#4a7a72] hover:bg-[#e6f7f5] hover:text-[#00bba7] transition-colors"
+          style="
+            display: flex;
+            width: 100%;
+            height: 57px;
+            padding: 0 16px;
+            justify-content: flex-start;
+            align-items: center;
+            flex-shrink: 0;
+            align-self: stretch;
+            gap: 8px;
+          "
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" fill="none">
+            <g clip-path="url(#clip0_405_18)">
+              <path d="M15 28.5C22.4558 28.5 28.5 22.4558 28.5 15C28.5 7.54416 22.4558 1.5 15 1.5C7.54416 1.5 1.5 7.54416 1.5 15C1.5 22.4558 7.54416 28.5 15 28.5Z" stroke="currentColor" stroke-width="3"></path>
+              <path d="M1.5 15H9.75" stroke="currentColor" stroke-width="3"></path>
+              <path d="M20.25 15H28.5" stroke="currentColor" stroke-width="3"></path>
+              <path d="M15 18.75C17.0711 18.75 18.75 17.0711 18.75 15C18.75 12.9289 17.0711 11.25 15 11.25C12.9289 11.25 11.25 12.9289 11.25 15C11.25 17.0711 12.9289 18.75 15 18.75Z" stroke="currentColor" stroke-width="3"></path>
+            </g>
+          </svg>
+          <p>내가 지닌 포켓몬</p>
+        </button>
+        <button
           id="btn-logout"
           class="text-sm rounded-lg border border-[#e7000b]/25 text-[#e7000b] hover:bg-[#fff0f0] transition-colors"
-          style="display: flex; width: 100%; height: 57px; padding: 0 16px; justify-content: flex-start; align-items: center; flex-shrink: 0; align-self: stretch; gap: 8px;"
+          style="
+            display: flex;
+            width: 100%;
+            height: 57px;
+            padding: 0 16px;
+            justify-content: flex-start;
+            align-items: center;
+            flex-shrink: 0;
+            align-self: stretch;
+            gap: 8px;
+          "
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path
@@ -92,7 +215,17 @@
         <button
           id="btn-withdraw"
           class="text-sm rounded-lg border border-[#e7000b]/25 text-[#e7000b] hover:bg-[#fff0f0] transition-colors"
-          style="display: flex; width: 100%; height: 57px; padding: 0 16px; justify-content: flex-start; align-items: center; flex-shrink: 0; align-self: stretch; gap: 8px;"
+          style="
+            display: flex;
+            width: 100%;
+            height: 57px;
+            padding: 0 16px;
+            justify-content: flex-start;
+            align-items: center;
+            flex-shrink: 0;
+            align-self: stretch;
+            gap: 8px;
+          "
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
             <g transform="translate(-1.5, 4) scale(0.80)">
@@ -120,7 +253,7 @@
     </div>
 
     <!-- right : mypage content-->
-    <div id="mypage-content" class="flex flex-col gap-4 flex-1 min-w-0 max-[1025px]:order-1">
+    <div id="mypage-content" class="flex flex-col gap-4 flex-1 min-w-0 max-[1084px]:order-1">
       <!-- Player card -->
 
       <!-- Player Contents -->

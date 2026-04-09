@@ -1,23 +1,23 @@
 //이건 저희가 피그마에서 TYPE_COLOR를 정해놓은것
 export const TYPE_COLORS = {
-  grass: "bg-[#7AC74C]",
-  poison: "bg-[#A33EA1]",
-  fire: "bg-[#EE8130]",
-  water: "bg-[#6390F0]",
-  bug: "bg-[#A6B91A]",
-  normal: "bg-[#A8A77A]",
-  electric: "bg-[#F8D030]",
-  fairy: "bg-[#D685AD]",
-  ground: "bg-[#E2BF65]",
-  psychic: "bg-[#F95587]",
-  rock: "bg-[#B6A136]",
-  ghost: "bg-[#735797]",
-  ice: "bg-[#96D9D6]",
-  dragon: "bg-[#6F35FC]",
-  flying: "bg-[#A98FF3]",
-  fighting: "bg-[#C22E28]",
-  steel: "bg-[#B7B7CE]",
-  dark: "bg-[#705746]",
+  grass: 'bg-[#7AC74C]',
+  poison: 'bg-[#A33EA1]',
+  fire: 'bg-[#EE8130]',
+  water: 'bg-[#6390F0]',
+  bug: 'bg-[#A6B91A]',
+  normal: 'bg-[#A8A77A]',
+  electric: 'bg-[#F8D030]',
+  fairy: 'bg-[#D685AD]',
+  ground: 'bg-[#E2BF65]',
+  psychic: 'bg-[#F95587]',
+  rock: 'bg-[#B6A136]',
+  ghost: 'bg-[#735797]',
+  ice: 'bg-[#96D9D6]',
+  dragon: 'bg-[#6F35FC]',
+  flying: 'bg-[#A98FF3]',
+  fighting: 'bg-[#C22E28]',
+  steel: 'bg-[#B7B7CE]',
+  dark: 'bg-[#705746]',
 };
 
 //JSON에 있는 한글 이름 포켓몬을 꺼내와서 목록을 보여주는? 컴포넌트
@@ -29,30 +29,49 @@ export const SidebarItem = (p) => `
   </div>
 `;
 
+const K_TYPE = {
+  NORMAL: '노말',
+  FIRE: '불꽃',
+  WATER: '물',
+  GRASS: '풀',
+  ELECTRIC: '전기',
+  FIGHTING: '격투',
+  FLYING: '비행',
+  POISON: '독',
+  GROUND: '땅',
+  ROCK: '바위',
+  BUG: '벌레',
+  GHOST: '고스트',
+  STEEL: '강철',
+  PSYCHIC: '에스퍼',
+  ICE: '얼음',
+  DRAGON: '드래곤',
+  DARK: '악',
+  FAIRY: '페어리',
+};
+
 // 포켓몬 카드 재활용되는 곳은 도감
 export const PokemonCard = (data, koName, myPocketMons = []) => {
-   if (!data || !data.types) {
-    console.warn("PokemonCard: 데이터 없음", data);
+  if (!data || !data.types) {
+    console.warn('PokemonCard: 데이터 없음', data);
     return '';
   }
   const types = data.types.map((t) => t.type.name);
- 
-
 
   //ai 안에 보면 고화질 이미지가 이거임 이거 앞모습 가져오는거임
-  const img = data.sprites.other["official-artwork"].front_default;
+  const img = data.sprites.other['official-artwork'].front_default;
   // const apiUrl = process.env.BASE_URL;
-  const isLoggedIn = localStorage.getItem("token");
+  const isLoggedIn = localStorage.getItem('token');
 
   return `
     <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
       <div class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0">
           <img src="${img}" class="w-28 h-28 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110">
       </div>
-      <div class="p-6 flex flex-col gap-4">
+      <div class="p-6 flex flex-col gap-4" style="padding: 10px;">
           <div class="flex flex-col gap-1.5">
               <span class="text-[11px] font-black text-gray-300 tracking-wider leading-none" style="padding: 5px">
-                  No.${String(data.id).padStart(3, "0")}
+                  No.${String(data.id).padStart(3, '0')}
               </span>
               <div class="flex justify-between items-center" style="padding: 5px">
                   <h3 class="text-xl font-black text-gray-800 leading-tight">${koName}</h3>
@@ -61,7 +80,7 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
                       ? myPocketMons.includes(data.id)
                         ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" id="poketmonDelete" onclick="poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
                         : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" id="poketmonReg" onclick="poketmonReg(event,${data.id})">${pokeBallOff}</div>`
-                      : ""
+                      : ''
                   }
               </div>
           </div>
@@ -69,12 +88,12 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
               ${types
                 .map(
                   (t) => `
-                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white font-bold text-[10px] uppercase tracking-tight ${TYPE_COLORS[t] || "bg-gray-400"} shadow-sm min-w-[60px]">
-                  ${t}
+                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white text-md uppercase tracking-tight ${TYPE_COLORS[t] || 'bg-gray-400'} shadow-sm min-w-15" style="padding: 5px">
+                  ${K_TYPE[t.toUpperCase()] || t}
                 </span>
               `,
                 )
-                .join("")}
+                .join('')}
           </div>
       </div>
     </div>
@@ -84,13 +103,9 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
 // 게시판 , 도감 등등에 쓰일 pagenation 함수
 export const Pagination = (currentPage, total) => {
   //얕복 하기
-  const range = [
-    ...new Set([1, total, currentPage - 1, currentPage, currentPage + 1]),
-  ]
-    .filter((p) => p > 0 && p <= total)
-    .sort((a, b) => a - b);
+  const range = [...new Set([1, total, currentPage - 1, currentPage, currentPage + 1])].filter((p) => p > 0 && p <= total).sort((a, b) => a - b);
 
-  let html = "";
+  let html = '';
   // 너무 길면 ... 처리
   range.forEach((p, i) => {
     if (i > 0 && p - range[i - 1] > 1) {
@@ -99,8 +114,8 @@ export const Pagination = (currentPage, total) => {
 
     const isCurrent = p === currentPage;
     const btnClass = isCurrent
-      ? "bg-[#22A9DA] bg-opacity-40 text-white border-[#22A9DA]"
-      : "bg-transparent text-gray-400 border-gray-200 hover:border-[#22A9DA]";
+      ? 'bg-[#22A9DA] bg-opacity-40 text-white border-[#22A9DA]'
+      : 'bg-transparent text-gray-400 border-gray-200 hover:border-[#22A9DA]';
 
     html += `
       <button data-page="${p}" class="page-btn w-10 h-10 rounded-xl font-bold border transition-all ${btnClass}">
@@ -125,29 +140,29 @@ window.toggleSidebar = function () {
   // PC 버전(1024px 이상)일 때는 클릭 무시
   if (window.innerWidth >= 1024) return;
 
-  const content = document.getElementById("sidebarContent");
-  const arrow = document.getElementById("sidebarArrow");
+  const content = document.getElementById('sidebarContent');
+  const arrow = document.getElementById('sidebarArrow');
 
   if (!content) return;
 
-  const isOpening = content.classList.contains("hidden");
+  const isOpening = content.classList.contains('hidden');
 
   if (isOpening) {
-    content.classList.remove("hidden");
-    if (arrow) arrow.style.transform = "rotate(180deg)";
+    content.classList.remove('hidden');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
   } else {
-    content.classList.add("hidden");
-    if (arrow) arrow.style.transform = "rotate(0deg)";
+    content.classList.add('hidden');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
   }
 };
 
-window.addEventListener("resize", () => {
-  const content = document.getElementById("sidebarContent");
-  const arrow = document.getElementById("sidebarArrow");
+window.addEventListener('resize', () => {
+  const content = document.getElementById('sidebarContent');
+  const arrow = document.getElementById('sidebarArrow');
 
   if (window.innerWidth >= 1024) {
-    if (content) content.classList.remove("hidden");
-    if (arrow) arrow.style.transform = "rotate(0deg)";
+    if (content) content.classList.remove('hidden');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
   }
 });
 // 북마크(도감에서 좋아요? 누르는 투명 포켓몬볼) SVG 아이콘 로그인이 안되어있으면 안보여줄거임
