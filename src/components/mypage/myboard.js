@@ -29,7 +29,6 @@ export async function initMyBoard() {
   try {
     const result = await getMyPosts();
     const posts = result.data?.posts ?? result.data ?? [];
-    console.log('[myboard] raw posts:', JSON.stringify(posts.map(p => ({ id: p.postId, isPublished: p.isPublished }))));
     renderMyPosts(postlist, posts);
 
     postlist.addEventListener('click', (e) => {
