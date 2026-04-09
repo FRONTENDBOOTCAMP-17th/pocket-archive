@@ -1,5 +1,5 @@
-import { TrainerCard } from '../components/trainerCard.js';
-import { PokemonCard } from '../components/pokedex/pokedexUI.js';
+import { TrainerCard } from './trainerCard.js';
+import { PokemonCard } from '../pokedex/pokedexUI';
 
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -393,7 +393,7 @@ async function savePreset(presetName) {
     const res = await fetch(`${BASE_URL}/party`, {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ deckname: presetName, pocketmons: pokemonIds }),
+      body: JSON.stringify({ deckname: presetName, pocketmons: pokemonIds, gender: gender  }),
     });
     if (!res.ok) throw new Error(`파티 저장 실패: ${res.status}`);
 
@@ -414,7 +414,7 @@ async function updatePreset(index) {
     const res = await fetch(`${BASE_URL}/party/${preset.apiId}`, {
       method: 'PUT',
       headers: authHeaders(),
-      body: JSON.stringify({ deckname: preset.name, pocketmons: pokemonIds }),
+      body: JSON.stringify({ deckname: preset.name, pocketmons: pokemonIds, gender: gender }),
     });
     if (!res.ok) throw new Error(`파티 수정 실패: ${res.status}`);
 

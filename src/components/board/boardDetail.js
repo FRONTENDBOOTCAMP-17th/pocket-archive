@@ -1,5 +1,30 @@
 import { BoardDetailContent, CommentSection } from './boardDetailUI.js';
+
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+//트레이너카드에 포켓몬 ID 배열 맵으로 반환
+async function fetchSprites(ids) {
+  if (!ids || ids.length === 0) return {};
+  const map = {};
+  const results = await Promise.allSettled(
+    ids.map((id) =>
+      fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+        .then((r) => r.json())
+        .then((data) => ({
+          id,
+          url:
+            data.sprites?.other?.['official-artwork']?.front_default ||
+            data.sprites?.front_default ||
+            '',
+        }))
+    )
+  );
+  results.forEach((r) => {
+    if (r.status === 'fulfilled') map[r.value.id] = r.value.url;
+  });
+  return map;
+}
 
 export async function initPostDetail(postId) {
   let post = null;
@@ -42,8 +67,19 @@ export async function initPostDetail(postId) {
   const commentArea = document.getElementById('commentSection');
 
   if (contentArea) {
-    contentArea.innerHTML = BoardDetailContent(post, currentUserId);
-  }
+  const testPreset = {
+    deckname: '테스트 파티',
+    gender: 'woman',
+    pocketmons: [1, 4, 7, 25, 39, 94],
+  };
+  const spriteMap = await fetchSprites(testPreset.pocketmons);
+
+  contentArea.innerHTML = BoardDetailContent(
+    { ...post, preset: testPreset },
+    currentUserId,
+    spriteMap
+  );
+}
 
   if (commentArea) {
     commentArea.innerHTML = CommentSection(comments, currentUserId);
