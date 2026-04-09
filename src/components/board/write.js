@@ -10,43 +10,23 @@ const categoryMap = {
 
 async function submitPost({ title, category, content }) {
   const token = localStorage.getItem("token");
-  const imageInput = document.getElementById("write-image");
-  const imgUrl = {};
-  if (imageInput.files[0]) {
-    const formData = new FormData();
-    formData.append("image", imageInput.files[0]);
-    const imgRes = await fetch(`${BASE_URL}/images`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-    if (!imgRes.ok) {
-      throw new Error("이미지 업로드 실패");
-    }
-    imgUrl = imgRes.data.url;
-    const response = await fetch(`${BASE_URL}/posts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title, category, content }),
-    });
-    if (!response.ok) throw new Error("게시글 작성 실패");
-  } else {
-    const response = await fetch(`${BASE_URL}/posts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title, category, content }),
-    });
-    if (!response.ok) throw new Error("게시글 작성 실패");
-  }
+  console.log(uploadImgUrl);
+  const response = await fetch(`${BASE_URL}/posts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      title,
+      category,
+      content,
+      preset,
+      imgUrl: uploadImgUrl,
+    }),
+  });
 
+  if (!response.ok) throw new Error("게시글 작성 실패");
   const data = await response.json();
   const postId = data.data?.postId;
 
