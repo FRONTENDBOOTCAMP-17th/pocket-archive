@@ -7,46 +7,34 @@ const categoryMap = {
   공략: "battle",
   파티공유: "party",
 };
+const reverseCategoryMap = {
+  free: "자유게시판",
+  guide: "질문게시판",
+  battle: "공략",
+  party: "파티공유",
+};
+let uploadImgUrl = "";
+const token = localStorage.getItem("token");
 
-async function submitPost({ title, category, content }) {
+async function submitPost({ title, category, content, preset }) {
   const token = localStorage.getItem("token");
-  const imageInput = document.getElementById("write-image");
-  const imgUrl = {};
-  if (imageInput.files[0]) {
-    const formData = new FormData();
-    formData.append("image", imageInput.files[0]);
-    const imgRes = await fetch(`${BASE_URL}/images`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-    if (!imgRes.ok) {
-      throw new Error("이미지 업로드 실패");
-    }
-    imgUrl = imgRes.data.url;
-    const response = await fetch(`${BASE_URL}/posts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title, category, content }),
-    });
-    if (!response.ok) throw new Error("게시글 작성 실패");
-  } else {
-    const response = await fetch(`${BASE_URL}/posts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title, category, content }),
-    });
-    if (!response.ok) throw new Error("게시글 작성 실패");
-  }
 
+  const response = await fetch(`${BASE_URL}/posts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      title,
+      category,
+      content,
+      preset,
+      imgUrl: uploadImgUrl,
+    }),
+  });
+
+  if (!response.ok) throw new Error("게시글 작성 실패");
   const data = await response.json();
   const postId = data.data?.postId;
 
@@ -64,7 +52,24 @@ async function submitPost({ title, category, content }) {
 export async function initWrite() {
   const container = document.getElementById("content");
   if (!container) return;
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("postId");
+  let postData = null;
+  if (postId) {
+    try {
+      const postRes = await fetch(`${BASE_URL}/posts/${postId}`, {
+        method: "GET",
+      });
+      if (!postRes.ok) {
+        throw new Error("게시물 불러오기 실패");
+      }
+      const postJson = await postRes.json();
 
+      postData = postJson.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
   container.innerHTML = `
     <div class="flex w-full flex-col items-start shrink-0 rounded-2xl bg-white shadow" style="padding: 32px; gap: 32px;">
       <button id="write-back-btn" class="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-500 hover:bg-[#05B29F]/10 hover:text-[#05B29F] transition-all text-sm font-bold">
@@ -130,8 +135,32 @@ export async function initWrite() {
 
       <!-- 하단 버튼 -->
       <div class="flex w-full" style="gap: 16px;">
-        <button id="write-middle-btn" class="flex-1 rounded-lg border border-[#D1D5DC] text-sm text-[#4B5563] hover:bg-gray-50 transition-colors" style="height: 48px;">중간 저장</button>
-        <button id="write-submit-btn" class="flex-1 rounded-lg bg-[#05B29F] text-white text-sm font-semibold hover:bg-[#049e8d] transition-colors" style="height: 48px;">작성 완료</button>
+        
+        
+        ${
+          postId
+            ? `<button
+              id="edit-submit-btn"
+              class="flex-1 rounded-lg bg-[#05B29F] text-white text-sm font-semibold hover:bg-[#049e8d] transition-colors"
+              style="height: 48px;"
+            >
+              수정
+            </button>`
+            : ` <button
+                  id="write-middle-btn"
+                  class="flex-1 rounded-lg border border-[#D1D5DC] text-sm text-[#4B5563] hover:bg-gray-50 transition-colors"
+                  style="height: 48px;"
+                >
+                  중간 저장
+                </button>
+              <button
+              id="write-submit-btn"
+              class="flex-1 rounded-lg bg-[#05B29F] text-white text-sm font-semibold hover:bg-[#049e8d] transition-colors"
+              style="height: 48px;"
+            >
+              작성 완료
+            </button>`
+        }
       </div>
     </div>
   `;
@@ -159,14 +188,63 @@ export async function initWrite() {
     const select = document.getElementById("write-party-preset");
     presets.forEach((preset) => {
       const option = document.createElement("option");
-      option.value = preset.id;
+      option.value = preset.partyId;
       option.textContent = preset.deckname;
       select.appendChild(option);
     });
   } catch (e) {
     console.warn("파티 프리셋 로드 실패:", e);
   }
+  // 작성글 수정 값 넘겨주기
+  if (postData) {
+    document.getElementById("write-title").value = postData.title || "";
+    document.getElementById("write-content").value = postData.content || "";
+    const categorySelect = document.getElementById("write-category");
+    categorySelect.value =
+      reverseCategoryMap[postData.category] || postData.category;
+    if (postData.preset) {
+      document.getElementById("write-party-preset").value = postData.preset;
+    }
+    if (postData.imgUrl) {
+      uploadImgUrl = postData.imgUrl;
+    }
+  }
+  document
+    .getElementById("edit-submit-btn")
+    .addEventListener("click", async () => {
+      const title = document.getElementById("write-title")?.value.trim();
+      const content = document.getElementById("write-content")?.value.trim();
+      const selectedCategory = document.getElementById("write-category")?.value;
+      const preset = document.getElementById("write-party-preset").value;
 
+      if (!title) return alert("제목을 입력해주세요.");
+      if (!selectedCategory) return alert("카테고리를 선택해주세요.");
+      if (!content) return alert("내용을 입력해주세요.");
+      try {
+        const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
+        const editRes = await fetch(`${BASE_URL}/posts/${postId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: title,
+            category: apiCategory,
+            content: content,
+            preset: preset,
+            imgUrl: uploadImgUrl,
+          }),
+        });
+        if (!editRes.ok) {
+          throw new Error(errorData.message || "수정 실패");
+        }
+        history.pushState(null, "", `/board/${postId}`);
+        window.loadPage();
+      } catch (error) {
+        console.error(error);
+      }
+    });
   // 폼 제출
   document
     .getElementById("write-submit-btn")
@@ -174,6 +252,7 @@ export async function initWrite() {
       const title = document.getElementById("write-title")?.value.trim();
       const content = document.getElementById("write-content")?.value.trim();
       const selectedCategory = document.getElementById("write-category")?.value;
+      const preset = document.getElementById("write-party-preset").value;
 
       if (!title) return alert("제목을 입력해주세요.");
       if (!selectedCategory) return alert("카테고리를 선택해주세요.");
@@ -181,12 +260,34 @@ export async function initWrite() {
 
       try {
         const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
-        await submitPost({ title, category: apiCategory, content });
+        await submitPost({ title, category: apiCategory, content, preset });
         history.pushState(null, "", "/board");
         window.loadPage();
       } catch (error) {
         console.error(error);
         alert("게시글 작성 중 오류가 발생했습니다.");
       }
+    });
+  document
+    .getElementById("write-image")
+    .addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+      const uploadRes = await fetch(`${BASE_URL}/images`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      if (!uploadRes.ok) {
+        throw new Error("이미지 업로드 실패");
+      }
+      const {
+        data: { imageUrl },
+      } = await uploadRes.json();
+      uploadImgUrl = imageUrl;
     });
 }
