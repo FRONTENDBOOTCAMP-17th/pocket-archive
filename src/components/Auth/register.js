@@ -1,140 +1,33 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { register, checkNickname, checkLoginId } from '../../api/user.js';
+import { Register } from './registerUI.js';
+export { Register };
 
-export function Register() {
-  return `
-    <main class="w-screen min-h-screen flex flex-col items-center justify-center gap-5" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFF 50%, #FFF7ED 100%)">
+function showModal(title, desc, { type = 'error', onConfirm } = {}) {
+  const modal = document.getElementById('register-modal');
+  const confirmBtn = document.getElementById('register-modal-confirm');
+  document.getElementById('register-modal-title').textContent = title;
+  document.getElementById('register-modal-desc').textContent = desc;
+  confirmBtn.className =
+    type === 'success'
+      ? 'w-full rounded-xl bg-[#00BBA7] text-white text-sm font-semibold hover:bg-[#009e8d] transition'
+      : 'w-full rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition';
+  confirmBtn.style.padding = '10px 16px';
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
 
-      <!-- icon & header -->
-      <div class="flex flex-col items-center gap-2">
-        <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 39.992C0 17.905 17.905 0 39.992 0C62.079 0 79.984 17.905 79.984 39.992C79.984 62.079 62.079 79.984 39.992 79.984C17.905 79.984 0 62.079 0 39.992Z" fill="#00BBA7"/>
-          <path d="M28.4172 52.5605V19.5605H43.4172V22.5605H31.4172V37.5605H43.4172V40.5605H31.4172V52.5605H28.4172ZM43.4172 37.5605V34.5605H46.4172V37.5605H43.4172ZM43.4172 22.5605H46.4172V25.5605H43.4172V22.5605ZM46.4172 34.5605V25.5605H49.4172V34.5605H46.4172Z" fill="white"/>
-        </svg>
-        <h1 class="text-xl font-bold text-[#1a3a35]">포켓 아카이브</h1>
-        <p class="text-xs text-[#5a8a82] tracking-widest text-center">포켓몬 트레이너 커뮤니티에<br class="hidden max-[315px]:block"> 오신 것을 환영합니다!</p>
-      </div>
+  const close = () => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    if (onConfirm) onConfirm();
+  };
 
-      <!-- register box -->
-      <div class="bg-white rounded-xl border-t-8 border-b-8 border-[#00BBA7] shadow-[0_8px_32px_rgba(0,187,167,0.15)] flex flex-col items-start gap-6 w-md max-[501px]:w-[calc(100vw-32px)] max-[501px]:h-auto max-[501px]:px-5 max-[501px]:pb-6" style="padding:32px;">
-
-        <h2 class="text-2xl font-bold text-[#00BBA7] mb-1">회원가입</h2>
-
-        <form name="registerForm" class="w-full flex flex-col gap-4">
-          <!-- nickname -->
-          <div style="display:flex; height:96px; flex-direction:column; align-items:flex-start; gap:8px; flex-shrink:0; align-self:stretch;">
-            <p class="text-s">닉네임</p>
-            <div style="display:flex; flex-direction:row; align-items:center; gap:8px; width:100%;">
-              <input
-                type="text"
-                id="register_nickname"
-                name="register_nickname"
-                placeholder="닉네임을 입력하세요"
-                class="w-full h-12 bg-[#f4faf9] border border-[#d0eeea] rounded-lg mb-3 text-sm text-[#1a3a35] placeholder-[#aac8c3] outline-none focus:border-[#00BBA7] transition-colors" style="padding-left: 12px; padding-right: 16px;"
-              />
-              <button type="button" id="checkNicknameBtn"
-                class="transition-colors cursor-pointer"
-                style="display: inline-flex; height: 48px; padding: 9px 25px 8px 24px; justify-content: center; align-items: center; border-radius: 10px; border: 1px solid #00BBA7; background: rgba(255, 255, 255, 0.10); color: #0A0A0A; text-align: center; font-size: 12px; font-weight: 400; line-height: 24px; white-space: nowrap;">
-                중복확인
-              </button>
-           </div>
-          </div>
-
-          <!-- ID -->
-          <div style="display:flex; height:96px; flex-direction:column; align-items:flex-start; gap:8px; flex-shrink:0; align-self:stretch;">
-            <p class="text-s">아이디</p>
-            <div style="display:flex; flex-direction:row; align-items:center; gap:8px; width:100%;">
-              <input
-                type="text"
-                id="register_id"
-                name="register_id"
-                placeholder="아이디를 입력하세요"
-                class="w-full h-12 bg-[#f4faf9] border border-[#d0eeea] rounded-lg mb-3 text-sm text-[#1a3a35] placeholder-[#aac8c3] outline-none focus:border-[#00BBA7] transition-colors" style="padding-left: 12px; padding-right: 16px;"
-              />
-              <button type="button" id="checkIdBtn"
-                class="transition-colors cursor-pointer"
-                style="display: inline-flex; height: 48px; padding: 9px 25px 8px 24px; justify-content: center; align-items: center; border-radius: 10px; border: 1px solid #00BBA7; background: rgba(255, 255, 255, 0.10); color: #0A0A0A; text-align: center; font-size: 12px; font-weight: 400; line-height: 24px; white-space: nowrap;">
-                중복확인
-              </button>
-            </div>
-          </div>
-
-          <!-- Password -->
-          <div style="display:flex; height:96px; flex-direction:column; align-items:flex-start; gap:8px; flex-shrink:0; align-self:stretch;">
-            <p class="text-s">비밀번호</p>
-            <div class="relative mb-3 w-full">
-              <input
-                type="password"
-                id="register_password"
-                name="register_password"
-                placeholder="비밀번호를 입력하세요"
-                class="w-full h-12 bg-[#f4faf9] border border-[#d0eeea] rounded-lg pr-11 text-sm text-[#1a3a35] placeholder-[#aac8c3] outline-none focus:border-[#00BBA7] transition-colors" style="padding-left: 12px;"
-              />
-              <button type="button" id="eye" aria-label="비밀번호 표시"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#aac8c3] hover:text-[#00BBA7] transition-colors cursor-pointer bg-transparent border-0 p-0 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                  <line id="eye-slash" x1="4" y1="4" x2="20" y2="20" stroke-dasharray="24" stroke-dashoffset="24" style="transition: stroke-dashoffset 0.2s;"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Password confirm -->
-          <div style="display:flex; height:96px; flex-direction:column; align-items:flex-start; gap:8px; flex-shrink:0; align-self:stretch;">
-            <p class="text-s">비밀번호 확인</p>
-            <div class="relative mb-3 w-full">
-              <input
-                type="password"
-                id="register_password_confirm"
-                name="register_password_confirm"
-                placeholder="비밀번호를 다시 입력하세요"
-                class="w-full h-12 bg-[#f4faf9] border border-[#d0eeea] rounded-lg pr-11 text-sm text-[#1a3a35] placeholder-[#aac8c3] outline-none focus:border-[#00BBA7] transition-colors" style="padding-left: 12px;"
-              />
-              <button type="button" id="eye2" aria-label="비밀번호 확인 표시"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#aac8c3] hover:text-[#00BBA7] transition-colors cursor-pointer bg-transparent border-0 p-0 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                  <line id="eye-slash2" x1="4" y1="4" x2="20" y2="20" stroke-dasharray="24" stroke-dashoffset="24" style="transition: stroke-dashoffset 0.2s;"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Error message -->
-          <p id="register-msg" class="hidden text-s text-red-500 bg-red-50 rounded-md px-3 py-2 mb-3"></p>
-
-          <!-- Register button -->
-          <button disabled type="submit"
-            class="w-full h-12 bg-[#00BBA7] hover:bg-[#009e8d] text-white rounded-full text-base font-bold transition-colors cursor-pointer border-0 mb-5"
-            id="signupBtn">
-            회원가입
-          </button>
-
-          <!-- Back to login -->
-          <div class="flex items-center justify-center gap-2 text-sm">
-            <p class="text-[#8a9a98] m-0">이미 계정이 있으신가요?</p>
-            <button
-              
-              type="button"
-              class="bg-transparent border-0 text-[#00BBA7] hover:text-[#009e8d] text-sm underline cursor-pointer p-0"
-              id="loginBtn">
-              로그인
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- footer -->
-      <p class="text-xs text-[#8a9a98]">포켓몬 마스터가 되는 여정을 시작하세요!</p>
-
-    </main>
-  `;
+  confirmBtn.addEventListener('click', close, { once: true });
+  document.getElementById('register-modal-overlay').addEventListener('click', close, { once: true });
 }
+
 export function initRegister() {
-  let validNickname = true;
-  let validId = true;
+  let validNickname = false;
+  let validId = false;
 
   const pwd = document.getElementById('register_password');
   const eye = document.getElementById('eye');
@@ -159,9 +52,26 @@ export function initRegister() {
     slash2.style.strokeDashoffset = eye2.classList.contains('active') ? '0' : '24';
   });
 
-  document.registerForm.addEventListener('submit', function (e) {
+  document.registerForm.addEventListener('submit', async function (e) {
     e.preventDefault();
-    checkRegister();
+    if (!checkRegister()) return;
+
+    try {
+      const result = await register(id.value, nickname.value, pwd.value);
+      const token = result.data?.token;
+      const userId = result.data?.user?.userId;
+
+      if (!token) throw new Error('토큰 정보 없음');
+      localStorage.setItem('token', token);
+      if (userId != null) localStorage.setItem('userId', String(userId));
+      showModal('회원가입 성공', '메인페이지로 이동합니다.', {
+        type: 'success',
+        onConfirm: () => location.replace('/'),
+      });
+    } catch (error) {
+      console.error(error);
+      showModal('오류', '회원가입에 실패했어요. 다시 시도해주세요.');
+    }
   });
 
   document.getElementById('loginBtn').addEventListener('click', function () {
@@ -170,13 +80,13 @@ export function initRegister() {
   });
 
   document.getElementById('checkNicknameBtn').addEventListener('click', async function () {
-    const nickname = document.getElementById('register_nickname');
+    const nicknameVal = nickname.value.trim();
+    if (!nicknameVal) return;
     try {
-      const res = await fetch(`${BASE_URL}/user/check-nickname?nickname=${nickname.value}`, {
-        method: 'GET',
-      });
-      const result = await res.json();
-      validNickname = !result.data.exists;
+      const result = await checkNickname(nicknameVal);
+      const exists = result.data.exists;
+      validNickname = !exists;
+      showFieldMsg('nickname-check-msg', exists ? '이미 사용 중인 닉네임입니다.' : '사용 가능한 닉네임입니다.', exists ? 'red' : 'green');
     } catch (error) {
       console.error(error);
     }
@@ -184,63 +94,49 @@ export function initRegister() {
   });
 
   document.getElementById('checkIdBtn').addEventListener('click', async function () {
-    const id = document.getElementById('register_id');
+    const idVal = id.value.trim();
+    if (!idVal) return;
     try {
-      const res = await fetch(`${BASE_URL}/user/check-login-id?loginId=${id.value}`, {
-        method: 'GET',
-      });
-      const result = await res.json();
-      validId = !result.data.exists;
+      const result = await checkLoginId(idVal);
+      const exists = result.data.exists;
+      validId = !exists;
+      showFieldMsg('id-check-msg', exists ? '이미 사용 중인 아이디입니다.' : '사용 가능한 아이디입니다.', exists ? 'red' : 'green');
     } catch (error) {
       console.error(error);
     }
     updateButtonState();
   });
+
   nickname.addEventListener('input', () => {
-    validNickname = true;
+    validNickname = false;
+    showFieldMsg('nickname-check-msg', '', '');
     updateButtonState();
   });
 
   id.addEventListener('input', () => {
-    validId = true;
+    validId = false;
+    showFieldMsg('id-check-msg', '', '');
     updateButtonState();
   });
 
-  document.getElementById('signupBtn').addEventListener('click', async function () {
-    try {
-      const res = await fetch(`${BASE_URL}/user/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          loginId: id.value,
-          nickname: nickname.value,
-          password: pwd.value,
-        }),
-      });
-      if (!res.ok) throw new Error('회원가입 실패');
-      await res.json();
-      alert('회원가입 성공! 로그인 페이지로 이동합니다.');
-      history.pushState(null, '', '/login');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    } catch (error) {
-      console.error(error);
-      alert('회원가입에 실패했어요. 다시 시도해주세요.');
-    }
-  });
+  pwd.addEventListener('input', updateButtonState);
+  pwd2.addEventListener('input', updateButtonState);
+
+  function showFieldMsg(elementId, text, color) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    el.textContent = text;
+    el.style.color = color === 'green' ? '#00BBA7' : color === 'red' ? '#ef4444' : '';
+    el.classList.toggle('hidden', !text);
+  }
 
   function updateButtonState() {
     const signupBtn = document.getElementById('signupBtn');
-    if (validNickname === true && validId === true) {
-      signupBtn.disabled = false;
-    } else {
-      signupBtn.disabled = true;
-    }
+    const allFilled = nickname.value.trim() && id.value.trim() && pwd.value && pwd2.value;
+    signupBtn.disabled = !(validNickname && validId && allFilled);
   }
 }
 
-// Form Validation
 function checkRegister() {
   var nickname = document.registerForm.register_nickname;
   var register_id = document.registerForm.register_id;
@@ -249,7 +145,7 @@ function checkRegister() {
   var msg = document.getElementById('register-msg');
 
   if (nickname.value === '') {
-    msg.style.display = 'block';
+    msg.classList.remove('hidden');
     msg.textContent = '닉네임을 입력해주세요';
     nickname.focus();
     return false;
@@ -258,7 +154,7 @@ function checkRegister() {
   }
 
   if (register_id.value === '') {
-    msg.style.display = 'block';
+    msg.classList.remove('hidden');
     msg.textContent = '아이디를 입력해주세요';
     register_id.focus();
     return false;
@@ -267,7 +163,7 @@ function checkRegister() {
   }
 
   if (password.value === '') {
-    msg.style.display = 'block';
+    msg.classList.remove('hidden');
     msg.textContent = '비밀번호를 입력해주세요';
     password.focus();
     return false;
@@ -276,18 +172,20 @@ function checkRegister() {
   }
 
   if (passwordConfirm.value === '') {
-    msg.style.display = 'block';
+    msg.classList.remove('hidden');
     msg.textContent = '비밀번호 확인을 입력해주세요';
     passwordConfirm.focus();
     return false;
   }
 
   if (password.value !== passwordConfirm.value) {
-    msg.style.display = 'block';
+    msg.classList.remove('hidden');
     msg.textContent = '비밀번호가 일치하지 않습니다';
     passwordConfirm.focus();
     return false;
   }
 
+  msg.classList.add('hidden');
   msg.textContent = '';
+  return true;
 }
