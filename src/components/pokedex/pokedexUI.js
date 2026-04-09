@@ -210,17 +210,17 @@ export const pokeBallOn = `
 </svg>
 `;
 
-
+//포켓몬 상세 모달 
 export const PokemonModalContent = (data, koName, species) => {
+  
   const types = data.types.map((t) => t.type.name);
   const img = data.sprites.other["official-artwork"].front_default;
   const isLoggedIn = localStorage.getItem("token");
 
-  // 설명 (한국어 우선, 없으면 영어)
+  // 설명 (한국어 우선, 없으면 영어라도 넣)
   const flavorEntry =
     species.flavor_text_entries.find((e) => e.language.name === "ko") ||
     species.flavor_text_entries.find((e) => e.language.name === "en");
-  //899번부터 영어 스크립트 출력됨 (포켓몬 설명)
   const flavor = flavorEntry ? flavorEntry.flavor_text.replace(/\f|\n/g, " ") : "";
 
   // 분류
@@ -239,38 +239,144 @@ export const PokemonModalContent = (data, koName, species) => {
       color: statColors[s.stat.name],
     }));
 
-  // 하단 이미지
+  // 하단 이미지 슬롯 
   const sprites = [
-    { label: "Front", src: data.sprites.front_default },
-    { label: "Back", src: data.sprites.back_default },
-    { label: "Shiny", src: data.sprites.front_shiny },
+    { label: "Front",      src: data.sprites.front_default },
+    { label: "Back",       src: data.sprites.back_default },
+    { label: "Shiny",      src: data.sprites.front_shiny },
     { label: "Shiny Back", src: data.sprites.back_shiny },
-    { label: "Home", src: data.sprites.other?.home?.front_default },
-    { label: "Dream", src: data.sprites.other?.["dream_world"]?.front_default },
+    { label: "Home",       src: data.sprites.other?.home?.front_default },
+    { label: "Dream",      src: data.sprites.other?.["dream_world"]?.front_default },
   ];
 
+  // 스타일 head에 한 번만 쳐넣기....... 
+  if (!document.getElementById("pm-modal-styles")) {
+    const style = document.createElement("style");
+    style.id = "pm-modal-styles";
+    style.textContent = `
+      /* 데스크탑 (790px 이상): 기존 grid 유지 */
+      @media (min-width: 790px) {
+        .pm-bottom-grid   { display: grid !important; }
+        .pm-bottom-slider { display: none !important; }
+      }
 
-  // 포켓몬 상세보기 모달 디자인 html
+      /* 슬라이더 공통 스타일 */
+      .pm-bottom-slider {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        flex: 2;
+        padding: 8px 14px 14px 14px;
+        box-sizing: border-box;
+        min-height: 0;
+        position: relative;
+      }
+      .pm-slider-track {
+        flex: 1;
+        overflow: hidden;
+        border-radius: 12px;
+        margin: 0 44px;
+      }
+      .pm-slider-inner {
+        display: flex;
+        gap: 8px;
+        transition: transform 0.3s ease;
+      }
+      .pm-slide-item {
+        flex: 0 0 100%;
+        border-radius: 12px;
+        border: 1.108px solid rgba(255,255,255,0.60);
+        background: rgba(255,255,255,0.20);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 8px 4px;
+        box-sizing: border-box;
+      }
+      .pm-arrow-btn {
+        position: absolute; 
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.25);
+        border: 1.5px solid rgba(255,255,255,0.6);
+        color: #fff;
+        font-size: 20px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.2s;
+        user-select: none;
+      }
+        #pmPrev { left: 18px; }   
+        #pmNext { right: 18px; }
+      .pm-arrow-btn:hover    { background: rgba(255,255,255,0.45); }
+      .pm-arrow-btn:disabled { opacity: 0.25; pointer-events: none; }
+
+      /* 모바일 (789px 이하): 상하 배치 + 내부 스크롤 */
+      @media (max-width: 789px) {
+        .pm-modal-wrap {
+          height: auto !important;
+          max-height: 85vh !important;
+          overflow-y: auto !important;   
+          overflow-x: hidden !important;
+        }
+        .pm-inner {
+          flex-direction: column !important;
+          flex: none !important;
+          height: auto !important;
+        }
+        .pm-left {
+          width: 100% !important;
+          min-width: unset !important;
+        }
+        .pm-right {
+          overflow-y: visible !important;
+          flex: none !important;
+          height: auto !important;        /* 8px 제거 */
+          margin-bottom: 8px !important;
+        }
+        .pm-bottom-grid   { display: none !important; }
+        .pm-bottom-slider {
+          display: flex !important;
+          flex-shrink: 0;
+          height: 110px;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  let pmIdx = 0;
+const PM_TOTAL = 6;
+
+setTimeout(() => {
+  const inner = document.getElementById('pmSliderInner');
+  const prev  = document.getElementById('pmPrev');
+  const next  = document.getElementById('pmNext');
+  if (!inner || !prev || !next) return;
+
+  function pmMove(dir) {
+    pmIdx = Math.max(0, Math.min(pmIdx + dir, PM_TOTAL - 1));
+    const slideW = inner.querySelector('.pm-slide-item')?.offsetWidth || 0;
+    inner.style.transform = 'translateX(-' + (pmIdx * (slideW + 8)) + 'px)';
+    prev.disabled = pmIdx === 0;
+    next.disabled = pmIdx === PM_TOTAL - 1;
+  }
+
+  prev.addEventListener('click', () => pmMove(-1));
+  next.addEventListener('click', () => pmMove(1));
+}, 0);
+
+
+
   return `
-  <style>
-  /* 789px 이하에서 상하로 전환하기 */
-  @media (max-width: 789px) {
-  .pm-inner { flex-direction: column; }
-  .pm-left { width: 100%; flex-direction: row; flex-wrap: wrap; }
-  .pm-right { max-height: none; overflow-y: visible; }
-  }
-  
-  /* 하단 스프라이트 슬라이더 구조 한장 씩 넘기기 */
-  .pm-slide { flex: 0 0 80%; scroll-snap-align: start; }
-
-  /* 데스크탑에서는 6등분 */
-  @media (min-width: 790px) {
-    .pm-slide { flex: 0 0 calc(100% / 6 - 7px); }
-  }
-  </style>
-
-
-  <div style="
+  <div class="pm-modal-wrap" style="
     width: 100%;
     max-width: 789px;
     height: 594px;
@@ -280,12 +386,12 @@ export const PokemonModalContent = (data, koName, species) => {
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden 제거 → 미디어쿼리로 제어 */
     box-sizing: border-box;
   ">
 
-    <!-- 상단  -->
-    <div style="
+    <!-- 상단 -->
+    <div class="pm-inner" style="
       flex: 8;
       display: flex;
       gap: 10px;
@@ -295,7 +401,7 @@ export const PokemonModalContent = (data, koName, species) => {
     ">
 
       <!-- 왼쪽 흰 박스 -->
-      <div style="
+      <div class="pm-left" style="
         width: 300px;
         min-width: 220px;
         border-radius: 14px;
@@ -305,21 +411,21 @@ export const PokemonModalContent = (data, koName, species) => {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        padding: 18px 14px;
+        gap: 3px;
+        padding: 12px 14px;
         text-align: center;
         box-sizing: border-box;
       ">
         <span style="font-size: 13px; color: #aaa; font-weight: 500;">No. ${String(data.id).padStart(3, "0")}</span>
 
         <div style="
-          width: 180px; height: 180px;
+          width: 120px; height: 120px;
           background: #f0fafa;
           border-radius: 12px;
           display: flex; align-items: center; justify-content: center;
           margin: 4px 0;
         ">
-          <img src="${img}" style="width: 130px; height: 130px; object-fit: contain;"/>
+          <img src="${img}" style="width: 90px; height: 90px; object-fit: contain;"/>
         </div>
 
         <h2 style="font-size: 25px; font-weight: 900; color: #1a1a1a; margin: 0;">${koName}</h2>
@@ -330,7 +436,6 @@ export const PokemonModalContent = (data, koName, species) => {
             <span class="${TYPE_COLORS[t] || "bg-gray-400"}"
               style="padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase;">
               ${K_TYPE[t.toUpperCase()] || t}
-
             </span>
           `).join("")}
         </div>
@@ -347,7 +452,7 @@ export const PokemonModalContent = (data, koName, species) => {
       </div>
 
       <!-- 오른쪽 흰 박스 -->
-      <div style="
+      <div class="pm-right" style="
         flex: 1;
         border-radius: 14px;
         border: 1.108px solid rgba(255,255,255,0.60);
@@ -359,7 +464,6 @@ export const PokemonModalContent = (data, koName, species) => {
         overflow-y: auto;
         box-sizing: border-box;
       ">
-        <!-- BASE STATS -->
         <div>
           <p style="font-size: 15px; font-weight: 800; color: #333; letter-spacing: 0.1em; margin: 0 0 10px 0;">BASE STATS</p>
           ${stats.map(s => `
@@ -375,7 +479,6 @@ export const PokemonModalContent = (data, koName, species) => {
 
         <hr style="border: none; border-top: 1px solid #eee; margin: 0;"/>
 
-        <!-- 설명 -->
         <div>
           <p style="font-size: 15px; font-weight: 800; color: #333; letter-spacing: 0.1em; margin: 0 0 6px 0;">설명</p>
           <p style="font-size: 18px; color: #555; line-height: 1.7; margin: 0;">${flavor}</p>
@@ -383,10 +486,9 @@ export const PokemonModalContent = (data, koName, species) => {
       </div>
     </div>
 
-    <!-- 하단 -->
-    <div style="
+    <!-- 하단: 데스크탑 grid -->
+    <div class="pm-bottom-grid" style="
       flex: 2;
-      display: grid;
       grid-template-columns: repeat(6, 1fr);
       gap: 8px;
       padding: 8px 14px 14px 14px;
@@ -414,7 +516,48 @@ export const PokemonModalContent = (data, koName, species) => {
       `).join("")}
     </div>
 
+    <!-- 하단 모바일 전용 화살표 슬라이더 -->
+<div class="pm-bottom-slider">
+  <button class="pm-arrow-btn" id="pmPrev" disabled>&#8249;</button>
+  <div class="pm-slider-track">
+    <div class="pm-slider-inner" id="pmSliderInner">
+      ${sprites.map((s, i) => `
+        <div class="pm-slide-item">
+          ${s.src
+            ? `<img src="${s.src}" style="width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated;"/>`
+            : `<div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>`}
+          <span style="font-size: 11px; color: rgba(255,255,255,0.9); font-weight: 500;">${s.label}</span>
+          <span style="font-size: 10px; color: rgba(255,255,255,0.5);">${i + 1} / 6</span>
+        </div>
+      `).join("")}
+    </div>
   </div>
+  <button class="pm-arrow-btn" id="pmNext">&#8250;</button>
 </div>
+
+  </div>
+
+  <script>
+    (function() {
+      let idx = 0;
+      const TOTAL = 6;
+
+      window.pmSlide = function(dir) {
+        idx = Math.max(0, Math.min(idx + dir, TOTAL - 1));
+
+        const inner = document.getElementById('pmSliderInner');
+        const prev  = document.getElementById('pmPrev');
+        const next  = document.getElementById('pmNext');
+        if (!inner) return;
+
+        const slideW = inner.querySelector('.pm-slide-item')?.offsetWidth || 0;
+        inner.style.transform = 'translateX(-' + (idx * (slideW + 8)) + 'px)';
+
+        if (prev) prev.disabled = idx === 0;
+        if (next) next.disabled = idx === TOTAL - 1;
+      };
+    })();
+  <\/script>
 `;
+  
 };

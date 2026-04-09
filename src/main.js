@@ -16,6 +16,8 @@ app.innerHTML = `
   ${Footer()}
 `;
 
+initSidebar();
+
 async function loadPage() {
   try {
     const path = window.location.pathname;
