@@ -99,7 +99,7 @@ async function loadPage() {
     }
 
     if (page.includes('myparty.html')) {
-      const { init } = await import('./scripts/myparty.js');
+      const { init } = await import('./components/myparty/myparty.js');
       init();
     }
     if (page.includes('mypage.html')) {

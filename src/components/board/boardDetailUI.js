@@ -1,11 +1,24 @@
 import { escapeHtml } from '../../utils/escapeHtml.js';
 
+
 const categoryMap = {
   free: '자유게시판',
   guide: '질문게시판',
   battle: '공략',
   party: '파티 공유',
 };
+
+//카드 내부에 포켓몬 배치
+const SLOT_POSITIONS = [
+  { top: "35%", left: "4%"  },
+  { top: "35%", left: "25%" },
+  { top: "35%", left: "46%" },
+  { top: "54%", left: "4%"  },
+  { top: "54%", left: "25%" },
+  { top: "54%", left: "46%" },
+];
+
+
 
 export const Comment = (comment, currentUserId) => {
   const isMyComment = String(comment.userId) === String(currentUserId);
@@ -39,10 +52,53 @@ export const Comment = (comment, currentUserId) => {
   `;
 };
 
-export const BoardDetailContent = (post, currentUserId) => {
-  console.log(post);
+// spriteMap: { [pokemonId]: imageUrl } — boardDetail.js에서 미리 fetch해서 넘겨
+export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
   const isLiked = post.isFavorited === true;
   const isMyPost = String(post.userId) === String(currentUserId);
+ 
+  // console.log(post.preset.pocketmons); 
+  // console.log(post.preset);
+  // console.log(spriteMap);
+  //  console.log(post.preset);
+
+  // 트레이너 카드 HTML 
+  const trainerCardHtml = post.preset
+    ? `
+      <div style="width: 100%; max-width: 600px; margin: 24px auto;">
+        ${
+          post.preset.deckname
+            ? `<p style="font-size: 13px; font-weight: 700; color: #6b7280; margin-bottom: 8px; text-align: center;">
+                  ${post.preset.deckname}
+               </p>`
+            : ''
+        }
+        <div style="position: relative; width: 100%; border-radius: 12px; overflow: hidden;">
+          <img
+            src="${post.preset.gender === 'woman' ? '/assets/trianercard_woman.png' : '/assets/trianercard_man.png'}"
+            alt="trainer-card"
+            style="display: block; width: 100%; height: auto; user-select: none;"
+          />
+          ${SLOT_POSITIONS.map((pos, i) => {
+            const id = post.preset.pocketmons?.[i];
+            const url = id ? spriteMap[id] : null;
+            return `
+              <div style="
+                position: absolute;
+                top: ${pos.top};
+                left: ${pos.left};
+                width: 20%;
+                height: 17%;
+              ">
+                ${url ? `<img src="${url}" alt="pokemon-${id}" style="width: 100%; height: 100%; object-fit: contain; padding: 4px;"/>` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `
+    : '';
+ 
   return `
    <div class="flex w-full flex-col items-start shrink-0 rounded-2xl bg-white shadow" style="padding: 32px; gap: 32px;">
       
@@ -52,14 +108,16 @@ export const BoardDetailContent = (post, currentUserId) => {
         </svg>
         목록으로 돌아가기
       </button>
+ 
     ${
       isMyPost
-        ? `<div class="flex gap-3"><button onclick="handleEditPost(${post.postId})" class="text-sm text-gray-400 hover:text-[#05B29F] font-bold transition-colors">수정</button>
-                <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
-           </div>
-            `
+        ? `<div class="flex gap-3">
+             <button onclick="handleEditPost(${post.postId})" class="text-sm text-gray-400 hover:text-[#05B29F] font-bold transition-colors">수정</button>
+             <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
+           </div>`
         : ''
     }
+ 
       <div class="flex flex-col w-full" style="gap: 16px;">
         <div class="flex flex-col items-start" style="gap: 8px;">
           <span class="inline-block px-3 py-1 bg-red-50 text-red-400 text-[11px] font-bold rounded-md">
@@ -69,7 +127,7 @@ export const BoardDetailContent = (post, currentUserId) => {
             ${post.title}
           </h1>
         </div>
-
+ 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full text-gray-400 text-sm gap-2">
           <div class="flex items-center gap-4">
             <span class="font-bold text-gray-700 text-[16px]">${escapeHtml(post.nickname)}</span>
@@ -81,25 +139,25 @@ export const BoardDetailContent = (post, currentUserId) => {
           </div>
         </div>
       </div>
-
-    <div class="px-6 md:px-10 lg:px-15" style="padding-top: 40px; padding-bottom: 60px; display: block; min-height: 400px; position: relative;">
-      
-      <div class="text-gray-700 leading-relaxed text-[16px] md:text-[17px] whitespace-pre-wrap" 
-           style="margin-top: 0; margin-bottom: 60px; text-align: left; width: 100%; display: block;">
+ 
+      <div class="px-6 md:px-10 lg:px-15" style="padding-top: 40px; padding-bottom: 60px; display: block; min-height: 400px; position: relative;">
+        <div class="text-gray-700 leading-relaxed text-[16px] md:text-[17px] whitespace-pre-wrap" 
+             style="margin-top: 0; margin-bottom: 60px; text-align: left; width: 100%; display: block;">
 ${escapeHtml(post.content.trim())}</div>
-
-      ${
-        post.imgUrl
-          ? `<div class="w-full rounded-3xl md:rounded-4xl overflow-hidden border border-gray-100" 
-                  style="margin-bottom: 60px; display: block;">
-               <img src="${post.imgUrl}" alt="게시글 이미지" style="width: 100%; height: auto; display: block;">
-             </div>`
-          : ''
-      }
-
-       
+ 
+        ${
+          post.imgUrl
+            ? `<div class="w-full rounded-3xl md:rounded-4xl overflow-hidden border border-gray-100" 
+                    style="margin-bottom: 60px; display: block;">
+                 <img src="${post.imgUrl}" alt="게시글 이미지" style="width: 100%; height: auto; display: block;">
+               </div>`
+            : ''
+        }
       </div>
-
+ 
+      <!-- 트레이너 카드 -->
+      ${trainerCardHtml}
+ 
       <div class="flex w-full" style="gap: 16px;">
         <button id="post-like-btn" class="flex-1 flex items-center justify-center gap-3 rounded-lg border border-[#D1D5DC] bg-white hover:bg-gray-50 transition-all active:scale-[0.98] group" style="height: 60px;">
           <span class="text-xl md:text-2xl" style="line-height: 1;">
@@ -110,11 +168,11 @@ ${escapeHtml(post.content.trim())}</div>
           </span>
         </button>
       </div>
-
+ 
     </div>
   `;
 };
-
+ 
 export const CommentSection = (comments = [], currentUserId) => `
   <div class="px-6 md:px-10 lg:px-15" style="padding-bottom: 60px;">
     <h3 class="font-black text-gray-900 text-lg md:text-xl" style="margin-bottom: 32px;">
@@ -124,7 +182,7 @@ export const CommentSection = (comments = [], currentUserId) => `
     <div style="margin-bottom: 40px;">
       ${comments.length > 0 ? comments.map((c) => Comment(c, currentUserId)).join('') : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"}
     </div>
-
+ 
     <div class="rounded-2xl border border-gray-200 overflow-hidden bg-white" 
          style="margin-bottom: 5px;">
       <textarea id="commentInput" placeholder="댓글을 입력하세요..." 
