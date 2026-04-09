@@ -12,7 +12,9 @@ export async function initPostDetail(postId) {
         const payload = JSON.parse(atob(token.split('.')[1]));
         currentUserId = String(payload.userId ?? payload.id ?? payload.sub ?? '');
       }
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   }
   try {
     const postRes = await fetch(`${BASE_URL}/posts/${postId}`, {
@@ -201,7 +203,6 @@ window.handleDeletePost = async (postId) => {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
-
     if (res.ok) {
       location.href = '/board';
     }
@@ -210,5 +211,5 @@ window.handleDeletePost = async (postId) => {
   }
 };
 window.handleEditPost = (postId) => {
-  location.href = `/write-post?edit=${postId}`;
+  location.href = `/write-post?postId=${postId}`;
 };
