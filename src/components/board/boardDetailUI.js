@@ -108,24 +108,25 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
         </svg>
         목록으로 돌아가기
       </button>
- 
-    ${
-      isMyPost
-        ? `<div class="flex gap-3">
-             <button onclick="handleEditPost(${post.postId})" class="text-sm text-gray-400 hover:text-[#05B29F] font-bold transition-colors">수정</button>
-             <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
-           </div>`
-        : ''
-    }
+
  
       <div class="flex flex-col w-full" style="gap: 16px;">
         <div class="flex flex-col items-start" style="gap: 8px;">
           <span class="inline-block px-3 py-1 bg-red-50 text-red-400 text-[11px] font-bold rounded-md">
             ${escapeHtml(categoryMap[post.category] ?? post.category)}
           </span>
-          <h1 class="text-3xl font-bold text-[#1a3a35] leading-tight">
-            ${post.title}
-          </h1>
+          <div class="flex items-center justify-between w-full">
+            <h1 class="text-3xl font-bold text-[#1a3a35] leading-tight flex-1">
+              ${post.title}
+            </h1>
+            ${
+              isMyPost
+                ? `<div class="flex items-center gap-3 ml-4 flex-shrink-0">
+                    <button onclick="handleEditPost(${post.postId})" class="text-sm text-gray-400 hover:text-[#05B29F] font-bold transition-colors">수정</button>
+                    <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
+                  </div>`
+                : ''
+            }
         </div>
  
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full text-gray-400 text-sm gap-2">
@@ -136,7 +137,8 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
           </div>
           <div class="font-medium">
             조회수 <span class="text-gray-600 font-bold ml-1">${post.viewCount?.toLocaleString()}</span>
-          </div>
+          
+            </div>
         </div>
       </div>
  
