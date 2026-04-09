@@ -1,4 +1,4 @@
-import { SidebarItem, PokemonCard, Pagination } from './pokedexUI.js';
+import { SidebarItem, PokemonCard, Pagination, PokemonModalContent } from './pokedexUI.js';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -30,10 +30,22 @@ export async function initPokedex() {
   } else {
     myPocketMons = [];
   }
+
+
+  // 포켓몬 정보 모달 닫기
+  document.getElementById("pokemon-modal-close")?.addEventListener("click", () => {
+    document.getElementById("pokemon-modal")?.classList.add("hidden");
+  });
+  document.getElementById("pokemon-modal-overlay")?.addEventListener("click", () => {
+    document.getElementById("pokemon-modal")?.classList.add("hidden");  
+  });
+  
   setupSearch();
   renderSidebar();
   renderGrid(1);
 }
+
+
 // 나중에 api에 쑤셔 박을것
 export async function loadPoketmons() {
   const token = localStorage.getItem('token');
@@ -152,44 +164,43 @@ async function movePage(p) {
 
 // 전역 윈도우 함수 (왼쪽에 포켓몬 사이드바안에 있는 포켓몬 no. 어쩌고 클릭하면 실행되는 함수임)
 window.selectPokemon = async function (no) {
-  const grid = document.getElementById('pokemonGrid');
-  const pag = document.getElementById('pokedexPagination');
+  const modal = document.getElementById('pokemon-modal');
+  const content = document.getElementById('pokemon-modal-content');
+  if (!modal || !content) return;
 
-  if (!grid) {
-    return;
-  }
+  // 로딩 표시 후 모달 열기
+  content.innerHTML = `
+    <div class="flex justify-center items-center py-20">
+      <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+    </div>
+  `;
+  modal.classList.remove('hidden');
 
   try {
     const p = allPokemon.find((item) => item.no === no);
-    if (!p) {
-      throw new Error('해당 포켓몬 데이터를 찾을 수 없습니다.');
-    }
+    if (!p) throw new Error('해당 포켓몬 데이터를 찾을 수 없습니다.');
 
-    const data = await fetchPokemonDetail(no);
-    if (!data) {
-      throw new Error('포켓몬 정보를 불러オ할 수 없습니다.');
-    }
+    const [data, species] = await Promise.all([
+      fetchPokemonDetail(no),
+      fetch(`https://pokeapi.co/api/v2/pokemon-species/${no}`).then((r) => r.json()),
+    ]);
 
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = PokemonCard(data, p.name);
+    if (!data) throw new Error('포켓몬 정보를 불러올 수 없습니다.');
 
-    grid.innerHTML = '';
-    grid.appendChild(wrapper.firstElementChild);
+    const isBookmarked = myPocketMons.includes(no);
+    content.innerHTML = PokemonModalContent(data, p.name, species, isBookmarked);
 
-    if (pag) pag.innerHTML = '';
-    // 왼쪽에 있는 사이드바 클릭시 위로 이동 즉 밑에서 클릭해도 맨 위로 가짐
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (error) {
-    console.error('포켓몬 상세 정보 로드 실패:', error);
-    //에러 뜨면 이런 화면 보여줄거임
-    grid.innerHTML = `
-      <div class="col-span-full text-center py-20">
-        <p class="text-red-500 font-bold">정보를 불러오지 못했습니다.</p>
-        <button onclick="location.reload()" class="mt-4 text-sm text-gray-500 underline">새로고침</button>
+    console.error('모달 로드 실패:', error);
+    content.innerHTML = `
+      <div class="text-center py-10 text-white">
+        <p class="font-bold">정보를 불러오지 못했습니다.</p>
       </div>
     `;
   }
 };
+
+
 // 등록 api
 export async function poketmonReg(poketmonId) {
   const token = localStorage.getItem('token');
@@ -245,4 +256,5 @@ window.poketmonDelete = async function (event, id) {
 
   myPocketMons = myPocketMons.filter((item) => item !== id);
   renderGrid(currentPage);
+
 };
