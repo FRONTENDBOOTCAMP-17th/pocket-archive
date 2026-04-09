@@ -20,29 +20,6 @@ export const TYPE_COLORS = {
   dark: 'bg-[#705746]',
 };
 
-
-//태그 한글화
-const K_TYPE = {
-  NORMAL: '노말',
-  FIRE: '불꽃',
-  WATER: '물',
-  GRASS: '풀',
-  ELECTRIC: '전기',
-  FIGHTING: '격투',
-  FLYING: '비행',
-  POISON: '독',
-  GROUND: '땅',
-  ROCK: '바위',
-  BUG: '벌레',
-  GHOST: '고스트',
-  STEEL: '강철',
-  PSYCHIC: '에스퍼',
-  ICE: '얼음',
-  DRAGON: '드래곤',
-  DARK: '악',
-  FAIRY: '페어리',
-};
-
 //JSON에 있는 한글 이름 포켓몬을 꺼내와서 목록을 보여주는? 컴포넌트
 export const SidebarItem = (p) => `
   <div onclick="selectPokemon(${p.no})" 
@@ -102,10 +79,10 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
                   <h3 class="text-xl font-black text-gray-800 leading-tight">${koName}</h3>
                   ${
                     isLoggedIn
-                    ? myPocketMons.includes(data.id)
-                      ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
-                      : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonReg(event,${data.id})">${pokeBallOff}</div>`
-                    : ""
+                      ? myPocketMons.includes(data.id)
+                        ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
+                        : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonReg(event,${data.id})">${pokeBallOff}</div>`
+                      : ''
                   }
               </div>
           </div>
@@ -113,7 +90,7 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
               ${types
                 .map(
                   (t) => `
-                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white font-bold text-[10px] uppercase tracking-tight ${TYPE_COLORS[t] || "bg-gray-400"} shadow-sm min-w-[60px]">
+                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white font-bold text-[10px] uppercase tracking-tight ${TYPE_COLORS[t] || 'bg-gray-400'} shadow-sm min-w-[60px]">
                   ${K_TYPE[t.toUpperCase()] || t}
                 </span>
               `,
@@ -224,49 +201,45 @@ export const pokeBallOn = `
 </svg>
 `;
 
-//포켓몬 상세 모달 
+//포켓몬 상세 모달
 export const PokemonModalContent = (data, koName, species) => {
-  
   const types = data.types.map((t) => t.type.name);
-  const img = data.sprites.other["official-artwork"].front_default;
-  const isLoggedIn = localStorage.getItem("token");
+  const img = data.sprites.other['official-artwork'].front_default;
+  const isLoggedIn = localStorage.getItem('token');
 
   // 설명 (한국어 우선, 없으면 영어라도 넣)
   const flavorEntry =
-    species.flavor_text_entries.find((e) => e.language.name === "ko") ||
-    species.flavor_text_entries.find((e) => e.language.name === "en");
-  const flavor = flavorEntry ? flavorEntry.flavor_text.replace(/\f|\n/g, " ") : "";
+    species.flavor_text_entries.find((e) => e.language.name === 'ko') || species.flavor_text_entries.find((e) => e.language.name === 'en');
+  const flavor = flavorEntry ? flavorEntry.flavor_text.replace(/\f|\n/g, ' ') : '';
 
   // 분류
-  const genus =
-    species.genera?.find((g) => g.language.name === "ko")?.genus ||
-    species.genera?.find((g) => g.language.name === "en")?.genus || "";
+  const genus = species.genera?.find((g) => g.language.name === 'ko')?.genus || species.genera?.find((g) => g.language.name === 'en')?.genus || '';
 
   // 스탯
-  const statMap = { hp: "HP", attack: "공격", defense: "방어", speed: "스피드" };
-  const statColors = { hp: "#FF6B6B", attack: "#FF8C42", defense: "#FFD166", speed: "#06D6A0" };
+  const statMap = { hp: 'HP', attack: '공격', defense: '방어', speed: '스피드' };
+  const statColors = { hp: '#FF6B6B', attack: '#FF8C42', defense: '#FFD166', speed: '#06D6A0' };
   const stats = data.stats
-    .filter((s) => ["hp", "attack", "defense", "speed"].includes(s.stat.name))
+    .filter((s) => ['hp', 'attack', 'defense', 'speed'].includes(s.stat.name))
     .map((s) => ({
       name: statMap[s.stat.name],
       value: s.base_stat,
       color: statColors[s.stat.name],
     }));
 
-  // 하단 이미지 슬롯 
+  // 하단 이미지 슬롯
   const sprites = [
-    { label: "Front",      src: data.sprites.front_default },
-    { label: "Back",       src: data.sprites.back_default },
-    { label: "Shiny",      src: data.sprites.front_shiny },
-    { label: "Shiny Back", src: data.sprites.back_shiny },
-    { label: "Home",       src: data.sprites.other?.home?.front_default },
-    { label: "Dream",      src: data.sprites.other?.["dream_world"]?.front_default },
+    { label: 'Front', src: data.sprites.front_default },
+    { label: 'Back', src: data.sprites.back_default },
+    { label: 'Shiny', src: data.sprites.front_shiny },
+    { label: 'Shiny Back', src: data.sprites.back_shiny },
+    { label: 'Home', src: data.sprites.other?.home?.front_default },
+    { label: 'Dream', src: data.sprites.other?.['dream_world']?.front_default },
   ];
 
-  // 스타일 head에 한 번만 쳐넣기....... 
-  if (!document.getElementById("pm-modal-styles")) {
-    const style = document.createElement("style");
-    style.id = "pm-modal-styles";
+  // 스타일 head에 한 번만 쳐넣기.......
+  if (!document.getElementById('pm-modal-styles')) {
+    const style = document.createElement('style');
+    style.id = 'pm-modal-styles';
     style.textContent = `
       /* 데스크탑 (790px 이상): 기존 grid 유지 */
       @media (min-width: 790px) {
@@ -367,27 +340,25 @@ export const PokemonModalContent = (data, koName, species) => {
   }
 
   let pmIdx = 0;
-const PM_TOTAL = 6;
+  const PM_TOTAL = 6;
 
-setTimeout(() => {
-  const inner = document.getElementById('pmSliderInner');
-  const prev  = document.getElementById('pmPrev');
-  const next  = document.getElementById('pmNext');
-  if (!inner || !prev || !next) return;
+  setTimeout(() => {
+    const inner = document.getElementById('pmSliderInner');
+    const prev = document.getElementById('pmPrev');
+    const next = document.getElementById('pmNext');
+    if (!inner || !prev || !next) return;
 
-  function pmMove(dir) {
-    pmIdx = Math.max(0, Math.min(pmIdx + dir, PM_TOTAL - 1));
-    const slideW = inner.querySelector('.pm-slide-item')?.offsetWidth || 0;
-    inner.style.transform = 'translateX(-' + (pmIdx * (slideW + 8)) + 'px)';
-    prev.disabled = pmIdx === 0;
-    next.disabled = pmIdx === PM_TOTAL - 1;
-  }
+    function pmMove(dir) {
+      pmIdx = Math.max(0, Math.min(pmIdx + dir, PM_TOTAL - 1));
+      const slideW = inner.querySelector('.pm-slide-item')?.offsetWidth || 0;
+      inner.style.transform = 'translateX(-' + pmIdx * (slideW + 8) + 'px)';
+      prev.disabled = pmIdx === 0;
+      next.disabled = pmIdx === PM_TOTAL - 1;
+    }
 
-  prev.addEventListener('click', () => pmMove(-1));
-  next.addEventListener('click', () => pmMove(1));
-}, 0);
-
-
+    prev.addEventListener('click', () => pmMove(-1));
+    next.addEventListener('click', () => pmMove(1));
+  }, 0);
 
   return `
   <div class="pm-modal-wrap" style="
@@ -430,7 +401,7 @@ setTimeout(() => {
         text-align: center;
         box-sizing: border-box;
       ">
-        <span style="font-size: 13px; color: #aaa; font-weight: 500;">No. ${String(data.id).padStart(3, "0")}</span>
+        <span style="font-size: 13px; color: #aaa; font-weight: 500;">No. ${String(data.id).padStart(3, '0')}</span>
 
         <div style="
           width: 120px; height: 120px;
@@ -446,12 +417,16 @@ setTimeout(() => {
         <p style="font-size: 15px; color: #aaa; margin: 0;">${genus}</p>
 
         <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin: 2px 0;">
-          ${types.map(t => `
-            <span class="${TYPE_COLORS[t] || "bg-gray-400"}"
+          ${types
+            .map(
+              (t) => `
+            <span class="${TYPE_COLORS[t] || 'bg-gray-400'}"
               style="padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase;">
               ${K_TYPE[t.toUpperCase()] || t}
             </span>
-          `).join("")}
+          `,
+            )
+            .join('')}
         </div>
 
         <div style="
@@ -480,15 +455,19 @@ setTimeout(() => {
       ">
         <div>
           <p style="font-size: 15px; font-weight: 800; color: #333; letter-spacing: 0.1em; margin: 0 0 10px 0;">BASE STATS</p>
-          ${stats.map(s => `
+          ${stats
+            .map(
+              (s) => `
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 7px;">
               <span style="font-size: 12px; color: #777; width: 36px;">${s.name}</span>
               <span style="font-size: 12px; font-weight: 700; color: #222; width: 26px; text-align: right;">${s.value}</span>
               <div style="flex: 1; background: #e8f5f4; border-radius: 10px; height: 7px;">
-                <div style="height: 7px; border-radius: 10px; width: ${Math.min(s.value / 255 * 100, 100)}%; background: ${s.color};"></div>
+                <div style="height: 7px; border-radius: 10px; width: ${Math.min((s.value / 255) * 100, 100)}%; background: ${s.color};"></div>
               </div>
             </div>
-          `).join("")}
+          `,
+            )
+            .join('')}
         </div>
 
         <hr style="border: none; border-top: 1px solid #eee; margin: 0;"/>
@@ -509,7 +488,9 @@ setTimeout(() => {
       box-sizing: border-box;
       min-height: 0;
     ">
-      ${sprites.map(s => `
+      ${sprites
+        .map(
+          (s) => `
         <div style="
           border-radius: 12px;
           border: 1.108px solid rgba(255,255,255,0.60);
@@ -522,12 +503,16 @@ setTimeout(() => {
           padding: 8px 4px;
           box-sizing: border-box;
         ">
-          ${s.src
-            ? `<img src="${s.src}" style="width: 44px; height: 44px; object-fit: contain;"/>`
-            : `<div style="width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>`}
+          ${
+            s.src
+              ? `<img src="${s.src}" style="width: 44px; height: 44px; object-fit: contain;"/>`
+              : `<div style="width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>`
+          }
           <span style="font-size: 10px; color: rgba(255,255,255,0.85); font-weight: 500;">${s.label}</span>
         </div>
-      `).join("")}
+      `,
+        )
+        .join('')}
     </div>
 
     <!-- 하단 모바일 전용 화살표 슬라이더 -->
@@ -535,15 +520,21 @@ setTimeout(() => {
   <button class="pm-arrow-btn" id="pmPrev" disabled>&#8249;</button>
   <div class="pm-slider-track">
     <div class="pm-slider-inner" id="pmSliderInner">
-      ${sprites.map((s, i) => `
+      ${sprites
+        .map(
+          (s, i) => `
         <div class="pm-slide-item">
-          ${s.src
-            ? `<img src="${s.src}" style="width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated;"/>`
-            : `<div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>`}
+          ${
+            s.src
+              ? `<img src="${s.src}" style="width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated;"/>`
+              : `<div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>`
+          }
           <span style="font-size: 11px; color: rgba(255,255,255,0.9); font-weight: 500;">${s.label}</span>
           <span style="font-size: 10px; color: rgba(255,255,255,0.5);">${i + 1} / 6</span>
         </div>
-      `).join("")}
+      `,
+        )
+        .join('')}
     </div>
   </div>
   <button class="pm-arrow-btn" id="pmNext">&#8250;</button>
@@ -573,5 +564,4 @@ setTimeout(() => {
     })();
   <\/script>
 `;
-  
 };
