@@ -20,6 +20,29 @@ export const TYPE_COLORS = {
   dark: "bg-[#705746]",
 };
 
+
+//태그 한글화
+const K_TYPE = {
+  NORMAL: '노말',
+  FIRE: '불꽃',
+  WATER: '물',
+  GRASS: '풀',
+  ELECTRIC: '전기',
+  FIGHTING: '격투',
+  FLYING: '비행',
+  POISON: '독',
+  GROUND: '땅',
+  ROCK: '바위',
+  BUG: '벌레',
+  GHOST: '고스트',
+  STEEL: '강철',
+  PSYCHIC: '에스퍼',
+  ICE: '얼음',
+  DRAGON: '드래곤',
+  DARK: '악',
+  FAIRY: '페어리',
+};
+
 //JSON에 있는 한글 이름 포켓몬을 꺼내와서 목록을 보여주는? 컴포넌트
 export const SidebarItem = (p) => `
   <div onclick="selectPokemon(${p.no})" 
@@ -45,10 +68,13 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
   const isLoggedIn = localStorage.getItem("token");
 
   return `
-    <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
-      <div class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0">
+  <div 
+     class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
+      <div onclick="selectPokemon(${data.id})"
+      class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0">
           <img src="${img}" class="w-28 h-28 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110">
       </div>
+      
       <div class="p-6 flex flex-col gap-4">
           <div class="flex flex-col gap-1.5">
               <span class="text-[11px] font-black text-gray-300 tracking-wider leading-none" style="padding: 5px">
@@ -58,10 +84,10 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
                   <h3 class="text-xl font-black text-gray-800 leading-tight">${koName}</h3>
                   ${
                     isLoggedIn
-                      ? myPocketMons.includes(data.id)
-                        ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" id="poketmonDelete" onclick="poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
-                        : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" id="poketmonReg" onclick="poketmonReg(event,${data.id})">${pokeBallOff}</div>`
-                      : ""
+                    ? myPocketMons.includes(data.id)
+                      ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
+                      : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonReg(event,${data.id})">${pokeBallOff}</div>`
+                    : ""
                   }
               </div>
           </div>
@@ -70,7 +96,7 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
                 .map(
                   (t) => `
                 <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white font-bold text-[10px] uppercase tracking-tight ${TYPE_COLORS[t] || "bg-gray-400"} shadow-sm min-w-[60px]">
-                  ${t}
+                  ${K_TYPE[t.toUpperCase()] || t}
                 </span>
               `,
                 )
@@ -183,3 +209,212 @@ export const pokeBallOn = `
 </defs>
 </svg>
 `;
+
+
+export const PokemonModalContent = (data, koName, species) => {
+  const types = data.types.map((t) => t.type.name);
+  const img = data.sprites.other["official-artwork"].front_default;
+  const isLoggedIn = localStorage.getItem("token");
+
+  // 설명 (한국어 우선, 없으면 영어)
+  const flavorEntry =
+    species.flavor_text_entries.find((e) => e.language.name === "ko") ||
+    species.flavor_text_entries.find((e) => e.language.name === "en");
+  //899번부터 영어 스크립트 출력됨 (포켓몬 설명)
+  const flavor = flavorEntry ? flavorEntry.flavor_text.replace(/\f|\n/g, " ") : "";
+
+  // 분류
+  const genus =
+    species.genera?.find((g) => g.language.name === "ko")?.genus ||
+    species.genera?.find((g) => g.language.name === "en")?.genus || "";
+
+  // 스탯
+  const statMap = { hp: "HP", attack: "공격", defense: "방어", speed: "스피드" };
+  const statColors = { hp: "#FF6B6B", attack: "#FF8C42", defense: "#FFD166", speed: "#06D6A0" };
+  const stats = data.stats
+    .filter((s) => ["hp", "attack", "defense", "speed"].includes(s.stat.name))
+    .map((s) => ({
+      name: statMap[s.stat.name],
+      value: s.base_stat,
+      color: statColors[s.stat.name],
+    }));
+
+  // 하단 이미지
+  const sprites = [
+    { label: "Front", src: data.sprites.front_default },
+    { label: "Back", src: data.sprites.back_default },
+    { label: "Shiny", src: data.sprites.front_shiny },
+    { label: "Shiny Back", src: data.sprites.back_shiny },
+    { label: "Home", src: data.sprites.other?.home?.front_default },
+    { label: "Dream", src: data.sprites.other?.["dream_world"]?.front_default },
+  ];
+
+
+  // 포켓몬 상세보기 모달 디자인 html
+  return `
+  <style>
+  /* 789px 이하에서 상하로 전환하기 */
+  @media (max-width: 789px) {
+  .pm-inner { flex-direction: column; }
+  .pm-left { width: 100%; flex-direction: row; flex-wrap: wrap; }
+  .pm-right { max-height: none; overflow-y: visible; }
+  }
+  
+  /* 하단 스프라이트 슬라이더 구조 한장 씩 넘기기 */
+  .pm-slide { flex: 0 0 80%; scroll-snap-align: start; }
+
+  /* 데스크탑에서는 6등분 */
+  @media (min-width: 790px) {
+    .pm-slide { flex: 0 0 calc(100% / 6 - 7px); }
+  }
+  </style>
+
+
+  <div style="
+    width: 100%;
+    max-width: 789px;
+    height: 594px;
+    border-radius: 26px;
+    background: linear-gradient(121deg, #05B29F -1.1%, #22A9DA 98.38%);
+    box-shadow: 0 0 0 4px rgba(5,178,159,0.40), 0 0 0 7px rgba(34,169,218,0.20), 0 24px 60px 0 rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+  ">
+
+    <!-- 상단  -->
+    <div style="
+      flex: 8;
+      display: flex;
+      gap: 10px;
+      padding: 14px 14px 8px 14px;
+      min-height: 0;
+      box-sizing: border-box;
+    ">
+
+      <!-- 왼쪽 흰 박스 -->
+      <div style="
+        width: 300px;
+        min-width: 220px;
+        border-radius: 14px;
+        border: 1.108px solid rgba(255,255,255,0.60);
+        background: #FFF;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 18px 14px;
+        text-align: center;
+        box-sizing: border-box;
+      ">
+        <span style="font-size: 13px; color: #aaa; font-weight: 500;">No. ${String(data.id).padStart(3, "0")}</span>
+
+        <div style="
+          width: 180px; height: 180px;
+          background: #f0fafa;
+          border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          margin: 4px 0;
+        ">
+          <img src="${img}" style="width: 130px; height: 130px; object-fit: contain;"/>
+        </div>
+
+        <h2 style="font-size: 25px; font-weight: 900; color: #1a1a1a; margin: 0;">${koName}</h2>
+        <p style="font-size: 15px; color: #aaa; margin: 0;">${genus}</p>
+
+        <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin: 2px 0;">
+          ${types.map(t => `
+            <span class="${TYPE_COLORS[t] || "bg-gray-400"}"
+              style="padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase;">
+              ${K_TYPE[t.toUpperCase()] || t}
+
+            </span>
+          `).join("")}
+        </div>
+
+        <div style="
+          font-size: 12px; color: #aaa;
+          border: 1px solid #e5e5e5;
+          border-radius: 20px;
+          padding: 3px 14px;
+          margin-top: 2px;
+        ">
+          ${(data.height / 10).toFixed(1)}m &nbsp; ${(data.weight / 10).toFixed(1)}kg
+        </div>
+      </div>
+
+      <!-- 오른쪽 흰 박스 -->
+      <div style="
+        flex: 1;
+        border-radius: 14px;
+        border: 1.108px solid rgba(255,255,255,0.60);
+        background: #FFF;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 18px 20px;
+        overflow-y: auto;
+        box-sizing: border-box;
+      ">
+        <!-- BASE STATS -->
+        <div>
+          <p style="font-size: 15px; font-weight: 800; color: #333; letter-spacing: 0.1em; margin: 0 0 10px 0;">BASE STATS</p>
+          ${stats.map(s => `
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 7px;">
+              <span style="font-size: 12px; color: #777; width: 36px;">${s.name}</span>
+              <span style="font-size: 12px; font-weight: 700; color: #222; width: 26px; text-align: right;">${s.value}</span>
+              <div style="flex: 1; background: #e8f5f4; border-radius: 10px; height: 7px;">
+                <div style="height: 7px; border-radius: 10px; width: ${Math.min(s.value / 255 * 100, 100)}%; background: ${s.color};"></div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 0;"/>
+
+        <!-- 설명 -->
+        <div>
+          <p style="font-size: 15px; font-weight: 800; color: #333; letter-spacing: 0.1em; margin: 0 0 6px 0;">설명</p>
+          <p style="font-size: 18px; color: #555; line-height: 1.7; margin: 0;">${flavor}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 -->
+    <div style="
+      flex: 2;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      padding: 8px 14px 14px 14px;
+      box-sizing: border-box;
+      min-height: 0;
+    ">
+      ${sprites.map(s => `
+        <div style="
+          border-radius: 12px;
+          border: 1.108px solid rgba(255,255,255,0.60);
+          background: rgba(255,255,255,0.20);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+          padding: 8px 4px;
+          box-sizing: border-box;
+        ">
+          ${s.src
+            ? `<img src="${s.src}" style="width: 44px; height: 44px; object-fit: contain;"/>`
+            : `<div style="width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>`}
+          <span style="font-size: 10px; color: rgba(255,255,255,0.85); font-weight: 500;">${s.label}</span>
+        </div>
+      `).join("")}
+    </div>
+
+  </div>
+</div>
+`;
+};
