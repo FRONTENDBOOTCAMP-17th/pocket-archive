@@ -40,13 +40,13 @@ export const Comment = (comment, currentUserId) => {
 };
 
 export const BoardDetailContent = (post, currentUserId) => {
+  console.log(post);
   const isLiked = post.isFavorited === true;
   const isMyPost = String(post.userId) === String(currentUserId);
-  console.log(post);
   return `
    <div class="flex w-full flex-col items-start shrink-0 rounded-2xl bg-white shadow" style="padding: 32px; gap: 32px;">
       
-      <button id="write-back-btn" onclick="history.back()" class="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-500 hover:bg-[#05B29F]/10 hover:text-[#05B29F] transition-all text-sm font-bold">
+      <button id="write-back-btn" onclick="location.href='/board'" class="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-500 hover:bg-[#05B29F]/10 hover:text-[#05B29F] transition-all text-sm font-bold">
         <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
         </svg>
@@ -89,21 +89,15 @@ export const BoardDetailContent = (post, currentUserId) => {
 ${escapeHtml(post.content.trim())}</div>
 
       ${
-        post.ImgUrls && post.ImgUrls.length > 0
+        post.imgUrl
           ? `<div class="w-full rounded-3xl md:rounded-4xl overflow-hidden border border-gray-100" 
                   style="margin-bottom: 60px; display: block;">
-               <img src="${post.ImgUrls[0]}" alt="게시글 이미지" style="width: 100%; height: auto; display: block;">
+               <img src="${post.imgUrl}" alt="게시글 이미지" style="width: 100%; height: auto; display: block;">
              </div>`
           : ""
       }
 
-        ${
-          post.ImgUrls && post.ImgUrls.length > 0
-            ? `<div class="w-full rounded-2xl overflow-hidden border border-gray-100">
-                 <img src="${post.ImgUrls[0]}" alt="게시글 이미지" class="w-full h-auto block">
-               </div>`
-            : ""
-        }
+       
       </div>
 
       <div class="flex w-full" style="gap: 16px;">
