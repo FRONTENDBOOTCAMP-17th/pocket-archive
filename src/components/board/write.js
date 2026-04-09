@@ -18,7 +18,7 @@ const token = localStorage.getItem("token");
 
 async function submitPost({ title, category, content, preset }) {
   const token = localStorage.getItem("token");
-
+  console.log(uploadImgUrl);
   const response = await fetch(`${BASE_URL}/posts`, {
     method: "POST",
     headers: {
