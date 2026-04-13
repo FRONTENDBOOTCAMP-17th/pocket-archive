@@ -1,24 +1,21 @@
-import { escapeHtml } from '../../utils/escapeHtml.js';
-
+import { escapeHtml } from "../../utils/escapeHtml.js";
 
 const categoryMap = {
-  free: '자유게시판',
-  guide: '질문게시판',
-  battle: '공략',
-  party: '파티 공유',
+  free: "자유게시판",
+  guide: "질문게시판",
+  battle: "공략",
+  party: "파티 공유",
 };
 
 //카드 내부에 포켓몬 배치
 const SLOT_POSITIONS = [
-  { top: "35%", left: "4%"  },
+  { top: "35%", left: "4%" },
   { top: "35%", left: "25%" },
   { top: "35%", left: "46%" },
-  { top: "54%", left: "4%"  },
+  { top: "54%", left: "4%" },
   { top: "54%", left: "25%" },
   { top: "54%", left: "46%" },
 ];
-
-
 
 export const Comment = (comment, currentUserId) => {
   const isMyComment = String(comment.userId) === String(currentUserId);
@@ -29,7 +26,7 @@ export const Comment = (comment, currentUserId) => {
         <div class="flex items-center gap-2">
           <span class="font-bold text-gray-800 text-[15px]">${comment.nickname}</span>
           <span class="text-xs text-gray-400 font-medium">
-            ${comment.createdAt ? comment.createdAt.split('T')[0].replace(/-/g, '.') : ''}
+            ${comment.createdAt ? comment.createdAt.split("T")[0].replace(/-/g, ".") : ""}
           </span>
           
           ${
@@ -43,7 +40,7 @@ export const Comment = (comment, currentUserId) => {
                       class="text-[11px] text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
             </div>
           `
-              : ''
+              : ""
           }
         </div>
       </div>
@@ -56,13 +53,8 @@ export const Comment = (comment, currentUserId) => {
 export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
   const isLiked = post.isFavorited === true;
   const isMyPost = String(post.userId) === String(currentUserId);
- 
-  // console.log(post.preset.pocketmons); 
-  // console.log(post.preset);
-  // console.log(spriteMap);
-  //  console.log(post.preset);
 
-  // 트레이너 카드 HTML 
+  // 트레이너 카드 HTML
   const trainerCardHtml = post.preset
     ? `
       <div style="width: 100%; max-width: 600px; margin: 24px auto;">
@@ -71,11 +63,11 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
             ? `<p style="font-size: 13px; font-weight: 700; color: #6b7280; margin-bottom: 8px; text-align: center;">
                   ${post.preset.deckname}
                </p>`
-            : ''
+            : ""
         }
         <div style="position: relative; width: 100%; border-radius: 12px; overflow: hidden;">
           <img
-            src="${post.preset.gender === 'woman' ? '/assets/trianercard_woman.png' : '/assets/trianercard_man.png'}"
+            src="${post.preset.gender === "woman" ? "/assets/trianercard_woman.png" : "/assets/trianercard_man.png"}"
             alt="trainer-card"
             style="display: block; width: 100%; height: auto; user-select: none;"
           />
@@ -90,15 +82,15 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
                 width: 20%;
                 height: 17%;
               ">
-                ${url ? `<img src="${url}" alt="pokemon-${id}" style="width: 100%; height: 100%; object-fit: contain; padding: 4px;"/>` : ''}
+                ${url ? `<img src="${url}" alt="pokemon-${id}" style="width: 100%; height: 100%; object-fit: contain; padding: 4px;"/>` : ""}
               </div>
             `;
-          }).join('')}
+          }).join("")}
         </div>
       </div>
     `
-    : '';
- 
+    : "";
+
   return `
    <div class="flex w-full flex-col items-start shrink-0 rounded-2xl bg-white shadow" style="padding: 32px; gap: 32px;">
       
@@ -108,7 +100,15 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
         </svg>
         목록으로 돌아가기
       </button>
-
+ 
+    ${
+      isMyPost
+        ? `<div class="flex gap-3">
+             <button onclick="handleEditPost(${post.postId})" class="text-sm text-gray-400 hover:text-[#05B29F] font-bold transition-colors">수정</button>
+             <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
+           </div>`
+        : ""
+    }
  
       <div class="flex flex-col w-full" style="gap: 16px;">
         <div class="flex flex-col items-start" style="gap: 8px;">
@@ -133,7 +133,7 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
           <div class="flex items-center gap-4">
             <span class="font-bold text-gray-700 text-[16px]">${escapeHtml(post.nickname)}</span>
             <span class="text-gray-200">|</span>
-            <span class="font-medium">${post.createdAt ? escapeHtml(post.createdAt.split('T')[0]) : ''}</span>
+            <span class="font-medium">${post.createdAt ? escapeHtml(post.createdAt.split("T")[0]) : ""}</span>
           </div>
           <div class="font-medium">
             조회수 <span class="text-gray-600 font-bold ml-1">${post.viewCount?.toLocaleString()}</span>
@@ -153,7 +153,7 @@ ${escapeHtml(post.content.trim())}</div>
                     style="margin-bottom: 60px; display: block;">
                  <img src="${post.imgUrl}" alt="게시글 이미지" style="width: 100%; height: auto; display: block;">
                </div>`
-            : ''
+            : ""
         }
       </div>
  
@@ -163,7 +163,7 @@ ${escapeHtml(post.content.trim())}</div>
       <div class="flex w-full" style="gap: 16px;">
         <button id="post-like-btn" class="flex-1 flex items-center justify-center gap-3 rounded-lg border border-[#D1D5DC] bg-white hover:bg-gray-50 transition-all active:scale-[0.98] group" style="height: 60px;">
           <span class="text-xl md:text-2xl" style="line-height: 1;">
-             ${isLiked ? '❤️' : '🤍'}
+             ${isLiked ? "❤️" : "🤍"}
           </span>
           <span class="font-black text-[#1a3a35] text-[18px]">
              ${post.favoriteCount || 0}
@@ -174,7 +174,7 @@ ${escapeHtml(post.content.trim())}</div>
     </div>
   `;
 };
- 
+
 export const CommentSection = (comments = [], currentUserId) => `
   <div class="px-6 md:px-10 lg:px-15" style="padding-bottom: 60px;">
     <h3 class="font-black text-gray-900 text-lg md:text-xl" style="margin-bottom: 32px;">
@@ -182,7 +182,7 @@ export const CommentSection = (comments = [], currentUserId) => `
     </h3>
     
     <div style="margin-bottom: 40px;">
-      ${comments.length > 0 ? comments.map((c) => Comment(c, currentUserId)).join('') : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"}
+      ${comments.length > 0 ? comments.map((c) => Comment(c, currentUserId)).join("") : "<p class='text-center py-10 text-gray-400'>아직 댓글이 없습니다.</p>"}
     </div>
  
     <div class="rounded-2xl border border-gray-200 overflow-hidden bg-white" 

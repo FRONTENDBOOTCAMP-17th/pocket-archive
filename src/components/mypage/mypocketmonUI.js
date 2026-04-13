@@ -1,37 +1,53 @@
-import { TYPE_COLORS } from '../pokedex/pokedexUI.js';
+import { TYPE_COLORS } from "../pokedex/pokedexUI.js";
 
 export const K_TYPE = {
-  NORMAL: '노말', FIRE: '불꽃', WATER: '물', GRASS: '풀',
-  ELECTRIC: '전기', FIGHTING: '격투', FLYING: '비행', POISON: '독',
-  GROUND: '땅', ROCK: '바위', BUG: '벌레', GHOST: '고스트',
-  STEEL: '강철', PSYCHIC: '에스퍼', ICE: '얼음', DRAGON: '드래곤',
-  DARK: '악', FAIRY: '페어리',
+  NORMAL: "노말",
+  FIRE: "불꽃",
+  WATER: "물",
+  GRASS: "풀",
+  ELECTRIC: "전기",
+  FIGHTING: "격투",
+  FLYING: "비행",
+  POISON: "독",
+  GROUND: "땅",
+  ROCK: "바위",
+  BUG: "벌레",
+  GHOST: "고스트",
+  STEEL: "강철",
+  PSYCHIC: "에스퍼",
+  ICE: "얼음",
+  DRAGON: "드래곤",
+  DARK: "악",
+  FAIRY: "페어리",
 };
 
 export function PokemonViewCard(data, koName) {
   const types = data.types.map((t) => t.type.name);
-  const img = data.sprites.other['official-artwork'].front_default;
-
+  const img = data.sprites.other["official-artwork"].front_default;
   return `
     <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
-      <div class="relative h-44 flex items-center justify-center bg-[#F7F9F8] transition-colors shrink-0">
+      <div onclick="selectPokemon(${data.id})" class="relative h-44 flex items-center justify-center bg-[#F7F9F8] transition-colors shrink-0" >
         <img src="${img}" class="w-28 h-28 object-contain drop-shadow-md">
       </div>
       <div class="flex flex-col gap-4" style="padding: 10px;">
         <div class="flex flex-col gap-1.5">
           <span class="text-[11px] font-black text-gray-300 tracking-wider leading-none" style="padding: 5px">
-            No.${String(data.id).padStart(3, '0')}
+            No.${String(data.id).padStart(3, "0")}
           </span>
           <div style="padding: 5px">
             <h3 class="text-xl font-black text-gray-800 leading-tight">${koName}</h3>
           </div>
         </div>
         <div class="flex flex-wrap gap-2" style="padding: 5px">
-          ${types.map((t) => `
-            <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white text-md uppercase tracking-tight ${TYPE_COLORS[t] || 'bg-gray-400'} shadow-sm min-w-15" style="padding: 5px">
+          ${types
+            .map(
+              (t) => `
+            <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white text-md uppercase tracking-tight ${TYPE_COLORS[t] || "bg-gray-400"} shadow-sm min-w-15" style="padding: 5px">
               ${K_TYPE[t.toUpperCase()] || t}
             </span>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       </div>
     </div>

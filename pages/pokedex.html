@@ -33,7 +33,7 @@
   </div>
 </div>
   <div
-    class="flex flex-col lg:flex-row gap-10 w-full max-w-[1920px] mx-auto items-start p-5 animate-fadeIn"
+    class="flex flex-col lg:flex-row gap-10 w-full  mx-auto items-start p-5 animate-fadeIn"
   >
     <aside
       id="sidebarAccordion"
@@ -84,7 +84,7 @@
         <div
           id="sidebarList"
           class="flex-1 overflow-y-auto px-6 pb-8 custom-scrollbar space-y-1"
-          style="height: 300px"
+          style="height: 300px; scrollbar-width: none;"
         ></div>
       </div>
     </aside>
@@ -93,7 +93,7 @@
       <div class="flex flex-col gap-12 pb-10">
         <div
           id="pokemonGrid"
-          class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8"
+          class="grid gap-8" style="grid-template-columns: repeat(auto-fill, minmax(282px, 1fr))"
         ></div>
 
         <div
