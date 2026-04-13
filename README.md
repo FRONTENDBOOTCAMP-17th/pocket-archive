@@ -112,7 +112,7 @@ npm run dev
 | ⚡ vite              | v8.0.1  |
 | 🎨 tailwindcss       | v4.2.2  |
 | 🔌 @tailwindcss/vite | v4.2.2  |
-| 🖥️ @tailwindcss/cli  | 4.2.2   |
+| 🖥️ @tailwindcss/cli  | v4.2.2  |
 | 🔐 dotenv            | v17.4.1 |
 
 ## ⚙️ vite.config.js 수정 방법
@@ -156,8 +156,8 @@ Tailwind CSS 플러그인이 기본으로 등록되어 있습니다.
 추가 Vite 플러그인이 필요하면 `plugins` 배열에 추가하세요.
 
 ```js
-import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vite';
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
