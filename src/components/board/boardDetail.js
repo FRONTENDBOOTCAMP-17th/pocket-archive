@@ -198,7 +198,7 @@ async function saveEditComment(commentId, oldContent) {
   if (!newContent.trim() || newContent === oldContent) {
     return location.reload();
   }
-  editComment(commentId);
+  editComment(commentId, newContent);
 };
 //댓글삭제
 async function handleDeleteComment(commentId) {

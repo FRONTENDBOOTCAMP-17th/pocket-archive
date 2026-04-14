@@ -41,12 +41,14 @@ export async function initPokedex() {
   document
     .getElementById("pokemon-modal-close")
     ?.addEventListener("click", () => {
-      document.getElementById("pokemon-modal")?.classList.add("hidden");
+      const m = document.getElementById("pokemon-modal");
+      m?.classList.add("hidden"); m?.classList.remove("flex");
     });
   document
     .getElementById("pokemon-modal-overlay")
     ?.addEventListener("click", () => {
-      document.getElementById("pokemon-modal")?.classList.add("hidden");
+      const m = document.getElementById("pokemon-modal");
+      m?.classList.add("hidden"); m?.classList.remove("flex");
     });
 
   setupSearch();
@@ -182,7 +184,7 @@ async function openPokemonModal(no) {
       <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
     </div>
   `;
-  modal.classList.remove("hidden");
+  modal.classList.remove("hidden"); modal.classList.add("flex");
 
   try {
     const p = allPokemon.find((item) => item.no === no);

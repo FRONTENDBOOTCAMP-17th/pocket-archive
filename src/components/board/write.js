@@ -1,7 +1,7 @@
 import { writePost, publishPost, loadEditPost, loadPreset as fetchPresets, editPost, uploadImg } from '../../api/post.js';
 import { showModal } from '../modal.js';
 
-import { categoryMap, reverseCategoryMap } from '../../utils/boardConstants';
+import { categoryMap } from '../../utils/boardConstants';
 
 let uploadImgUrl = '';
 let loadPreset = [];
@@ -144,7 +144,7 @@ export async function initWrite() {
     document.getElementById('write-title').value = postData.title || '';
     document.getElementById('write-content').value = postData.content || '';
     const categorySelect = document.getElementById('write-category');
-    categorySelect.value = reverseCategoryMap[postData.category] || postData.category;
+    categorySelect.value = categoryMap[postData.category] || postData.category;
     if (postData.preset) {
       const select = document.getElementById('write-party-preset');
       const option = document.createElement('option');
@@ -180,6 +180,29 @@ export async function initWrite() {
     });
   });
   // 폼 제출 (글작성 , 수정)
+  // 임시 저장 — writePost만 호출, publishPost 생략 → isPublished: false 상태 유지
+  document.getElementById('write-middle-btn')?.addEventListener('click', async () => {
+    const title = document.getElementById('write-title')?.value.trim();
+    const content = document.getElementById('write-content')?.value.trim();
+    const selectedCategory = document.getElementById('write-category')?.value;
+    const preset = document.getElementById('write-party-preset').value;
+
+    if (!title) return await showModal('제목 미입력', '제목을 입력해주세요.', 'danger');
+    if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
+    if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
+
+    try {
+      const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
+      const selectedPreset = loadPreset.find((item) => item.partyId === Number(preset));
+      await writePost(title, apiCategory, content, selectedPreset, uploadImgUrl);
+      history.pushState(null, '', '/board');
+      window.loadPage();
+    } catch (error) {
+      console.error(error);
+      await showModal('오류', '임시저장 중 오류가 발생했습니다.', 'danger');
+    }
+  });
+
   document.getElementById('write-submit-btn')?.addEventListener('click', async () => {
     const title = document.getElementById('write-title')?.value.trim();
     const content = document.getElementById('write-content')?.value.trim();

@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const token = localStorage.getItem("token");
+const getToken = () => localStorage.getItem("token");
 
 
 export async function loadPosts() {
@@ -13,11 +13,11 @@ export async function loadPosts() {
 
 
 export async function togglePostLike(postId) {
-  if (!token) return false;
+  if (!getToken()) return false;
   const res = await fetch(`${BASE_URL}/posts/${postId}/favorite`, {
     method: "PUT",
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${getToken()}`,
       "Content-Type": "application/json",
     },
   });
@@ -25,12 +25,12 @@ export async function togglePostLike(postId) {
 }
 
 export async function postComment(postId, text) {
-  if (token) {
+  if (getToken()) {
     try {
       const res = await fetch(`${BASE_URL}/posts/${postId}/comments`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -48,15 +48,15 @@ export async function postComment(postId, text) {
   }
 }
 //댓글 수정
-export async function editComment(commentId) {
+export async function editComment(commentId, content) {
   try {
     const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ content: newContent }),
+      body: JSON.stringify({ content }),
     });
 
     if (res.ok) {
@@ -74,7 +74,7 @@ export async function deleteCommnet(commentId) {
     const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -90,7 +90,7 @@ export async function deletePost(postId) {
   try {
     const res = await fetch(`${BASE_URL}/posts/${postId}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${getToken()}` },
     });
     if (res.ok) {
       location.href = "/board";
@@ -142,7 +142,7 @@ export async function writePost(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({
         title,
@@ -170,7 +170,7 @@ export async function publishPost(postId) {
   try {
     const publishRes = await fetch(`${BASE_URL}/posts/${postId}/publish`, {
       method: "PUT",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${getToken()}` },
     });
     if (!publishRes.ok) throw new Error("게시글 발행 실패");
   } catch (error) {
@@ -198,7 +198,7 @@ export async function loadEditPost(postId) {
 export async function loadPreset() {
   try {
     const res = await fetch(`${BASE_URL}/party`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${getToken()}` },
     });
     const data = await res.json();
     const presets = Array.isArray(data) ? data : (data.data ?? []);
@@ -243,7 +243,7 @@ export async function editPost(
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({
         title,
@@ -268,7 +268,7 @@ export async function uploadImg(formData) {
   try {
     const uploadRes = await fetch(`${BASE_URL}/images`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${getToken()}` },
       body: formData,
     });
     if (!uploadRes.ok) {

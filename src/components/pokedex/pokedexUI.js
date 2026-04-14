@@ -63,7 +63,7 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
 
   return `
   <div 
-     class="group bg-white rounded-2xl shadow-sm hover:shadow-xl max-w-71 hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
+     class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
       <div data-action="select-pokemon" data-id="${data.id}"
       class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0 cursor-pointer">
           <img src="${img}" class="w-28 h-28 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110">
