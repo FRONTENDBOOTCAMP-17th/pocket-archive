@@ -67,7 +67,7 @@ export async function loadPoketmons() {
       throw new Error("불러오기 실패");
     }
     const result = await res.json();
-    return result.data.myPocketMons;
+    return result.data.myPocketmons;
   } catch (error) {
     console.error(error);
     return [];
