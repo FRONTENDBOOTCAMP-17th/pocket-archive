@@ -2,7 +2,6 @@ import { TrainerCard } from "./trainerCard.js";
 import { PokemonCard } from "../pokedex/pokedexUI";
 import { escapeHtml } from '../../utils/escapeHtml.js';
 
-// 프리셋 행 색상 팔레트
 export const PRESET_COLORS = [
   { bg: "background-color:#fff7ed; border-color:#fed7aa;", text: "color:#ea580c;" },
   { bg: "background-color:#eff6ff; border-color:#bfdbfe;", text: "color:#2563eb;" },
@@ -131,49 +130,3 @@ export function renderPresetsUI(presetListEl, presets, loadedPresetIndex) {
     .join("");
 }
 
-// ─── 파티 저장/덮어쓰기 모달 (preset-modal) ─────────────────
-export function openOverwriteModalUI(preset, onConfirm, onClose) {
-  const modal     = document.getElementById("preset-modal");
-  const input     = document.getElementById("preset-name-input");
-  const titleEl   = document.getElementById("modal-title");
-  const descEl    = document.getElementById("modal-desc");
-  if (!modal || !input) return;
-
-  if (titleEl) titleEl.textContent = "파티 덮어쓰기";
-  if (descEl)  descEl.textContent  = `"${preset.name}" 파티에 현재 구성을 덮어씁니다.`;
-  input.style.display = "none";
-  modal.classList.remove("hidden");
-
-  const close = () => { input.style.display = "block"; closePresetModal(); onClose?.(); };
-  document.getElementById("modal-overlay")?.addEventListener("click",   close,      { once: true });
-  document.getElementById("modal-cancel")?.addEventListener("click",    close,      { once: true });
-  document.getElementById("modal-confirm")?.addEventListener("click", () => { close(); onConfirm(); }, { once: true });
-}
-
-export function openNewSaveModalUI(presets, onConfirm, onClose) {
-  const modal   = document.getElementById("preset-modal");
-  const input   = document.getElementById("preset-name-input");
-  const titleEl = document.getElementById("modal-title");
-  const descEl  = document.getElementById("modal-desc");
-  if (!modal || !input) return;
-
-  if (titleEl) titleEl.textContent = "파티 이름 저장";
-  if (descEl)  descEl.textContent  = "나만의 파티 이름을 입력해주세요";
-  input.value = "";
-  input.style.display = "block";
-  modal.classList.remove("hidden");
-  input.focus();
-
-  const close = () => { closePresetModal(); onClose?.(); };
-  document.getElementById("modal-overlay")?.addEventListener("click", close, { once: true });
-  document.getElementById("modal-cancel")?.addEventListener("click",  close, { once: true });
-  document.getElementById("modal-confirm")?.addEventListener("click", () => {
-    const name = input.value.trim() || `나의 파티 ${presets.length + 1}`;
-    closePresetModal();
-    onConfirm(name);
-  }, { once: true });
-}
-
-export function closePresetModal() {
-  document.getElementById("preset-modal")?.classList.add("hidden");
-}

@@ -22,8 +22,8 @@ export const TYPE_COLORS = {
 
 //JSON에 있는 한글 이름 포켓몬을 꺼내와서 목록을 보여주는? 컴포넌트
 export const SidebarItem = (p) => `
-  <div onclick="selectPokemon(${p.no})" 
-       style="display: flex; align-items: center; min-height: 48px; padding: 0 0 0 24px; cursor: pointer;" 
+  <div data-action="select-pokemon" data-id="${p.no}"
+       style="display: flex; align-items: center; min-height: 48px; padding: 0 0 0 24px; cursor: pointer;"
        class="p-3 text-sm text-gray-400 rounded-xl hover:bg-[#E8F5E9] hover:text-[#05B29F] transition-all">
       No.${p.no} ${p.name}
   </div>
@@ -60,14 +60,12 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
 
   //ai 안에 보면 고화질 이미지가 이거임 이거 앞모습 가져오는거임
   const img = data.sprites.other['official-artwork'].front_default;
-  // const apiUrl = process.env.BASE_URL;
-  const isLoggedIn = localStorage.getItem('token');
 
   return `
   <div 
      class="group bg-white rounded-2xl shadow-sm hover:shadow-xl max-w-71 hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
-      <div onclick="selectPokemon(${data.id})"
-      class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0">
+      <div data-action="select-pokemon" data-id="${data.id}"
+      class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0 cursor-pointer">
           <img src="${img}" class="w-28 h-28 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110">
       </div>
       <div class="p-6 flex flex-col gap-4" style="padding: 10px;">
@@ -78,10 +76,10 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
               <div class="flex justify-between items-center" style="padding: 5px">
                   <h3 class="text-xl font-black text-gray-800 leading-tight">${koName}</h3>
                   ${
-                    isLoggedIn
+                    localStorage.getItem('token')
                       ? myPocketMons.includes(data.id)
-                        ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
-                        : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonReg(event,${data.id})">${pokeBallOff}</div>`
+                        ? `<div data-action="poketmon-delete" data-id="${data.id}" class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110">${pokeBallOn}</div>`
+                        : `<div data-action="poketmon-reg" data-id="${data.id}" class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110">${pokeBallOff}</div>`
                       : ''
                   }
               </div>
