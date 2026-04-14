@@ -1,6 +1,7 @@
-// dummy data
 import { escapeHtml } from '../../utils/escapeHtml.js';
+import { categoryMap, categoryColors, formatDate } from '../../utils/boardConstants.js';
 
+// dummy data
 const dummyData = [
   {
     postId: 1,
@@ -109,38 +110,16 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 // API 연결 오류 시 임시데이터로 변환
 const getPosts = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/posts`, {
-      method: 'GET',
-    });
+    const response = await fetch(`${BASE_URL}/posts`, { method: 'GET' });
     if (!response.ok) throw new Error('Failed to fetch posts');
     const data = await response.json();
-    const posts = data.data?.content ?? data.data ?? dummyData;
-    return Array.isArray(posts) ? posts : dummyData;
+    const posts = data.data?.content ?? data.data ?? [];
+    return Array.isArray(posts) ? posts : [];
   } catch (error) {
     console.error('Error fetching posts:', error);
-    return dummyData;
+    return [];
   }
 };
-
-const categoryMap = {
-  free: '자유게시판',
-  guide: '질문게시판',
-  battle: '공략',
-  party: '파티 공유',
-};
-
-const categoryColors = {
-  자유게시판: 'text-[#00bba7] bg-[#e6f7f5]',
-  질문게시판: 'text-pink-500 bg-pink-50',
-  '파티 공유': 'text-amber-500 bg-amber-50',
-  파티공유: 'text-amber-500 bg-amber-50',
-  공략: 'text-blue-500 bg-blue-50',
-  공지: 'text-purple-500 bg-purple-50',
-};
-
-function formatDate(dateStr) {
-  return dateStr.split('T')[0].replace(/-/g, '.');
-}
 
 const PAGE_SIZE = 8;
 
@@ -155,6 +134,15 @@ export async function initBoard() {
 
   // Render posts
   function renderPosts(data, page = 1) {
+    if (data.length === 0) {
+      postlist.innerHTML = `
+      <p style="text-align:center; padding:40px; color:#4a7a72;">
+        게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
+      </p>
+    `;
+      pagination.innerHTML = '';
+      return;
+    }
     const sorted = [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     currentData = sorted;
     currentPage = page;
