@@ -1,161 +1,55 @@
+// dummy data
+import { escapeHtml } from "../../utils/escapeHtml.js";
+import { loadPosts } from "./write.js";
 import { escapeHtml } from '../../utils/escapeHtml.js';
 import { categoryMap, categoryColors, formatDate } from '../../utils/boardConstants.js';
-
-// dummy data
-const dummyData = [
-  {
-    postId: 1,
-    title: '카비곤 육성 팁 공유합니다!',
-    nickname: '트레이너A',
-    category: '자유게시판',
-    createdAt: '2026-03-27T14:23:00',
-    viewCount: 1234,
-    favoriteCount: 89,
-    commentCount: 23,
-  },
-  {
-    postId: 2,
-    title: '레전드 포켓몬 추천해주세요',
-    nickname: '피카츄마스터',
-    category: '자유게시판',
-    createdAt: '2026-03-26T09:11:00',
-    viewCount: 892,
-    favoriteCount: 45,
-    commentCount: 31,
-  },
-  {
-    postId: 3,
-    title: '뮤츠 잡았어요!!!',
-    nickname: '포켓마스터',
-    category: '자유게시판',
-    createdAt: '2026-03-25T21:47:00',
-    viewCount: 2341,
-    favoriteCount: 156,
-    commentCount: 67,
-  },
-  {
-    postId: 4,
-    title: '불꽃타입 vs 물타입 어느게 더 좋나요?',
-    nickname: '초보트레이너',
-    category: '질문게시판',
-    createdAt: '2026-03-24T16:05:00',
-    viewCount: 567,
-    favoriteCount: 34,
-    commentCount: 42,
-  },
-  {
-    postId: 5,
-    title: '진화 타이밍 질문',
-    nickname: '파이리조아',
-    category: '질문게시판',
-    createdAt: '2026-03-23T11:30:00',
-    viewCount: 445,
-    favoriteCount: 28,
-    commentCount: 19,
-  },
-  {
-    postId: 6,
-    title: '내가 만든 최강 덱 자랑',
-    nickname: '파티마스터',
-    category: '파티 공유',
-    createdAt: '2026-03-22T18:52:00',
-    viewCount: 1567,
-    favoriteCount: 234,
-    commentCount: 56,
-  },
-  {
-    postId: 7,
-    title: '이브이 진화형 중에 뭐가 제일 예쁨?',
-    nickname: '이브이러브',
-    category: '자유게시판',
-    createdAt: '2026-03-21T13:08:00',
-    viewCount: 2103,
-    favoriteCount: 187,
-    commentCount: 94,
-  },
-  {
-    postId: 8,
-    title: '포켓몬 배틀 초보 가이드',
-    nickname: '배틀킹',
-    category: '공략',
-    createdAt: '2026-03-20T08:44:00',
-    viewCount: 3421,
-    favoriteCount: 412,
-    commentCount: 78,
-  },
-  {
-    postId: 9,
-    title: '포켓몬스터 레전드 아르세우스 공략 공유합니다.',
-    nickname: '배틀킹',
-    category: '공략',
-    createdAt: '2026-03-19T20:17:00',
-    viewCount: 250,
-    favoriteCount: 30,
-    commentCount: 15,
-  },
-  {
-    postId: 10,
-    title: '나는야 이규화 여기서 제일 잘생겼지.',
-    nickname: '이규화',
-    category: '자유게시판',
-    createdAt: '2026-04-02T12:00:00',
-    viewCount: 9999,
-    favoriteCount: 9999,
-    commentCount: 9999,
-  },
-];
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // API 연결 오류 시 임시데이터로 변환
 const getPosts = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/posts`, { method: 'GET' });
-    if (!response.ok) throw new Error('Failed to fetch posts');
-    const data = await response.json();
-    const posts = data.data?.content ?? data.data ?? [];
-    return Array.isArray(posts) ? posts : [];
+    const data = await loadPosts();
+    const posts = data.data?.content ?? data.data ?? dummyData;
+    return Array.isArray(posts) ? posts : dummyData;
   } catch (error) {
-    console.error('Error fetching posts:', error);
-    return [];
+    console.error("Error fetching posts:", error);
+    return dummyData;
   }
 };
+
+function formatDate(dateStr) {
+  return dateStr.split("T")[0].replace(/-/g, ".");
+}
 
 const PAGE_SIZE = 8;
 
 export async function initBoard() {
   const posts = await getPosts();
-  const postlist = document.getElementById('postlist');
+  const postlist = document.getElementById("postlist");
   if (!postlist) return;
-  postlist.style = 'display:flex; flex-direction:column; gap:16px;';
-  const pagination = document.getElementById('pagination');
+  postlist.style = "display:flex; flex-direction:column; gap:16px;";
+  const pagination = document.getElementById("pagination");
   let currentPage = 1;
   let currentData = posts;
 
   // Render posts
   function renderPosts(data, page = 1) {
-    if (data.length === 0) {
-      postlist.innerHTML = `
-      <p style="text-align:center; padding:40px; color:#4a7a72;">
-        게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
-      </p>
-    `;
-      pagination.innerHTML = '';
-      return;
-    }
-    const sorted = [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sorted = [...data].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+    );
     currentData = sorted;
     currentPage = page;
     const start = (page - 1) * PAGE_SIZE;
-    postlist.innerHTML = '';
+    postlist.innerHTML = "";
     sorted.slice(start, start + PAGE_SIZE).forEach((post) => {
       const category = categoryMap[post.category] ?? post.category;
-      const badgeClass = categoryColors[category] || 'text-gray-500 bg-gray-100';
-      const postElement = document.createElement('div');
+      const badgeClass =
+        categoryColors[category] || "text-gray-500 bg-gray-100";
+      const postElement = document.createElement("div");
       postElement.dataset.postId = post.postId;
-      postElement.className = 'bg-white rounded-2xl border border-[#00bba7]/15 shadow-sm cursor-pointer hover:shadow-md transition-shadow';
+      postElement.className =
+        "bg-white rounded-2xl border border-[#00bba7]/15 shadow-sm cursor-pointer hover:shadow-md transition-shadow";
       postElement.style =
-        'display:flex; min-height:181px; padding:24px 24px 16px 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;';
+        "display:flex; min-height:181px; padding:24px 24px 16px 24px; flex-direction:column; align-items:flex-start; gap:12px; flex-shrink:0; align-self:stretch;";
       postElement.innerHTML = `
         <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${escapeHtml(category)}</span>
         <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${escapeHtml(post.title)}</p>
@@ -195,17 +89,20 @@ export async function initBoard() {
   function renderPagination(data, page) {
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
     const isMobile = window.innerWidth <= 391;
-    pagination.innerHTML = '';
+    pagination.innerHTML = "";
 
     // previous button
-    const prevBtn = document.createElement('button');
-    prevBtn.textContent = '이전';
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "이전";
     prevBtn.className = `text-sm rounded-lg border transition-colors ${
-      page === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#e6f7f5]'
+      page === 1
+        ? "border-gray-200 text-gray-300 cursor-not-allowed"
+        : "border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#e6f7f5]"
     }`;
-    prevBtn.style = 'display:flex; padding:7px 17px 11px 17px; justify-content:center; align-items:center;';
+    prevBtn.style =
+      "display:flex; padding:7px 17px 11px 17px; justify-content:center; align-items:center;";
     prevBtn.disabled = page === 1;
-    prevBtn.addEventListener('click', () => {
+    prevBtn.addEventListener("click", () => {
       if (currentPage > 1) renderPosts(currentData, currentPage - 1);
       window.scrollTo(0, 0);
     });
@@ -213,23 +110,28 @@ export async function initBoard() {
 
     if (isMobile) {
       // Mobile: Show only current page number
-      const pageBtn = document.createElement('button');
+      const pageBtn = document.createElement("button");
       pageBtn.textContent = page;
-      pageBtn.className = 'text-sm rounded-lg transition-colors bg-[#22A9DA]/40 text-white font-medium';
-      pageBtn.style = 'display:flex; width:40.813px; padding:6px 0 10px 0; justify-content:center; align-items:center; flex-shrink:0;';
+      pageBtn.className =
+        "text-sm rounded-lg transition-colors bg-[#22A9DA]/40 text-white font-medium";
+      pageBtn.style =
+        "display:flex; width:40.813px; padding:6px 0 10px 0; justify-content:center; align-items:center; flex-shrink:0;";
       pagination.appendChild(pageBtn);
     } else {
       // Desktop: Show only 3 page numbers
       const start = Math.max(1, page - 1);
       const end = Math.min(totalPages, page + 1);
       for (let i = start; i <= end; i++) {
-        const pageBtn = document.createElement('button');
+        const pageBtn = document.createElement("button");
         pageBtn.textContent = i;
         pageBtn.className = `text-sm rounded-lg transition-colors ${
-          i === page ? 'bg-[#22A9DA]/40 text-white font-medium' : 'border border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#22A9DA]/40'
+          i === page
+            ? "bg-[#22A9DA]/40 text-white font-medium"
+            : "border border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#22A9DA]/40"
         }`;
-        pageBtn.style = 'display:flex; width:40.813px; padding:6px 0 10px 0; justify-content:center; align-items:center; flex-shrink:0;';
-        pageBtn.addEventListener('click', () => {
+        pageBtn.style =
+          "display:flex; width:40.813px; padding:6px 0 10px 0; justify-content:center; align-items:center; flex-shrink:0;";
+        pageBtn.addEventListener("click", () => {
           renderPosts(currentData, i);
           window.scrollTo(0, 0);
         });
@@ -238,14 +140,17 @@ export async function initBoard() {
     }
 
     // next button
-    const nextBtn = document.createElement('button');
-    nextBtn.textContent = '다음';
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "다음";
     nextBtn.className = `text-sm rounded-lg border transition-colors ${
-      page === totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#e6f7f5]'
+      page === totalPages
+        ? "border-gray-200 text-gray-300 cursor-not-allowed"
+        : "border-[#00bba7]/30 text-[#4a7a72] hover:bg-[#e6f7f5]"
     }`;
-    nextBtn.style = 'display:flex; padding:7px 17px 11px 17px; justify-content:center; align-items:center;';
+    nextBtn.style =
+      "display:flex; padding:7px 17px 11px 17px; justify-content:center; align-items:center;";
     nextBtn.disabled = page === totalPages;
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener("click", () => {
       if (currentPage < totalPages) renderPosts(currentData, currentPage + 1);
       window.scrollTo(0, 0);
     });
@@ -253,58 +158,66 @@ export async function initBoard() {
   }
 
   // Re-render pagination when screen size changes
-  window.addEventListener('resize', () => renderPagination(currentData, currentPage));
+  window.addEventListener("resize", () =>
+    renderPagination(currentData, currentPage),
+  );
 
   // Search
-  document.getElementById('search-btn')?.addEventListener('click', () => {
-    const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+  document.getElementById("search-btn")?.addEventListener("click", () => {
+    const keyword = document
+      .getElementById("search-input")
+      .value.trim()
+      .toLowerCase();
     if (!keyword) {
       renderPosts(posts);
       return;
     }
-    const filterType = document.getElementById('filter-type')?.value ?? 'title';
+    const filterType = document.getElementById("filter-type")?.value ?? "title";
     const filtered = posts.filter((post) => {
-      if (filterType === 'author') return post.nickname.toLowerCase().includes(keyword);
+      if (filterType === "author")
+        return post.nickname.toLowerCase().includes(keyword);
       return post.title.toLowerCase().includes(keyword);
     });
     renderPosts(filtered);
   });
 
-  document.getElementById('search-input')?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') document.getElementById('search-btn').click();
+  document.getElementById("search-input")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("search-btn").click();
   });
 
   // Category filter (all, free bulletin board, question board, party sharing, strategy)
-  const categoryButtons = document.querySelectorAll('.category-btn');
+  const categoryButtons = document.querySelectorAll(".category-btn");
 
   function setActiveCategoryButton(activeButton) {
     categoryButtons.forEach((button) => {
       const isActive = button === activeButton;
 
       // desktop style
-      button.classList.toggle('bg-[#e6f7f5]', isActive);
-      button.classList.toggle('text-[#00bba7]', isActive);
-      button.classList.toggle('border', !isActive);
-      button.classList.toggle('border-[#00bba7]/25', !isActive);
-      button.classList.toggle('text-[#4a7a72]', !isActive);
+      button.classList.toggle("bg-[#e6f7f5]", isActive);
+      button.classList.toggle("text-[#00bba7]", isActive);
+      button.classList.toggle("border", !isActive);
+      button.classList.toggle("border-[#00bba7]/25", !isActive);
+      button.classList.toggle("text-[#4a7a72]", !isActive);
 
       // mobile style
-      button.classList.toggle('max-[1025px]:bg-[#22A9DA]/40!', isActive);
-      button.classList.toggle('max-[1025px]:bg-[#F3F4F6]!', !isActive);
-      button.classList.toggle('max-[1025px]:border-none!', !isActive);
+      button.classList.toggle("max-[1025px]:bg-[#22A9DA]/40!", isActive);
+      button.classList.toggle("max-[1025px]:bg-[#F3F4F6]!", !isActive);
+      button.classList.toggle("max-[1025px]:border-none!", !isActive);
     });
   }
 
   categoryButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener("click", () => {
       const category = btn.dataset.category;
 
       setActiveCategoryButton(btn);
 
-      if (category === '전체') {
+      if (category === "전체") {
         renderPosts(posts);
       } else {
-        const filtered = posts.filter((post) => (categoryMap[post.category] ?? post.category) === category);
+        const filtered = posts.filter(
+          (post) => (categoryMap[post.category] ?? post.category) === category,
+        );
         renderPosts(filtered);
       }
     });
@@ -313,29 +226,29 @@ export async function initBoard() {
   renderPosts(posts);
 
   // Category drag-to-scroll
-  const categoryScroll = document.getElementById('category-scroll');
+  const categoryScroll = document.getElementById("category-scroll");
   let isDragging = false;
   let startX = 0;
   let scrollLeft = 0;
 
-  categoryScroll.addEventListener('mousedown', (e) => {
+  categoryScroll.addEventListener("mousedown", (e) => {
     isDragging = true;
     startX = e.pageX - categoryScroll.offsetLeft;
     scrollLeft = categoryScroll.scrollLeft;
-    categoryScroll.style.cursor = 'grabbing';
+    categoryScroll.style.cursor = "grabbing";
   });
 
-  categoryScroll.addEventListener('mouseleave', () => {
+  categoryScroll.addEventListener("mouseleave", () => {
     isDragging = false;
-    categoryScroll.style.cursor = '';
+    categoryScroll.style.cursor = "";
   });
 
-  categoryScroll.addEventListener('mouseup', () => {
+  categoryScroll.addEventListener("mouseup", () => {
     isDragging = false;
-    categoryScroll.style.cursor = '';
+    categoryScroll.style.cursor = "";
   });
 
-  categoryScroll.addEventListener('mousemove', (e) => {
+  categoryScroll.addEventListener("mousemove", (e) => {
     if (!isDragging) return;
     e.preventDefault();
     const x = e.pageX - categoryScroll.offsetLeft;
@@ -343,25 +256,26 @@ export async function initBoard() {
   });
 
   // Click on the post to go to the detail page
-  postlist.addEventListener('click', (e) => {
-    const postElement = e.target.closest('[data-post-id]');
+  postlist.addEventListener("click", (e) => {
+    const postElement = e.target.closest("[data-post-id]");
     if (!postElement) return;
     const postId = postElement.dataset.postId;
     if (postId) {
-      history.pushState(null, '', `/board/${postId}`);
+      history.pushState(null, "", `/board/${postId}`);
       window.loadPage();
     }
   });
 
   // Go to the writing page when you click the writing button (only when there is a local token)
-  document.getElementById('write-post-btn')?.addEventListener('click', () => {
-    const token = localStorage.getItem('token');
+  document.getElementById("write-post-btn")?.addEventListener("click", () => {
+    const token = localStorage.getItem("token");
     if (token) {
-      history.pushState(null, '', '/write-post');
+      history.pushState(null, "", "/write-post");
       window.loadPage();
     } else {
-      alert('로그인이 필요한 서비스입니다.');
-      history.pushState(null, '', '/login');
+      // alert("로그인이 필요한 서비스입니다.");
+      // 여기 모달창
+      history.pushState(null, "", "/login");
       window.loadPage();
     }
   });

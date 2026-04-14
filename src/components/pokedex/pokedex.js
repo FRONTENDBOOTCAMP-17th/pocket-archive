@@ -4,17 +4,19 @@ import {
   Pagination,
   PokemonModalContent,
 } from "./pokedexUI.js";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import {
+  fetchPokemonDetail,
+  fetchPokemonSpecies,
+  loadPoketmons,
+  poketmonReg,
+  poketmonDelete,
+} from "../../api/pokemonApi.js";
 
 let allPokemon = [];
 let filteredPokemon = [];
 let myPocketMons = [];
 let currentPage = 1;
 const ITEMS_PER_PAGE = 12;
-
-// PokeAPI 데이터 캐시
-const pokemonCache = new Map();
 
 export async function initPokedex() {
   try {
@@ -51,45 +53,6 @@ export async function initPokedex() {
   setupSearch();
   renderSidebar();
   renderGrid(1);
-}
-
-// 나중에 api에 쑤셔 박을것
-export async function loadPoketmons() {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/pocketmons`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!res.ok) {
-      throw new Error("불러오기 실패");
-    }
-    const result = await res.json();
-    return result.data.myPocketmons;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-// PokeAPI에서 포켓몬 상세 정보 가져오기 (캐싱 포함)
-export async function fetchPokemonDetail(no) {
-  if (pokemonCache.has(no)) {
-    return pokemonCache.get(no);
-  }
-
-  try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${no}`);
-    if (!res.ok) throw new Error(`API 오류: ${res.status}`);
-    const data = await res.json();
-    pokemonCache.set(no, data);
-    return data;
-  } catch (error) {
-    console.error(`포켓몬 ${no} 데이터 로드 실패:`, error);
-    return null;
-  }
 }
 
 function setupSearch() {
@@ -195,9 +158,7 @@ window.selectPokemon = async function (no) {
 
     const [data, species] = await Promise.all([
       fetchPokemonDetail(no),
-      fetch(`https://pokeapi.co/api/v2/pokemon-species/${no}`).then((r) =>
-        r.json(),
-      ),
+      fetchPokemonSpecies(no),
     ]);
 
     if (!data) throw new Error("포켓몬 정보를 불러올 수 없습니다.");
@@ -219,48 +180,6 @@ window.selectPokemon = async function (no) {
   }
 };
 
-// 등록 api
-export async function poketmonReg(poketmonId) {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/pocketmons`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        pocketmonId: Number(poketmonId),
-      }),
-    });
-    if (!res.ok) {
-      throw new Error(`등록 실패: ${res.status}`);
-    }
-    return true;
-  } catch (error) {
-    console.error("포켓몬 등록 에러:", error);
-    return false;
-  }
-}
-
-export async function poketmonDelete(poketmonId) {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/pocketmons/${poketmonId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!res.ok) {
-      throw new Error(`삭제 실패: ${res.status}`);
-    }
-    return true;
-  } catch (error) {
-    console.error("포켓몬 삭제 에러:", error);
-    return false;
-  }
-}
 window.poketmonReg = async function (event, id) {
   event.stopPropagation(); // 카드 클릭 이벤트 전파 방지
   await poketmonReg(id);

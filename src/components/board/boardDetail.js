@@ -1,7 +1,13 @@
-import { BoardDetailContent, CommentSection } from './boardDetailUI.js';
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+import { BoardDetailContent, CommentSection } from "./boardDetailUI.js";
+import {
+  postComment,
+  togglePostLike,
+  editComment,
+  deleteCommnet,
+  deletePost,
+  loadDetailPost,
+  loadDetailComment,
+} from "../../api/post.js";
 //트레이너카드에 포켓몬 ID 배열 맵으로 반환
 async function fetchSprites(ids) {
   if (!ids || ids.length === 0) return {};
@@ -37,31 +43,12 @@ export async function initPostDetail(postId) {
       console.error(error);
     }
   }
-  try {
-    const postRes = await fetch(`${BASE_URL}/posts/${postId}`, {
-      method: 'GET',
-    });
-    const commentRes = await fetch(`${BASE_URL}/posts/${postId}/comments`, {
-      method: 'GET',
-    });
-    if (!postRes.ok) {
-      throw new Error('게시물 불러오기 실패');
-    }
-    if (!commentRes.ok) {
-      throw new Error('댓글 불러오기 실패');
-    }
-
-    const postJson = await postRes.json();
-    const commentJson = await commentRes.json();
-
-    post = postJson.data;
-    console.log(post, 'post');
-    comments = Array.isArray(commentJson.data) ? commentJson.data : [];
-  } catch (error) {
-    console.error(error);
-  }
-  const contentArea = document.getElementById('postDetailContent');
-  const commentArea = document.getElementById('commentSection');
+  const postJson = await loadDetailPost(postId);
+  const commentJson = await loadDetailComment(postId);
+  post = postJson?.data ?? null;
+  comments = Array.isArray(commentJson?.data) ? commentJson.data : [];
+  const contentArea = document.getElementById("postDetailContent");
+  const commentArea = document.getElementById("commentSection");
 
   if (contentArea) {
     let spriteMap = {};
@@ -86,33 +73,14 @@ export async function initPostDetail(postId) {
 }
 
 async function setupCommentEvents(postId) {
-  const submitBtn = document.getElementById('submitComment');
-  const userToken = localStorage.getItem('token');
+  const submitBtn = document.getElementById("submitComment");
   if (submitBtn) {
     submitBtn.onclick = async () => {
       const text = document.getElementById('commentInput').value;
       if (!text.trim()) {
-        return alert('내용을 입력하세요');
+        return;
       }
-      if (userToken) {
-        try {
-          await fetch(`${BASE_URL}/posts/${postId}/comments`, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              content: text,
-            }),
-          });
-
-          document.getElementById('commentInput').value = '';
-          location.reload();
-        } catch (error) {
-          console.error(error);
-        }
-      }
+      postComment(postId, text);
     };
   }
 
@@ -149,25 +117,25 @@ async function setupLikeEvent(postId) {
 
   if (likeBtn) {
     likeBtn.onclick = async () => {
-      if (!userToken) return alert('로그인이 필요한 서비스입니다.');
+      if (!userToken) return;
 
       try {
-        const res = await fetch(`${BASE_URL}/posts/${postId}/favorite`, {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const ok = await togglePostLike(postId);
 
-        if (res.ok) {
-          const emojiSpan = likeBtn.querySelector('span:first-of-type');
-          const countSpan = likeBtn.querySelector('span:last-of-type');
-          const isCurrentlyLiked = emojiSpan?.textContent.includes('❤️');
-          const currentCount = parseInt(countSpan?.textContent.trim() || '0', 10);
+        if (ok) {
+          const emojiSpan = likeBtn.querySelector("span:first-of-type");
+          const countSpan = likeBtn.querySelector("span:last-of-type");
+          const isCurrentlyLiked = emojiSpan?.textContent.includes("❤️");
+          const currentCount = parseInt(
+            countSpan?.textContent.trim() || "0",
+            10,
+          );
 
-          if (emojiSpan) emojiSpan.textContent = isCurrentlyLiked ? '🤍' : '❤️';
-          if (countSpan) countSpan.textContent = isCurrentlyLiked ? Math.max(0, currentCount - 1) : currentCount + 1;
+          if (emojiSpan) emojiSpan.textContent = isCurrentlyLiked ? "🤍" : "❤️";
+          if (countSpan)
+            countSpan.textContent = isCurrentlyLiked
+              ? Math.max(0, currentCount - 1)
+              : currentCount + 1;
         } else {
           console.error('좋아요 실패');
         }
@@ -177,6 +145,7 @@ async function setupLikeEvent(postId) {
     };
   }
 }
+
 // 수정 모드 전환
 function toggleEditMode(commentId) {
   const contentP = document.getElementById(`comment-content-${commentId}`);
@@ -211,63 +180,20 @@ async function saveEditComment(commentId, oldContent) {
   if (!newContent.trim() || newContent === oldContent) {
     return location.reload();
   }
-
-  const token = localStorage.getItem('token');
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ content: newContent }),
-    });
-
-    if (res.ok) {
-      location.reload();
-    } else {
-      console.log('수정에 실패했습니다.');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-async function handleDeleteComment(commentId) {
-  const token = localStorage.getItem('token');
+  editComment(commentId);
+};
+//댓글삭제
+window.handleDeleteComment = async (commentId) => {
+  const token = localStorage.getItem("token");
   if (!token) {
     return;
   }
+  deleteCommnet(commentId);
+};
 
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (res.ok) {
-      location.reload();
-    }
-  } catch (error) {
-    console.error('댓글 삭제 에러:', error);
-  }
-}
-
-async function handleDeletePost(postId) {
-  const token = localStorage.getItem('token');
-  try {
-    const res = await fetch(`${BASE_URL}/posts/${postId}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) {
-      location.href = '/board';
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-function handleEditPost(postId) {
+window.handleDeletePost = async (postId) => {
+  deletePost(postId);
+};
+window.handleEditPost = (postId) => {
   location.href = `/write-post?postId=${postId}`;
 }
