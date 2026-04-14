@@ -121,7 +121,7 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
             </h1>
             ${
               isMyPost
-                ? `<div class="flex items-center gap-3 ml-4 flex-shrink-0">
+                ? `<div class="flex items-center gap-3 ml-4">
                     <button onclick="handleEditPost(${post.postId})" class="text-sm text-gray-400 hover:text-[#05B29F] font-bold transition-colors">수정</button>
                     <button onclick="handleDeletePost(${post.postId})" class="text-sm text-gray-400 hover:text-red-500 font-bold transition-colors">삭제</button>
                   </div>`
