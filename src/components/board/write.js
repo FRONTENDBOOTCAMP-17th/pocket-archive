@@ -1,3 +1,12 @@
+import {
+  writePost,
+  publishPost,
+  loadEditPost,
+  loadPreset as fetchPresets,
+  editPost,
+  uploadImg,
+} from "../../api/post.js";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // category value → API category key
@@ -17,45 +26,24 @@ let uploadImgUrl = "";
 const token = localStorage.getItem("token");
 let loadPreset = [];
 async function submitPost({ title, category, content, preset }) {
-  const token = localStorage.getItem("token");
   // number 선언안해서 문법 맞는데 왜 안되지 계속 이 난리30분침
   const selectedPreset = loadPreset.find(
     (item) => item.partyId === Number(preset),
   );
   console.log(selectedPreset, preset, loadPreset);
-  const response = await fetch(`${BASE_URL}/posts`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      title,
-      category,
-      content,
-      preset: selectedPreset
-        ? {
-            deckname: selectedPreset.deckname,
-            pocketmons: selectedPreset.pocketmons,
-            gender: selectedPreset.gender,
-          }
-        : null,
-      imgUrl: uploadImgUrl,
-    }),
-  });
-  console.log(response.data);
-  if (!response.ok) throw new Error("게시글 작성 실패");
-  const data = await response.json();
+
+  const data = await writePost(
+    title,
+    category,
+    content,
+    selectedPreset,
+    uploadImgUrl,
+  );
   const postId = data.data?.postId;
 
   if (postId) {
-    const publishRes = await fetch(`${BASE_URL}/posts/${postId}/publish`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!publishRes.ok) throw new Error("게시글 발행 실패");
+    publishPost(postId);
   }
-
   return data;
 }
 
@@ -66,19 +54,7 @@ export async function initWrite() {
   const postId = params.get("postId");
   let postData = null;
   if (postId) {
-    try {
-      const postRes = await fetch(`${BASE_URL}/posts/${postId}`, {
-        method: "GET",
-      });
-      if (!postRes.ok) {
-        throw new Error("게시물 불러오기 실패");
-      }
-      const postJson = await postRes.json();
-
-      postData = postJson.data;
-    } catch (error) {
-      console.error(error);
-    }
+    postData = await loadEditPost(postId);
   }
   container.innerHTML = `
     <div class="flex w-full flex-col items-start shrink-0 rounded-2xl bg-white shadow" style="padding: 32px; gap: 32px;">
@@ -177,7 +153,6 @@ export async function initWrite() {
   `;
 
   // 로그인 체크 (비로그인 시 board로 이동)
-  const token = localStorage.getItem("token");
   if (!token) {
     history.replaceState(null, "", "/board");
     window.loadPage();
@@ -190,24 +165,7 @@ export async function initWrite() {
   });
 
   // 파티 프리셋 목록 로드
-  try {
-    const res = await fetch(`${BASE_URL}/party`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    loadPreset = [...data.data];
-
-    const presets = Array.isArray(data) ? data : (data.data ?? []);
-    const select = document.getElementById("write-party-preset");
-    presets.forEach((preset) => {
-      const option = document.createElement("option");
-      option.value = preset.partyId;
-      option.textContent = preset.deckname;
-      select.appendChild(option);
-    });
-  } catch (e) {
-    console.warn("파티 프리셋 로드 실패:", e);
-  }
+  loadPreset = await fetchPresets();
   // 작성글 수정 값 넘겨주기
   if (postData && postId) {
     document.getElementById("write-title").value = postData.title || "";
@@ -238,56 +196,22 @@ export async function initWrite() {
       const content = document.getElementById("write-content")?.value.trim();
       const selectedCategory = document.getElementById("write-category")?.value;
       const preset = document.getElementById("write-party-preset").value;
-      let editPreset = null;
+      // 여기 모달창
       if (!title) return alert("제목을 입력해주세요.");
       if (!selectedCategory) return alert("카테고리를 선택해주세요.");
       if (!content) return alert("내용을 입력해주세요.");
-      try {
-        const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
-        if (preset === "default") {
-          console.log("default");
-          editPreset = {
-            deckname: postData.preset.deckname,
-            pocketmons: postData.preset.pocketmons,
-            gender: postData.preset.gender,
-          };
-        } else if (preset !== "") {
-          const selectedPreset = loadPreset.find(
-            (item) => item.partyId === Number(preset),
-          );
-          editPreset = {
-            deckname: selectedPreset.deckname,
-            pocketmons: selectedPreset.pocketmons,
-            gender: selectedPreset.gender,
-          };
-        } else {
-          editPreset = null;
-        }
-
-        const editRes = await fetch(`${BASE_URL}/posts/${postId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            title: title,
-            category: apiCategory,
-            content: content,
-            preset: editPreset || null,
-            imgUrl: uploadImgUrl,
-          }),
-        });
-        if (!editRes.ok) {
-          throw new Error(errorData.message || "수정 실패");
-        }
-        history.pushState(null, "", `/board/${postId}`);
-        window.loadPage();
-      } catch (error) {
-        console.error(error);
-      }
+      const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
+      await editPost(postId, {
+        title,
+        content,
+        category: apiCategory,
+        preset,
+        uploadImgUrl,
+        postData,
+        presets: loadPreset,
+      });
     });
-  // 폼 제출
+  // 폼 제출 (글작성 , 수정)
   document
     .getElementById("write-submit-btn")
     ?.addEventListener("click", async () => {
@@ -295,7 +219,7 @@ export async function initWrite() {
       const content = document.getElementById("write-content")?.value.trim();
       const selectedCategory = document.getElementById("write-category")?.value;
       const preset = document.getElementById("write-party-preset").value;
-
+      // 여기 모달창
       if (!title) return alert("제목을 입력해주세요.");
       if (!selectedCategory) return alert("카테고리를 선택해주세요.");
       if (!content) return alert("내용을 입력해주세요.");
@@ -307,6 +231,7 @@ export async function initWrite() {
         window.loadPage();
       } catch (error) {
         console.error(error);
+        // 여기 모달창
         alert("게시글 작성 중 오류가 발생했습니다.");
       }
     });
@@ -319,18 +244,8 @@ export async function initWrite() {
       }
       const formData = new FormData();
       formData.append("file", file);
-      const uploadRes = await fetch(`${BASE_URL}/images`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      if (!uploadRes.ok) {
-        throw new Error("이미지 업로드 실패");
-      }
-      const {
-        data: { imageUrl },
-      } = await uploadRes.json();
-      uploadImgUrl = imageUrl;
+
+      uploadImgUrl = await uploadImg(formData);
       const uploadContainer = document.getElementById("imgUrl");
       const img = document.createElement("img");
       img.src = uploadImgUrl;
@@ -339,4 +254,11 @@ export async function initWrite() {
       //계속 올려도 하나만 업로드 되게
       uploadContainer.replaceChildren(img);
     });
+}
+export async function loadPosts() {
+  const response = await fetch(`${BASE_URL}/posts`, {
+    method: "GET",
+  });
+  if (!response.ok) throw new Error("Failed to fetch posts");
+  return response.json();
 }

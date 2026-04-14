@@ -5,9 +5,9 @@ import {
   editComment,
   deleteCommnet,
   deletePost,
+  loadDetailPost,
+  loadDetailComment,
 } from "../../api/post.js";
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 //트레이너카드에 포켓몬 ID 배열 맵으로 반환
 async function fetchSprites(ids) {
   if (!ids || ids.length === 0) return {};
@@ -48,29 +48,10 @@ export async function initPostDetail(postId) {
       console.error(error);
     }
   }
-  try {
-    const postRes = await fetch(`${BASE_URL}/posts/${postId}`, {
-      method: "GET",
-    });
-    const commentRes = await fetch(`${BASE_URL}/posts/${postId}/comments`, {
-      method: "GET",
-    });
-    if (!postRes.ok) {
-      throw new Error("게시물 불러오기 실패");
-    }
-    if (!commentRes.ok) {
-      throw new Error("댓글 불러오기 실패");
-    }
-
-    const postJson = await postRes.json();
-    const commentJson = await commentRes.json();
-
-    post = postJson.data;
-    console.log(post, "post");
-    comments = Array.isArray(commentJson.data) ? commentJson.data : [];
-  } catch (error) {
-    console.error(error);
-  }
+  const postJson = await loadDetailPost(postId);
+  const commentJson = await loadDetailComment(postId);
+  post = postJson?.data ?? null;
+  comments = Array.isArray(commentJson?.data) ? commentJson.data : [];
   const contentArea = document.getElementById("postDetailContent");
   const commentArea = document.getElementById("commentSection");
 
