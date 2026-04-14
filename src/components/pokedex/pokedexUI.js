@@ -561,27 +561,5 @@ export const PokemonModalContent = (data, koName, species) => {
 </div>
 
   </div>
-
-  <script>
-    (function() {
-      let idx = 0;
-      const TOTAL = 6;
-
-      window.pmSlide = function(dir) {
-        idx = Math.max(0, Math.min(idx + dir, TOTAL - 1));
-
-        const inner = document.getElementById('pmSliderInner');
-        const prev  = document.getElementById('pmPrev');
-        const next  = document.getElementById('pmNext');
-        if (!inner) return;
-
-        const slideW = inner.querySelector('.pm-slide-item')?.offsetWidth || 0;
-        inner.style.transform = 'translateX(-' + (idx * (slideW + 8)) + 'px)';
-
-        if (prev) prev.disabled = idx === 0;
-        if (next) next.disabled = idx === TOTAL - 1;
-      };
-    })();
-  <\/script>
 `;
 };

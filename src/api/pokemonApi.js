@@ -1,7 +1,7 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const pokemonCache = new Map();
-
+const token = localStorage.getItem("token");
 //
 export async function fetchPokemonDetail(no) {
   if (pokemonCache.has(no)) {
@@ -28,7 +28,6 @@ export async function fetchPokemonSpecies(no) {
 }
 // 자신이 포획한 포켓몬 불러오는 함수
 export async function loadPoketmons() {
-  const token = localStorage.getItem("token");
   try {
     const res = await fetch(`${BASE_URL}/pocketmons`, {
       method: "GET",
@@ -48,7 +47,6 @@ export async function loadPoketmons() {
 }
 
 export async function poketmonReg(poketmonId) {
-  const token = localStorage.getItem("token");
   try {
     const res = await fetch(`${BASE_URL}/pocketmons`, {
       method: "POST",
@@ -71,7 +69,6 @@ export async function poketmonReg(poketmonId) {
 }
 
 export async function poketmonDelete(poketmonId) {
-  const token = localStorage.getItem("token");
   try {
     const res = await fetch(`${BASE_URL}/pocketmons/${poketmonId}`, {
       method: "DELETE",

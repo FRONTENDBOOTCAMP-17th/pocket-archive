@@ -1,5 +1,11 @@
 import { BoardDetailContent, CommentSection } from "./boardDetailUI.js";
-
+import {
+  postComment,
+  togglePostLike,
+  editComment,
+  deleteCommnet,
+  deletePost,
+} from "../../api/post.js";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 //트레이너카드에 포켓몬 ID 배열 맵으로 반환
@@ -90,34 +96,13 @@ export async function initPostDetail(postId) {
 
 async function setupCommentEvents(postId) {
   const submitBtn = document.getElementById("submitComment");
-  const userToken = localStorage.getItem("token");
   if (submitBtn) {
     submitBtn.onclick = async () => {
       const text = document.getElementById("commentInput").value;
       if (!text.trim()) {
-        return alert("내용을 입력하세요");
-      }
-      if (userToken) {
-        try {
-          const res = await fetch(`${BASE_URL}/posts/${postId}/comments`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              content: text,
-            }),
-          });
-
-          document.getElementById("commentInput").value = "";
-          location.reload();
-        } catch (error) {
-          console.error(error);
-        }
-      } else {
         return;
       }
+      postComment(postId, text);
     };
   }
 }
@@ -128,18 +113,12 @@ async function setupLikeEvent(postId) {
 
   if (likeBtn) {
     likeBtn.onclick = async () => {
-      if (!userToken) return alert("로그인이 필요한 서비스입니다.");
+      if (!userToken) return;
 
       try {
-        const res = await fetch(`${BASE_URL}/posts/${postId}/favorite`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const ok = await togglePostLike(postId);
 
-        if (res.ok) {
+        if (ok) {
           const emojiSpan = likeBtn.querySelector("span:first-of-type");
           const countSpan = likeBtn.querySelector("span:last-of-type");
           const isCurrentlyLiked = emojiSpan?.textContent.includes("❤️");
@@ -162,6 +141,7 @@ async function setupLikeEvent(postId) {
     };
   }
 }
+
 // 수정 모드 전환
 window.toggleEditMode = (commentId) => {
   const contentP = document.getElementById(`comment-content-${commentId}`);
@@ -195,62 +175,19 @@ window.saveEditComment = async (commentId, oldContent) => {
   if (!newContent.trim() || newContent === oldContent) {
     return location.reload();
   }
-
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content: newContent }),
-    });
-
-    if (res.ok) {
-      location.reload();
-    } else {
-      console.log("수정에 실패했습니다.");
-    }
-  } catch (error) {
-    console.error(error);
-  }
+  editComment(commentId);
 };
+//댓글삭제
 window.handleDeleteComment = async (commentId) => {
   const token = localStorage.getItem("token");
   if (!token) {
     return;
   }
-
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (res.ok) {
-      location.reload();
-    }
-  } catch (error) {
-    console.error("댓글 삭제 에러:", error);
-  }
+  deleteCommnet(commentId);
 };
 
 window.handleDeletePost = async (postId) => {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/posts/${postId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) {
-      location.href = "/board";
-    }
-  } catch (error) {
-    console.error(error);
-  }
+  deletePost(postId);
 };
 window.handleEditPost = (postId) => {
   location.href = `/write-post?postId=${postId}`;
