@@ -64,12 +64,18 @@ export async function initPostDetail(postId) {
   const commentArea = document.getElementById('commentSection');
 
   if (contentArea) {
-    if (post.preset) {
-      const spriteMap = await fetchSprites(post.preset.pocketmons);
-      contentArea.innerHTML = BoardDetailContent(post, currentUserId, spriteMap);
-    } else {
-      contentArea.innerHTML = BoardDetailContent(post, currentUserId);
+    let spriteMap = {};
+
+    // 게시글에 실제 프리셋이 있을 때만 포켓몬 스프라이트 로드
+    if (post.preset && post.preset.pocketmons?.length > 0) {
+      spriteMap = await fetchSprites(post.preset.pocketmons);
     }
+
+    contentArea.innerHTML = BoardDetailContent(
+      post,
+      currentUserId,
+      spriteMap
+    );
   }
 
   if (commentArea) {

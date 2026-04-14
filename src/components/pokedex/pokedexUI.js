@@ -1,23 +1,23 @@
 //이건 저희가 피그마에서 TYPE_COLOR를 정해놓은것
 export const TYPE_COLORS = {
-  grass: "bg-[#7AC74C]",
-  poison: "bg-[#A33EA1]",
-  fire: "bg-[#EE8130]",
-  water: "bg-[#6390F0]",
-  bug: "bg-[#A6B91A]",
-  normal: "bg-[#A8A77A]",
-  electric: "bg-[#F8D030]",
-  fairy: "bg-[#D685AD]",
-  ground: "bg-[#E2BF65]",
-  psychic: "bg-[#F95587]",
-  rock: "bg-[#B6A136]",
-  ghost: "bg-[#735797]",
-  ice: "bg-[#96D9D6]",
-  dragon: "bg-[#6F35FC]",
-  flying: "bg-[#A98FF3]",
-  fighting: "bg-[#C22E28]",
-  steel: "bg-[#B7B7CE]",
-  dark: "bg-[#705746]",
+  grass: 'bg-[#7AC74C]',
+  poison: 'bg-[#A33EA1]',
+  fire: 'bg-[#EE8130]',
+  water: 'bg-[#6390F0]',
+  bug: 'bg-[#A6B91A]',
+  normal: 'bg-[#A8A77A]',
+  electric: 'bg-[#F8D030]',
+  fairy: 'bg-[#D685AD]',
+  ground: 'bg-[#E2BF65]',
+  psychic: 'bg-[#F95587]',
+  rock: 'bg-[#B6A136]',
+  ghost: 'bg-[#735797]',
+  ice: 'bg-[#96D9D6]',
+  dragon: 'bg-[#6F35FC]',
+  flying: 'bg-[#A98FF3]',
+  fighting: 'bg-[#C22E28]',
+  steel: 'bg-[#B7B7CE]',
+  dark: 'bg-[#705746]',
 };
 
 //JSON에 있는 한글 이름 포켓몬을 꺼내와서 목록을 보여주는? 컴포넌트
@@ -30,42 +30,42 @@ export const SidebarItem = (p) => `
 `;
 
 const K_TYPE = {
-  NORMAL: "노말",
-  FIRE: "불꽃",
-  WATER: "물",
-  GRASS: "풀",
-  ELECTRIC: "전기",
-  FIGHTING: "격투",
-  FLYING: "비행",
-  POISON: "독",
-  GROUND: "땅",
-  ROCK: "바위",
-  BUG: "벌레",
-  GHOST: "고스트",
-  STEEL: "강철",
-  PSYCHIC: "에스퍼",
-  ICE: "얼음",
-  DRAGON: "드래곤",
-  DARK: "악",
-  FAIRY: "페어리",
+  NORMAL: '노말',
+  FIRE: '불꽃',
+  WATER: '물',
+  GRASS: '풀',
+  ELECTRIC: '전기',
+  FIGHTING: '격투',
+  FLYING: '비행',
+  POISON: '독',
+  GROUND: '땅',
+  ROCK: '바위',
+  BUG: '벌레',
+  GHOST: '고스트',
+  STEEL: '강철',
+  PSYCHIC: '에스퍼',
+  ICE: '얼음',
+  DRAGON: '드래곤',
+  DARK: '악',
+  FAIRY: '페어리',
 };
 
 // 포켓몬 카드 재활용되는 곳은 도감
 export const PokemonCard = (data, koName, myPocketMons = []) => {
   if (!data || !data.types) {
-    console.warn("PokemonCard: 데이터 없음", data);
-    return "";
+    console.warn('PokemonCard: 데이터 없음', data);
+    return '';
   }
   const types = data.types.map((t) => t.type.name);
 
   //ai 안에 보면 고화질 이미지가 이거임 이거 앞모습 가져오는거임
-  const img = data.sprites.other["official-artwork"].front_default;
+  const img = data.sprites.other['official-artwork'].front_default;
   // const apiUrl = process.env.BASE_URL;
-  const isLoggedIn = localStorage.getItem("token");
+  const isLoggedIn = localStorage.getItem('token');
 
   return `
   <div 
-     class="group bg-white rounded-2xl shadow-sm hover:shadow-xl max-w-[284px] hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
+     class="group bg-white rounded-2xl shadow-sm hover:shadow-xl max-w-71 hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
       <div onclick="selectPokemon(${data.id})"
       class="relative h-44 flex items-center justify-center bg-[#F7F9F8] group-hover:bg-[#E8F5E9] transition-colors shrink-0">
           <img src="${img}" class="w-28 h-28 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110">
@@ -73,7 +73,7 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
       <div class="p-6 flex flex-col gap-4" style="padding: 10px;">
           <div class="flex flex-col gap-1.5">
               <span class="text-[11px] font-black text-gray-300 tracking-wider leading-none" style="padding: 5px">
-                  No.${String(data.id).padStart(3, "0")}
+                  No.${String(data.id).padStart(3, '0')}
               </span>
               <div class="flex justify-between items-center" style="padding: 5px">
                   <h3 class="text-xl font-black text-gray-800 leading-tight">${koName}</h3>
@@ -82,7 +82,7 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
                       ? myPocketMons.includes(data.id)
                         ? `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonDelete(event,${data.id})">${pokeBallOn}</div>`
                         : `<div class="w-7 h-7 flex items-center justify-center cursor-pointer transition-transform hover:scale-110" onclick="event.stopPropagation(); event.preventDefault(); poketmonReg(event,${data.id})">${pokeBallOff}</div>`
-                      : ""
+                      : ''
                   }
               </div>
           </div>
@@ -90,12 +90,12 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
               ${types
                 .map(
                   (t) => `
-                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white font-bold text-[10px] uppercase tracking-tight ${TYPE_COLORS[t] || "bg-gray-400"} shadow-sm min-w-[60px]">
+                <span class="flex items-center justify-center px-3 py-1 h-6 rounded-full text-white font-bold text-sm uppercase tracking-tight ${TYPE_COLORS[t] || 'bg-gray-400'} shadow-sm min-w-25">
                   ${K_TYPE[t.toUpperCase()] || t}
                 </span>
               `,
                 )
-                .join("")}
+                .join('')}
           </div>
       </div>
     </div>
@@ -105,13 +105,9 @@ export const PokemonCard = (data, koName, myPocketMons = []) => {
 // 게시판 , 도감 등등에 쓰일 pagenation 함수
 export const Pagination = (currentPage, total) => {
   //얕복 하기
-  const range = [
-    ...new Set([1, total, currentPage - 1, currentPage, currentPage + 1]),
-  ]
-    .filter((p) => p > 0 && p <= total)
-    .sort((a, b) => a - b);
+  const range = [...new Set([1, total, currentPage - 1, currentPage, currentPage + 1])].filter((p) => p > 0 && p <= total).sort((a, b) => a - b);
 
-  let html = "";
+  let html = '';
   // 너무 길면 ... 처리
   range.forEach((p, i) => {
     if (i > 0 && p - range[i - 1] > 1) {
@@ -120,8 +116,8 @@ export const Pagination = (currentPage, total) => {
 
     const isCurrent = p === currentPage;
     const btnClass = isCurrent
-      ? "bg-[#22A9DA] bg-opacity-40 text-white border-[#22A9DA]"
-      : "bg-transparent text-gray-400 border-gray-200 hover:border-[#22A9DA]";
+      ? 'bg-[#22A9DA] bg-opacity-40 text-white border-[#22A9DA]'
+      : 'bg-transparent text-gray-400 border-gray-200 hover:border-[#22A9DA]';
 
     html += `
       <button data-page="${p}" class="page-btn w-10 h-10 rounded-xl font-bold border transition-all ${btnClass}">
@@ -146,29 +142,29 @@ window.toggleSidebar = function () {
   // PC 버전(1024px 이상)일 때는 클릭 무시
   if (window.innerWidth >= 1024) return;
 
-  const content = document.getElementById("sidebarContent");
-  const arrow = document.getElementById("sidebarArrow");
+  const content = document.getElementById('sidebarContent');
+  const arrow = document.getElementById('sidebarArrow');
 
   if (!content) return;
 
-  const isOpening = content.classList.contains("hidden");
+  const isOpening = content.classList.contains('hidden');
 
   if (isOpening) {
-    content.classList.remove("hidden");
-    if (arrow) arrow.style.transform = "rotate(180deg)";
+    content.classList.remove('hidden');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
   } else {
-    content.classList.add("hidden");
-    if (arrow) arrow.style.transform = "rotate(0deg)";
+    content.classList.add('hidden');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
   }
 };
 
-window.addEventListener("resize", () => {
-  const content = document.getElementById("sidebarContent");
-  const arrow = document.getElementById("sidebarArrow");
+window.addEventListener('resize', () => {
+  const content = document.getElementById('sidebarContent');
+  const arrow = document.getElementById('sidebarArrow');
 
   if (window.innerWidth >= 1024) {
-    if (content) content.classList.remove("hidden");
-    if (arrow) arrow.style.transform = "rotate(0deg)";
+    if (content) content.classList.remove('hidden');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
   }
 });
 // 북마크(도감에서 좋아요? 누르는 투명 포켓몬볼) SVG 아이콘 로그인이 안되어있으면 안보여줄거임
@@ -208,38 +204,32 @@ export const pokeBallOn = `
 //포켓몬 상세 모달
 export const PokemonModalContent = (data, koName, species) => {
   const types = data.types.map((t) => t.type.name);
-  const img = data.sprites.other["official-artwork"].front_default;
-  const isLoggedIn = localStorage.getItem("token");
+  const img = data.sprites.other['official-artwork'].front_default;
+  const isLoggedIn = localStorage.getItem('token');
 
   // 설명 (한국어 우선, 없으면 영어라도 넣)
   const flavorEntry =
-    species.flavor_text_entries.find((e) => e.language.name === "ko") ||
-    species.flavor_text_entries.find((e) => e.language.name === "en");
-  const flavor = flavorEntry
-    ? flavorEntry.flavor_text.replace(/\f|\n/g, " ")
-    : "";
+    species.flavor_text_entries.find((e) => e.language.name === 'ko') || species.flavor_text_entries.find((e) => e.language.name === 'en');
+  const flavor = flavorEntry ? flavorEntry.flavor_text.replace(/\f|\n/g, ' ') : '';
 
   // 분류
-  const genus =
-    species.genera?.find((g) => g.language.name === "ko")?.genus ||
-    species.genera?.find((g) => g.language.name === "en")?.genus ||
-    "";
+  const genus = species.genera?.find((g) => g.language.name === 'ko')?.genus || species.genera?.find((g) => g.language.name === 'en')?.genus || '';
 
   // 스탯
   const statMap = {
-    hp: "HP",
-    attack: "공격",
-    defense: "방어",
-    speed: "스피드",
+    hp: 'HP',
+    attack: '공격',
+    defense: '방어',
+    speed: '스피드',
   };
   const statColors = {
-    hp: "#FF6B6B",
-    attack: "#FF8C42",
-    defense: "#FFD166",
-    speed: "#06D6A0",
+    hp: '#FF6B6B',
+    attack: '#FF8C42',
+    defense: '#FFD166',
+    speed: '#06D6A0',
   };
   const stats = data.stats
-    .filter((s) => ["hp", "attack", "defense", "speed"].includes(s.stat.name))
+    .filter((s) => ['hp', 'attack', 'defense', 'speed'].includes(s.stat.name))
     .map((s) => ({
       name: statMap[s.stat.name],
       value: s.base_stat,
@@ -248,18 +238,18 @@ export const PokemonModalContent = (data, koName, species) => {
 
   // 하단 이미지 슬롯
   const sprites = [
-    { label: "Front", src: data.sprites.front_default },
-    { label: "Back", src: data.sprites.back_default },
-    { label: "Shiny", src: data.sprites.front_shiny },
-    { label: "Shiny Back", src: data.sprites.back_shiny },
-    { label: "Home", src: data.sprites.other?.home?.front_default },
-    { label: "Dream", src: data.sprites.other?.["dream_world"]?.front_default },
+    { label: 'Front', src: data.sprites.front_default },
+    { label: 'Back', src: data.sprites.back_default },
+    { label: 'Shiny', src: data.sprites.front_shiny },
+    { label: 'Shiny Back', src: data.sprites.back_shiny },
+    { label: 'Home', src: data.sprites.other?.home?.front_default },
+    { label: 'Dream', src: data.sprites.other?.['dream_world']?.front_default },
   ];
 
   // 스타일 head에 한 번만 쳐넣기.......
-  if (!document.getElementById("pm-modal-styles")) {
-    const style = document.createElement("style");
-    style.id = "pm-modal-styles";
+  if (!document.getElementById('pm-modal-styles')) {
+    const style = document.createElement('style');
+    style.id = 'pm-modal-styles';
     style.textContent = `
       /* 데스크탑 (790px 이상): 기존 grid 유지 */
       @media (min-width: 790px) {
@@ -363,21 +353,21 @@ export const PokemonModalContent = (data, koName, species) => {
   const PM_TOTAL = 6;
 
   setTimeout(() => {
-    const inner = document.getElementById("pmSliderInner");
-    const prev = document.getElementById("pmPrev");
-    const next = document.getElementById("pmNext");
+    const inner = document.getElementById('pmSliderInner');
+    const prev = document.getElementById('pmPrev');
+    const next = document.getElementById('pmNext');
     if (!inner || !prev || !next) return;
 
     function pmMove(dir) {
       pmIdx = Math.max(0, Math.min(pmIdx + dir, PM_TOTAL - 1));
-      const slideW = inner.querySelector(".pm-slide-item")?.offsetWidth || 0;
-      inner.style.transform = "translateX(-" + pmIdx * (slideW + 8) + "px)";
+      const slideW = inner.querySelector('.pm-slide-item')?.offsetWidth || 0;
+      inner.style.transform = 'translateX(-' + pmIdx * (slideW + 8) + 'px)';
       prev.disabled = pmIdx === 0;
       next.disabled = pmIdx === PM_TOTAL - 1;
     }
 
-    prev.addEventListener("click", () => pmMove(-1));
-    next.addEventListener("click", () => pmMove(1));
+    prev.addEventListener('click', () => pmMove(-1));
+    next.addEventListener('click', () => pmMove(1));
   }, 0);
 
   return `
@@ -421,7 +411,7 @@ export const PokemonModalContent = (data, koName, species) => {
         text-align: center;
         box-sizing: border-box;
       ">
-        <span style="font-size: 13px; color: #aaa; font-weight: 500;">No. ${String(data.id).padStart(3, "0")}</span>
+        <span style="font-size: 13px; color: #aaa; font-weight: 500;">No. ${String(data.id).padStart(3, '0')}</span>
 
         <div style="
           width: 120px; height: 120px;
@@ -440,13 +430,13 @@ export const PokemonModalContent = (data, koName, species) => {
           ${types
             .map(
               (t) => `
-            <span class="${TYPE_COLORS[t] || "bg-gray-400"}"
+            <span class="${TYPE_COLORS[t] || 'bg-gray-400'}"
               style="padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase;">
               ${K_TYPE[t.toUpperCase()] || t}
             </span>
           `,
             )
-            .join("")}
+            .join('')}
         </div>
 
         <div style="
@@ -487,7 +477,7 @@ export const PokemonModalContent = (data, koName, species) => {
             </div>
           `,
             )
-            .join("")}
+            .join('')}
         </div>
 
         <hr style="border: none; border-top: 1px solid #eee; margin: 0;"/>
@@ -532,7 +522,7 @@ export const PokemonModalContent = (data, koName, species) => {
         </div>
       `,
         )
-        .join("")}
+        .join('')}
     </div>
 
     <!-- 하단 모바일 전용 화살표 슬라이더 -->
@@ -554,34 +544,12 @@ export const PokemonModalContent = (data, koName, species) => {
         </div>
       `,
         )
-        .join("")}
+        .join('')}
     </div>
   </div>
   <button class="pm-arrow-btn" id="pmNext">&#8250;</button>
 </div>
 
   </div>
-
-  <script>
-    (function() {
-      let idx = 0;
-      const TOTAL = 6;
-
-      window.pmSlide = function(dir) {
-        idx = Math.max(0, Math.min(idx + dir, TOTAL - 1));
-
-        const inner = document.getElementById('pmSliderInner');
-        const prev  = document.getElementById('pmPrev');
-        const next  = document.getElementById('pmNext');
-        if (!inner) return;
-
-        const slideW = inner.querySelector('.pm-slide-item')?.offsetWidth || 0;
-        inner.style.transform = 'translateX(-' + (idx * (slideW + 8)) + 'px)';
-
-        if (prev) prev.disabled = idx === 0;
-        if (next) next.disabled = idx === TOTAL - 1;
-      };
-    })();
-  <\/script>
 `;
 };

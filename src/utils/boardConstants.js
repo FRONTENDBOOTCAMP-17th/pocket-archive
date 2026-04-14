@@ -6,6 +6,13 @@ export const categoryMap = {
   party: '파티 공유',
 };
 
+export const reverseCategoryMap = {
+  자유게시판: 'free',
+  질문게시판: 'guide',
+  공략: 'battle',
+  파티공유: 'party',
+};
+
 // Tailwind color class mapping by category
 export const categoryColors = {
   자유게시판: 'text-[#00bba7] bg-[#e6f7f5]',

@@ -110,16 +110,14 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 // API 연결 오류 시 임시데이터로 변환
 const getPosts = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/posts`, {
-      method: 'GET',
-    });
+    const response = await fetch(`${BASE_URL}/posts`, { method: 'GET' });
     if (!response.ok) throw new Error('Failed to fetch posts');
     const data = await response.json();
-    const posts = data.data?.content ?? data.data ?? dummyData;
-    return Array.isArray(posts) ? posts : dummyData;
+    const posts = data.data?.content ?? data.data ?? [];
+    return Array.isArray(posts) ? posts : [];
   } catch (error) {
     console.error('Error fetching posts:', error);
-    return dummyData;
+    return [];
   }
 };
 
@@ -136,6 +134,15 @@ export async function initBoard() {
 
   // Render posts
   function renderPosts(data, page = 1) {
+    if (data.length === 0) {
+      postlist.innerHTML = `
+      <p style="text-align:center; padding:40px; color:#4a7a72;">
+        게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
+      </p>
+    `;
+      pagination.innerHTML = '';
+      return;
+    }
     const sorted = [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     currentData = sorted;
     currentPage = page;
