@@ -1,5 +1,6 @@
 import { TrainerCard } from "./trainerCard.js";
 import { PokemonCard } from "../pokedex/pokedexUI";
+import { escapeHtml } from '../../utils/escapeHtml.js';
 
 // 프리셋 행 색상 팔레트
 export const PRESET_COLORS = [
@@ -7,12 +8,6 @@ export const PRESET_COLORS = [
   { bg: "background-color:#eff6ff; border-color:#bfdbfe;", text: "color:#2563eb;" },
   { bg: "background-color:#f0fdfa; border-color:#99f6e4;", text: "color:#0d9488;" },
 ];
-
-export function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
 
 // ─── 트레이너 카드 ──────────────────────────────────────────
 export function renderTrainerCardUI(root, gender, party) {

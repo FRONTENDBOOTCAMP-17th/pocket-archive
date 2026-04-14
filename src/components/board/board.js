@@ -1,7 +1,5 @@
-// dummy data
-import { escapeHtml } from "../../utils/escapeHtml.js";
-import { loadPosts } from "./write.js";
 import { escapeHtml } from '../../utils/escapeHtml.js';
+import { loadPosts } from "./write.js";
 import { categoryMap, categoryColors, formatDate } from '../../utils/boardConstants.js';
 
 // API 연결 오류 시 임시데이터로 변환
@@ -15,10 +13,6 @@ const getPosts = async () => {
     return dummyData;
   }
 };
-
-function formatDate(dateStr) {
-  return dateStr.split("T")[0].replace(/-/g, ".");
-}
 
 const PAGE_SIZE = 8;
 
