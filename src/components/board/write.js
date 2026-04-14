@@ -239,21 +239,6 @@ export async function initWrite() {
       //계속 올려도 하나만 업로드 되게
       uploadContainer.replaceChildren(img);
     });
-    if (!uploadRes.ok) {
-      throw new Error('이미지 업로드 실패');
-    }
-    const {
-      data: { imageUrl },
-    } = await uploadRes.json();
-    uploadImgUrl = imageUrl;
-    const uploadContainer = document.getElementById('imgUrl');
-    const img = document.createElement('img');
-    img.src = uploadImgUrl;
-    img.alt = '업로드 이미지';
-    img.className = 'w-full h-48 object-contain rounded-lg';
-    //계속 올려도 하나만 업로드 되게
-    uploadContainer.replaceChildren(img);
-  });
 }
 export async function loadPosts() {
   const response = await fetch(`${BASE_URL}/posts`, {
