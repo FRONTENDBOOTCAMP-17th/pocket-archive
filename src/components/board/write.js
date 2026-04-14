@@ -6,8 +6,7 @@ import {
   editPost,
   uploadImg,
 } from "../../api/post.js";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { showModal } from "../modal.js";
 
 import { categoryMap, reverseCategoryMap } from '../../utils/boardConstants';
 
@@ -139,6 +138,8 @@ export async function initWrite() {
   `;
 
   // 로그인 체크 (비로그인 시 board로 이동)
+  const token = localStorage.getItem("token");
+  
   if (!token) {
     history.replaceState(null, '', '/board');
     window.loadPage();
@@ -181,10 +182,12 @@ export async function initWrite() {
       const content = document.getElementById("write-content")?.value.trim();
       const selectedCategory = document.getElementById("write-category")?.value;
       const preset = document.getElementById("write-party-preset").value;
-      // 여기 모달창
-      if (!title) return alert("제목을 입력해주세요.");
-      if (!selectedCategory) return alert("카테고리를 선택해주세요.");
-      if (!content) return alert("내용을 입력해주세요.");
+  
+      if (!title) return await showModal("제목 미입력", "제목을 입력해주세요.", "danger");
+      if (!selectedCategory) return await showModal("카테고리 미선택", "카테고리를 선택해주세요.", "danger");
+      if (!content) return await showModal("내용 미입력", "내용을 입력해주세요.", "danger");
+
+
       const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
       await editPost(postId, {
         title,
@@ -204,10 +207,11 @@ export async function initWrite() {
       const content = document.getElementById("write-content")?.value.trim();
       const selectedCategory = document.getElementById("write-category")?.value;
       const preset = document.getElementById("write-party-preset").value;
-      // 여기 모달창
-      if (!title) return alert("제목을 입력해주세요.");
-      if (!selectedCategory) return alert("카테고리를 선택해주세요.");
-      if (!content) return alert("내용을 입력해주세요.");
+
+
+      if (!title) return await showModal("제목 미입력", "제목을 입력해주세요.", "danger");
+      if (!selectedCategory) return await showModal("카테고리 미선택", "카테고리를 선택해주세요.", "danger");
+      if (!content) return await showModal("내용 미작성", "내용을 입력해주세요.", "danger");
 
       try {
         const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
@@ -216,8 +220,7 @@ export async function initWrite() {
         window.loadPage();
       } catch (error) {
         console.error(error);
-        // 여기 모달창
-        alert("게시글 작성 중 오류가 발생했습니다.");
+        await showModal("오류", "게시글 작성 중 오류가 발생했습니다.", "danger");
       }
     });
   document
@@ -239,11 +242,4 @@ export async function initWrite() {
       //계속 올려도 하나만 업로드 되게
       uploadContainer.replaceChildren(img);
     });
-}
-export async function loadPosts() {
-  const response = await fetch(`${BASE_URL}/posts`, {
-    method: "GET",
-  });
-  if (!response.ok) throw new Error("Failed to fetch posts");
-  return response.json();
 }

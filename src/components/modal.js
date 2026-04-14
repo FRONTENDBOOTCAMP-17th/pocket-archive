@@ -1,6 +1,5 @@
-//경고/알림 모달 컴포넌트
+// 경고/알림 모달 컴포넌트
 const MODAL_ID = 'custom-modal';
-
 
 function injectModal() {
   if (document.getElementById(MODAL_ID)) return;
@@ -16,7 +15,7 @@ function injectModal() {
           <p id="${MODAL_ID}-desc" class="text-sm text-slate-400" style="margin-top:4px;"></p>
         </div>
         <button id="${MODAL_ID}-confirm"
-          class="w-full rounded-xl bg-teal-500 text-white text-sm font-semibold hover:bg-teal-600 transition"
+          class="w-full rounded-xl text-white text-sm font-semibold transition"
           style="padding:10px 16px;">
           확인
         </button>
@@ -34,9 +33,9 @@ function closeModal() {
   modal.classList.remove('flex');
 }
 
-
 // 모달 열기
-export function showModal(title, desc) {
+// type: 'default' (기본 초록색임) 'danger' (빨강경고임)
+export function showModal(title, desc, type = 'default') {
   injectModal();
 
   const modal   = document.getElementById(MODAL_ID);
@@ -44,6 +43,17 @@ export function showModal(title, desc) {
   const descEl  = document.getElementById(`${MODAL_ID}-desc`);
   const confirm = document.getElementById(`${MODAL_ID}-confirm`);
   const overlay = document.getElementById(`${MODAL_ID}-overlay`);
+
+  // 버튼 색상 적용
+  const colorMap = {
+    default: { bg: '#00BBA7', hover: '#009e8d' },
+    danger:  { bg: '#ef4444', hover: '#dc2626' },
+  };
+  
+  const color = colorMap[type] ?? colorMap.default;
+  confirm.style.backgroundColor = color.bg;
+  confirm.onmouseover = () => { confirm.style.backgroundColor = color.hover; };
+  confirm.onmouseout  = () => { confirm.style.backgroundColor = color.bg; };
 
   titleEl.textContent = title;
   descEl.textContent  = desc;

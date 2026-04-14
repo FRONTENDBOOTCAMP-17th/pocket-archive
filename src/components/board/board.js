@@ -1,6 +1,7 @@
 import { escapeHtml } from '../../utils/escapeHtml.js';
-import { loadPosts } from "./write.js";
 import { categoryMap, categoryColors, formatDate } from '../../utils/boardConstants.js';
+import { loadPosts } from '../../api/post.js';
+import { showModal } from '../modal.js';
 
 // API 연결 오류 시 임시데이터로 변환
 const getPosts = async () => {
@@ -261,14 +262,14 @@ export async function initBoard() {
   });
 
   // Go to the writing page when you click the writing button (only when there is a local token)
-  document.getElementById("write-post-btn")?.addEventListener("click", () => {
+  document.getElementById("write-post-btn")?.addEventListener("click", async () => {
     const token = localStorage.getItem("token");
     if (token) {
       history.pushState(null, "", "/write-post");
       window.loadPage();
     } else {
-      // alert("로그인이 필요한 서비스입니다.");
-      // 여기 모달창
+      //버튼 색 바꾸고싶으면 뒤에 변수 빼셈
+      await showModal("비로그인 상태", "로그인이 필요한 서비스 입니다.", "danger");
       history.pushState(null, "", "/login");
       window.loadPage();
     }

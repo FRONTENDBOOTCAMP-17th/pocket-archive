@@ -2,6 +2,16 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const token = localStorage.getItem("token");
 
+
+export async function loadPosts() {
+  const response = await fetch(`${BASE_URL}/posts`, {
+    method: "GET",
+  });
+  if (!response.ok) throw new Error("Failed to fetch posts");
+  return response.json();
+}
+
+
 export async function togglePostLike(postId) {
   if (!token) return false;
   const res = await fetch(`${BASE_URL}/posts/${postId}/favorite`, {
