@@ -1,5 +1,6 @@
 import { TrainerCard } from "./trainerCard.js";
 import { PokemonCard } from "../pokedex/pokedexUI";
+import { showModal } from "../modal.js" 
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -281,9 +282,9 @@ async function renderList() {
 
 function bindPokemonClick() {
   listEl.querySelectorAll("[data-id]").forEach((card) => {
-    card.addEventListener("click", () => {
+    card.addEventListener("click", async () => {
       if (selectedSlot === null) {
-        alert("먼저 트레이너 카드의 슬롯을 선택해주세요.");
+        await showModal("트레이너 카드 슬롯 미체크", "먼저 트레이너 카드의 슬롯을 선택해주세요.")
         return;
       }
       const id = Number(card.dataset.id);
@@ -325,13 +326,13 @@ function bindActionButtons() {
     renderPresets();
   });
 
-  document.getElementById("saveBtn")?.addEventListener("click", () => {
+  document.getElementById("saveBtn")?.addEventListener("click", async () => {
     if (party.filter(Boolean).length === 0) {
-      alert("포켓몬을 하나 이상 선택해주세요.");
+      await showModal("포켓몬 미선택", "포켓몬을 하나 이상 선택해주세요.");
       return;
     }
     if (loadedPresetIndex === null) {
-      alert("저장할 슬롯을 선택해주세요.");
+      await showModal("저장할 슬롯 미선택", "저장할 슬롯을 선택해주세요.");
       return;
     }
 
@@ -345,9 +346,9 @@ function bindActionButtons() {
 }
 
 //  완성버튼을 클릭 시 로드된 프리셋이 있으면 덮어쓰기 + 없으면 새저장 ㄲ
-function openSaveModal() {
+async function openSaveModal() {
   if (party.filter(Boolean).length === 0) {
-    alert("포켓몬을 하나 이상 선택한 뒤 저장해주세요.");
+    await showModal("포켓몬 미선택", "포켓몬을 하나 이상 선택해주세요.");
     return;
   }
 
@@ -387,7 +388,7 @@ function openSaveModal() {
   } else {
     // 새 저장 모드
     if (presets.length >= 3) {
-      alert("파티는 최대 3개까지 저장할 수 있습니다.");
+      await showModal("저장 공간 부족", "파티는 최대 3개까지 저장할 수 있습니다.");
       return;
     }
     modalTitle.textContent = "파티 이름 저장";
@@ -439,7 +440,7 @@ async function savePreset(presetName) {
     renderPresets();
   } catch (err) {
     console.error("파티 저장 에러:", err);
-    alert("파티 저장에 실패했습니다.");
+    await showModal("파티 저장 실패", "파티 저장에 실패했습니다.");
   }
 }
 
@@ -468,7 +469,7 @@ async function updatePreset(index) {
     renderPresets();
   } catch (err) {
     console.error("파티 수정 에러:", err);
-    alert("파티 수정에 실패했습니다.");
+    await showModal("파티 수정 실패", "파티 수정에 실패했습니다.");
   }
 }
 
@@ -488,7 +489,7 @@ async function deletePreset(index) {
     renderPresets();
   } catch (err) {
     console.error("파티 삭제 에러:", err);
-    alert("파티 삭제에 실패했습니다.");
+    await showModal("파티 삭제 실패", "파티 삭제에 실패했습니다.");
   }
 }
 
