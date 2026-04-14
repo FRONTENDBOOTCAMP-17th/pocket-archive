@@ -8,6 +8,11 @@ import {
   loadDetailPost,
   loadDetailComment,
 } from "../../api/post.js";
+import {showModal} from "../modal.js";
+
+const token = localStorage.getItem("token");
+
+
 //트레이너카드에 포켓몬 ID 배열 맵으로 반환
 async function fetchSprites(ids) {
   if (!ids || ids.length === 0) return {};
@@ -80,7 +85,11 @@ async function setupCommentEvents(postId) {
       if (!text.trim()) {
         return;
       }
-      postComment(postId, text);
+      if (token) {
+        postComment(postId, text);
+      } else {
+        return await showModal("비로그인 상태", "로그인이 필요한 서비스 입니다.", "danger");
+      }
     };
   }
 
