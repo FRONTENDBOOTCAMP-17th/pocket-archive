@@ -1,3 +1,5 @@
+import { showModal } from "./modal";
+
 export function Header() {
   const isLoggedin = localStorage.getItem('token');
 
@@ -92,12 +94,12 @@ document.addEventListener('click', (e) => {
 });
 
 // 나의 파티 만들기 - 로그인 필요
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async(e) => {
   if (e.target.closest('a[data-page="myparty"]')) {
     const isLoggedIn = !!localStorage.getItem('token');
     if (!isLoggedIn) {
       e.preventDefault();
-      alert('나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
+      await showModal("비로그인 상태", "나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.");
       history.pushState(null, '', '/login');
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
@@ -105,12 +107,13 @@ document.addEventListener('click', (e) => {
 });
 
 // 마이페이지 - 로그인 필요
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
   if (e.target.closest('a[data-page="mypage"]')) {
     const isLoggedIn = !!localStorage.getItem('token');
     if (!isLoggedIn) {
       e.preventDefault();
-      alert('마이페이지는 로그인 후 이용 가능합니다.');
+      await showModal("비로그인 상태", "마이페이지는 로그인 후 이용 가능합니다.");
+
       history.pushState(null, '', '/login');
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
