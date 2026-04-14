@@ -68,6 +68,26 @@ export async function poketmonReg(poketmonId) {
   }
 }
 
+export async function fetchPokemonsByIds(ids) {
+  const results = await Promise.all(ids.map((id) => fetchPokemonDetail(id)));
+  return results.filter(Boolean);
+}
+
+export async function fetchKoNames(ids) {
+  const results = await Promise.all(
+    ids.map(async (id) => {
+      try {
+        const species = await fetchPokemonSpecies(id);
+        const koEntry = species.names.find((n) => n.language.name === "ko");
+        return { no: id, name: koEntry ? koEntry.name : species.name };
+      } catch {
+        return { no: id, name: String(id) };
+      }
+    }),
+  );
+  return results;
+}
+
 export async function poketmonDelete(poketmonId) {
   try {
     const res = await fetch(`${BASE_URL}/pocketmons/${poketmonId}`, {
