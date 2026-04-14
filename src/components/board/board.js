@@ -1,7 +1,8 @@
 // dummy data
 import { escapeHtml } from "../../utils/escapeHtml.js";
 import { loadPosts } from "./write.js";
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { escapeHtml } from '../../utils/escapeHtml.js';
+import { categoryMap, categoryColors, formatDate } from '../../utils/boardConstants.js';
 
 // API 연결 오류 시 임시데이터로 변환
 const getPosts = async () => {
@@ -13,22 +14,6 @@ const getPosts = async () => {
     console.error("Error fetching posts:", error);
     return dummyData;
   }
-};
-
-const categoryMap = {
-  free: "자유게시판",
-  guide: "질문게시판",
-  battle: "공략",
-  party: "파티 공유",
-};
-
-const categoryColors = {
-  자유게시판: "text-[#00bba7] bg-[#e6f7f5]",
-  질문게시판: "text-pink-500 bg-pink-50",
-  "파티 공유": "text-amber-500 bg-amber-50",
-  파티공유: "text-amber-500 bg-amber-50",
-  공략: "text-blue-500 bg-blue-50",
-  공지: "text-purple-500 bg-purple-50",
 };
 
 function formatDate(dateStr) {

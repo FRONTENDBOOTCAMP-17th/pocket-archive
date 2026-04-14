@@ -18,15 +18,12 @@ async function fetchSprites(ids) {
         .then((r) => r.json())
         .then((data) => ({
           id,
-          url:
-            data.sprites?.other?.["official-artwork"]?.front_default ||
-            data.sprites?.front_default ||
-            "",
+          url: data.sprites?.other?.['official-artwork']?.front_default || data.sprites?.front_default || '',
         })),
     ),
   );
   results.forEach((r) => {
-    if (r.status === "fulfilled") map[r.value.id] = r.value.url;
+    if (r.status === 'fulfilled') map[r.value.id] = r.value.url;
   });
   return map;
 }
@@ -34,15 +31,13 @@ async function fetchSprites(ids) {
 export async function initPostDetail(postId) {
   let post = null;
   let comments = [];
-  let currentUserId = localStorage.getItem("userId");
+  let currentUserId = localStorage.getItem('userId');
   if (!currentUserId) {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (token) {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        currentUserId = String(
-          payload.userId ?? payload.id ?? payload.sub ?? "",
-        );
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        currentUserId = String(payload.userId ?? payload.id ?? payload.sub ?? '');
       }
     } catch (error) {
       console.error(error);
@@ -56,16 +51,18 @@ export async function initPostDetail(postId) {
   const commentArea = document.getElementById("commentSection");
 
   if (contentArea) {
-    if (post.preset) {
-      const spriteMap = await fetchSprites(post.preset.pocketmons);
-      contentArea.innerHTML = BoardDetailContent(
-        post,
-        currentUserId,
-        spriteMap,
-      );
-    } else {
-      contentArea.innerHTML = BoardDetailContent(post, currentUserId);
+    let spriteMap = {};
+
+    // 게시글에 실제 프리셋이 있을 때만 포켓몬 스프라이트 로드
+    if (post.preset && post.preset.pocketmons?.length > 0) {
+      spriteMap = await fetchSprites(post.preset.pocketmons);
     }
+
+    contentArea.innerHTML = BoardDetailContent(
+      post,
+      currentUserId,
+      spriteMap
+    );
   }
 
   if (commentArea) {
@@ -79,18 +76,44 @@ async function setupCommentEvents(postId) {
   const submitBtn = document.getElementById("submitComment");
   if (submitBtn) {
     submitBtn.onclick = async () => {
-      const text = document.getElementById("commentInput").value;
+      const text = document.getElementById('commentInput').value;
       if (!text.trim()) {
         return;
       }
       postComment(postId, text);
     };
   }
+
+  // data-action 이벤트 위임
+  document.addEventListener('click', async (e) => {
+    const action = e.target.dataset.action;
+    if (!action) return;
+
+    if (action === 'edit-comment') {
+      const commentId = e.target.dataset.commentId;
+      toggleEditMode(commentId);
+    }
+
+    if (action === 'delete-comment') {
+      const commentId = e.target.dataset.commentId;
+      await handleDeleteComment(commentId);
+    }
+
+    if (action === 'edit-post') {
+      const pid = e.target.dataset.postId;
+      handleEditPost(pid);
+    }
+
+    if (action === 'delete-post') {
+      const pid = e.target.dataset.postId;
+      await handleDeletePost(pid);
+    }
+  });
 }
 
 async function setupLikeEvent(postId) {
-  const likeBtn = document.getElementById("post-like-btn");
-  const userToken = localStorage.getItem("token");
+  const likeBtn = document.getElementById('post-like-btn');
+  const userToken = localStorage.getItem('token');
 
   if (likeBtn) {
     likeBtn.onclick = async () => {
@@ -114,7 +137,7 @@ async function setupLikeEvent(postId) {
               ? Math.max(0, currentCount - 1)
               : currentCount + 1;
         } else {
-          console.error("좋아요 실패");
+          console.error('좋아요 실패');
         }
       } catch (error) {
         console.error(error);
@@ -124,33 +147,34 @@ async function setupLikeEvent(postId) {
 }
 
 // 수정 모드 전환
-window.toggleEditMode = (commentId) => {
+function toggleEditMode(commentId) {
   const contentP = document.getElementById(`comment-content-${commentId}`);
   const btnGroup = document.getElementById(`comment-btns-${commentId}`);
   const originalContent = contentP.innerText;
 
   // 1. 내용 영역을 textarea로 교체
   contentP.innerHTML = `
-    <textarea id="edit-input-${commentId}" 
+    <textarea id="edit-input-${commentId}"
       class="w-full p-3 mt-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#05B29F] text-[14px] resize-none"
       rows="3">${originalContent}</textarea>
   `;
 
-  // 2. 버튼을 '저장/취소'로 교체
+  // 2. 버튼을 '저장/취소'로 교체 (인라인 onclick 대신 id로 이벤트 연결)
   btnGroup.innerHTML = `
-    <button onclick="saveEditComment(${commentId}, '${originalContent}')" 
-            class="text-[11px] text-[#05B29F] font-bold">저장</button>
-    <button onclick="cancelEditMode(${commentId}, '${originalContent}')" 
-            class="text-[11px] text-gray-400 font-bold">취소</button>
+    <button id="save-btn-${commentId}" class="text-[11px] text-[#05B29F] font-bold">저장</button>
+    <button id="cancel-btn-${commentId}" class="text-[11px] text-gray-400 font-bold">취소</button>
   `;
-};
+
+  document.getElementById(`save-btn-${commentId}`).addEventListener('click', () => saveEditComment(commentId, originalContent));
+  document.getElementById(`cancel-btn-${commentId}`).addEventListener('click', () => location.reload());
+}
 
 // 수정 취소
-window.cancelEditMode = (commentId, originalContent) => {
+function cancelEditMode(commentId, originalContent) {
   location.reload();
-};
+}
 
-window.saveEditComment = async (commentId, oldContent) => {
+async function saveEditComment(commentId, oldContent) {
   const newContent = document.getElementById(`edit-input-${commentId}`).value;
 
   if (!newContent.trim() || newContent === oldContent) {
@@ -172,4 +196,4 @@ window.handleDeletePost = async (postId) => {
 };
 window.handleEditPost = (postId) => {
   location.href = `/write-post?postId=${postId}`;
-};
+}

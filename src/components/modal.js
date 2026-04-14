@@ -1,3 +1,4 @@
+//경고/알림 모달 컴포넌트
 const MODAL_ID = 'custom-modal';
 
 

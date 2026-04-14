@@ -9,27 +9,13 @@ import {
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// category value → API category key
-const categoryMap = {
-  자유게시판: "free",
-  질문게시판: "guide",
-  공략: "battle",
-  파티공유: "party",
-};
-const reverseCategoryMap = {
-  free: "자유게시판",
-  guide: "질문게시판",
-  battle: "공략",
-  party: "파티공유",
-};
-let uploadImgUrl = "";
-const token = localStorage.getItem("token");
+import { categoryMap, reverseCategoryMap } from '../../utils/boardConstants';
+
+let uploadImgUrl = '';
 let loadPreset = [];
 async function submitPost({ title, category, content, preset }) {
   // number 선언안해서 문법 맞는데 왜 안되지 계속 이 난리30분침
-  const selectedPreset = loadPreset.find(
-    (item) => item.partyId === Number(preset),
-  );
+  const selectedPreset = loadPreset.find((item) => item.partyId === Number(preset));
   console.log(selectedPreset, preset, loadPreset);
 
   const data = await writePost(
@@ -48,10 +34,10 @@ async function submitPost({ title, category, content, preset }) {
 }
 
 export async function initWrite() {
-  const container = document.getElementById("content");
+  const container = document.getElementById('content');
   if (!container) return;
   const params = new URLSearchParams(window.location.search);
-  const postId = params.get("postId");
+  const postId = params.get('postId');
   let postData = null;
   if (postId) {
     postData = await loadEditPost(postId);
@@ -154,13 +140,13 @@ export async function initWrite() {
 
   // 로그인 체크 (비로그인 시 board로 이동)
   if (!token) {
-    history.replaceState(null, "", "/board");
+    history.replaceState(null, '', '/board');
     window.loadPage();
     return;
   }
 
   // 뒤로가기 버튼
-  document.getElementById("write-back-btn")?.addEventListener("click", () => {
+  document.getElementById('write-back-btn')?.addEventListener('click', () => {
     history.back();
   });
 
@@ -168,17 +154,16 @@ export async function initWrite() {
   loadPreset = await fetchPresets();
   // 작성글 수정 값 넘겨주기
   if (postData && postId) {
-    document.getElementById("write-title").value = postData.title || "";
-    document.getElementById("write-content").value = postData.content || "";
-    const categorySelect = document.getElementById("write-category");
-    console.log(postData, "load");
-    categorySelect.value =
-      reverseCategoryMap[postData.category] || postData.category;
+    document.getElementById('write-title').value = postData.title || '';
+    document.getElementById('write-content').value = postData.content || '';
+    const categorySelect = document.getElementById('write-category');
+    console.log(postData, 'load');
+    categorySelect.value = reverseCategoryMap[postData.category] || postData.category;
     if (postData.preset) {
-      const select = document.getElementById("write-party-preset");
-      const option = document.createElement("option");
-      option.value = "default";
-      option.textContent = "기존 파티";
+      const select = document.getElementById('write-party-preset');
+      const option = document.createElement('option');
+      option.value = 'default';
+      option.textContent = '기존 파티';
       option.selected = true;
       console.log(option.value);
       select.appendChild(option);
@@ -254,6 +239,21 @@ export async function initWrite() {
       //계속 올려도 하나만 업로드 되게
       uploadContainer.replaceChildren(img);
     });
+    if (!uploadRes.ok) {
+      throw new Error('이미지 업로드 실패');
+    }
+    const {
+      data: { imageUrl },
+    } = await uploadRes.json();
+    uploadImgUrl = imageUrl;
+    const uploadContainer = document.getElementById('imgUrl');
+    const img = document.createElement('img');
+    img.src = uploadImgUrl;
+    img.alt = '업로드 이미지';
+    img.className = 'w-full h-48 object-contain rounded-lg';
+    //계속 올려도 하나만 업로드 되게
+    uploadContainer.replaceChildren(img);
+  });
 }
 export async function loadPosts() {
   const response = await fetch(`${BASE_URL}/posts`, {
