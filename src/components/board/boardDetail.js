@@ -43,8 +43,7 @@ export async function initPostDetail(postId) {
       console.error(error);
     }
   }
-  const postJson = await loadDetailPost(postId);
-  const commentJson = await loadDetailComment(postId);
+  const [postJson, commentJson] = await Promise.all([loadDetailPost(postId), loadDetailComment(postId)]);
   post = postJson?.data ?? null;
   comments = Array.isArray(commentJson?.data) ? commentJson.data : [];
 
