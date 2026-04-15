@@ -1,4 +1,4 @@
-import { showModal } from "./modal";
+import { showModal } from './modal';
 
 export function Header() {
   const isLoggedin = localStorage.getItem('token');
@@ -6,7 +6,7 @@ export function Header() {
   return `
     <header class="header">
     <div class="header-inner">
-    <div class="logo">P 포켓아카이브</div>
+    <a href="/" data-page="home" class="logo"><img src="/assets/pocketarchive.png" alt="포켓아카이브" /> 포켓아카이브</a>
 
     <nav class="nav">
       <a href="/" data-page="home">포켓몬 도감</a>
@@ -94,12 +94,12 @@ document.addEventListener('click', (e) => {
 });
 
 // 나의 파티 만들기 - 로그인 필요
-document.addEventListener('click', async(e) => {
+document.addEventListener('click', async (e) => {
   if (e.target.closest('a[data-page="myparty"]')) {
     const isLoggedIn = !!localStorage.getItem('token');
     if (!isLoggedIn) {
       e.preventDefault();
-      await showModal("비로그인 상태", "나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.");
+      await showModal('비로그인 상태', '나의 파티 만들기 페이지는 로그인 후 이용 가능합니다.');
       history.pushState(null, '', '/login');
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
@@ -112,7 +112,7 @@ document.addEventListener('click', async (e) => {
     const isLoggedIn = !!localStorage.getItem('token');
     if (!isLoggedIn) {
       e.preventDefault();
-      await showModal("비로그인 상태", "마이페이지는 로그인 후 이용 가능합니다.");
+      await showModal('비로그인 상태', '마이페이지는 로그인 후 이용 가능합니다.');
 
       history.pushState(null, '', '/login');
       window.dispatchEvent(new PopStateEvent('popstate'));

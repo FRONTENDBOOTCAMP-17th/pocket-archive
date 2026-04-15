@@ -3,7 +3,7 @@ export const categoryMap = {
   free: '자유게시판',
   guide: '질문게시판',
   battle: '공략',
-  party: '파티 공유',
+  party: '파티공유',
 };
 
 export const reverseCategoryMap = {
@@ -17,7 +17,6 @@ export const reverseCategoryMap = {
 export const categoryColors = {
   자유게시판: 'text-[#00bba7] bg-[#e6f7f5]',
   질문게시판: 'text-pink-500 bg-pink-50',
-  '파티 공유': 'text-amber-500 bg-amber-50',
   파티공유: 'text-amber-500 bg-amber-50',
   공략: 'text-blue-500 bg-blue-50',
   공지: 'text-purple-500 bg-purple-50',

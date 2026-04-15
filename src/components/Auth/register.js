@@ -16,25 +16,32 @@ export function initRegister() {
   const id = document.getElementById('register_id');
   const nickname = document.getElementById('register_nickname');
 
-  eye.addEventListener('click', function () {
+  eye.onclick = function () {
     eye.classList.toggle('active');
     pwd.type = pwd.type === 'password' ? 'text' : 'password';
 
     const slash = document.getElementById('eye-slash');
     slash.style.strokeDashoffset = eye.classList.contains('active') ? '0' : '24';
-  });
+  };
 
-  eye2.addEventListener('click', function () {
+  eye2.onclick = function () {
     eye2.classList.toggle('active');
     pwd2.type = pwd2.type === 'password' ? 'text' : 'password';
 
     const slash2 = document.getElementById('eye-slash2');
     slash2.style.strokeDashoffset = eye2.classList.contains('active') ? '0' : '24';
-  });
+  };
 
-  document.registerForm.addEventListener('submit', async function (e) {
+  let isSubmitting = false;
+
+  document.registerForm.onsubmit = async function (e) {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!checkRegister()) return;
+
+    isSubmitting = true;
+    const signupBtn = document.getElementById('signupBtn');
+    if (signupBtn) signupBtn.disabled = true;
 
     try {
       const result = await register(id.value, nickname.value, pwd.value);
@@ -50,14 +57,14 @@ export function initRegister() {
       console.error(error);
       await showModal('오류', '회원가입에 실패했어요. 다시 시도해주세요.', 'danger');
     }
-  });
+  };
 
-  document.getElementById('loginBtn').addEventListener('click', function () {
+  document.getElementById('loginBtn').onclick = function () {
     history.pushState(null, '', '/login');
     window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+  };
 
-  document.getElementById('checkNicknameBtn').addEventListener('click', async function () {
+  document.getElementById('checkNicknameBtn').onclick = async function () {
     const nicknameVal = nickname.value.trim();
     if (!nicknameVal) return;
     try {
@@ -69,9 +76,9 @@ export function initRegister() {
       console.error(error);
     }
     updateButtonState();
-  });
+  };
 
-  document.getElementById('checkIdBtn').addEventListener('click', async function () {
+  document.getElementById('checkIdBtn').onclick = async function () {
     const idVal = id.value.trim();
     if (!idVal) return;
     try {
@@ -83,22 +90,22 @@ export function initRegister() {
       console.error(error);
     }
     updateButtonState();
-  });
+  };
 
-  nickname.addEventListener('input', () => {
+  nickname.oninput = () => {
     validNickname = false;
     showFieldMsg('nickname-check-msg', '', '');
     updateButtonState();
-  });
+  };
 
-  id.addEventListener('input', () => {
+  id.oninput = () => {
     validId = false;
     showFieldMsg('id-check-msg', '', '');
     updateButtonState();
-  });
+  };
 
-  pwd.addEventListener('input', updateButtonState);
-  pwd2.addEventListener('input', updateButtonState);
+  pwd.oninput = updateButtonState;
+  pwd2.oninput = updateButtonState;
 
   function showFieldMsg(elementId, text, color) {
     const el = document.getElementById(elementId);

@@ -18,7 +18,7 @@ export const Comment = (comment, currentUserId) => {
          style="padding: 20px 24px; margin-bottom: 5px;">
       <div class="flex justify-between items-center mb-2">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-gray-800 text-[15px]">${comment.nickname}</span>
+          <span class="font-bold text-gray-800 text-[15px]">${escapeHtml(comment.nickname)}</span>
           <span class="text-xs text-gray-400 font-medium">
             ${comment.createdAt ? comment.createdAt.split('T')[0].replace(/-/g, '.') : ''}
           </span>
@@ -53,7 +53,7 @@ export const BoardDetailContent = (post, currentUserId, spriteMap = {}) => {
         ${
           post.preset.deckname
             ? `<p style="font-size: 13px; font-weight: 700; color: #6b7280; margin-bottom: 8px; text-align: center;">
-                  ${post.preset.deckname}
+                  ${escapeHtml(post.preset.deckname)}
                </p>`
             : ''
         }

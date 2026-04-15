@@ -1,16 +1,13 @@
-import { showModal } from "../modal.js";
+import { showModal, showConfirm, showPrompt } from "../modal.js";
 import {
   renderTrainerCardUI,
   renderCount,
   renderPresetCount,
   renderListUI,
   renderPresetsUI,
-  openOverwriteModalUI,
-  openNewSaveModalUI,
 } from "./mypartyUI.js";
 import { fetchKoNames, fetchPokemonsByIds } from "/src/api/pokemonApi.js";
 import {
-  authHeaders,
   fetchBookmarkedPokemons,
   deleteBookmark,
   fetchPartyPresets,
@@ -38,6 +35,14 @@ let searchQuery = "";
 
 // ─── 초기화 ─────────────────────────────────────────────────
 export async function init() {
+  selectedSlot      = null;
+  party             = Array(6).fill(null);
+  gender            = "man";
+  loadedPresetIndex = null;
+  pokemons          = [];
+  presets           = [];
+  searchQuery       = "";
+
   root          = document.getElementById("trainer-card-root");
   listEl        = document.getElementById("pokemon-list");
   countEl       = document.getElementById("count");
@@ -68,7 +73,6 @@ async function loadBookmarkedPokemons() {
     const koList         = await fetchKoNames(ids);
     const koMap          = {};
     koList.forEach((p) => { koMap[p.no] = p.name; });
-
     pokemons = pokemonDetails.map((p) => ({
       ...p,
       koName: koMap[p.id] || p.name,
@@ -87,7 +91,7 @@ async function loadPartyPresets() {
       name:       p.deckname,
       gender:     "man",
       pokemonIds: p.pocketmons,
-      party:      p.pocketmons.map((id) => pokemons.find((pk) => pk.id === id) || null),
+      party:      p.pocketmons.map((id) => pokemons.find((pk) => pk.id === Number(id)) || null),
     }));
   } catch (err) {
     console.error("파티 목록 로드 에러:", err);
@@ -99,13 +103,12 @@ async function loadPartyPresets() {
 async function savePreset(presetName) {
   try {
     const pokemonIds = party.filter(Boolean).map((p) => p.id);
-    await postPartyPreset(presetName, gender, pokemonIds);
+    await postPartyPreset(presetName, pokemonIds, gender);
     await loadPartyPresets();
     renderPresets();
   } catch (err) {
     console.error("파티 저장 에러:", err);
     await showModal("파티 저장 실패", "파티 저장에 실패했습니다.");
-    
   }
 }
 
@@ -190,8 +193,10 @@ function bindSearch() {
 }
 
 function bindPokemonClick() {
-  listEl.querySelectorAll("[data-id]").forEach((card) => {
-    card.addEventListener("click", async () => {
+  listEl.querySelectorAll(".pokemon-pick-card").forEach((card) => {
+    card.addEventListener("click", async (e) => {
+      if (e.target.closest("[data-action='poketmon-delete']")) return;
+
       if (selectedSlot === null) {
         await showModal("트레이너 카드 슬롯 미선택", "먼저 트레이너 카드의 슬롯을 선택해주세요.");
         return;
@@ -241,13 +246,15 @@ function bindActionButtons() {
 
     const preset = presets[loadedPresetIndex];
     if (preset) {
-      openOverwriteModalUI(preset, () => updatePreset(loadedPresetIndex));
+      const ok = await showConfirm("파티 덮어쓰기", `"${preset.name}" 파티에 현재 구성을 덮어씁니다.`);
+      if (ok) await updatePreset(loadedPresetIndex);
     } else {
       if (presets.length >= 3) {
         await showModal("저장 공간 부족", "파티는 최대 3개까지 저장할 수 있습니다.");
         return;
       }
-      openNewSaveModalUI(presets, (name) => savePreset(name));
+      const name = await showPrompt("파티 이름 저장", "나만의 파티 이름을 입력해주세요");
+      if (name) await savePreset(name);
     }
   });
 }
@@ -284,9 +291,14 @@ function loadPreset(index) {
   renderPresets();
 }
 
+// ─── 북마크 삭제 이벤트 위임 ────────────────────────────────
 function bindBookmarkEvents() {
-  window.poketmonDelete = async function (event, id) {
-    event.stopPropagation();
+  listEl.addEventListener("click", async (e) => {
+    const target = e.target.closest("[data-action='poketmon-delete']");
+    if (!target) return;
+    e.stopPropagation();
+
+    const id = Number(target.dataset.id);
     try {
       await deleteBookmark(id);
       pokemons = pokemons.filter((p) => p.id !== id);
@@ -297,5 +309,5 @@ function bindBookmarkEvents() {
       console.error("북마크 삭제 에러:", err);
       await showModal("삭제 실패", "북마크 삭제에 실패했습니다.");
     }
-  };
+  });
 }

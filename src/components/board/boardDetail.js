@@ -10,9 +10,6 @@ import {
 } from "../../api/post.js";
 import {showModal} from "../modal.js";
 
-const token = localStorage.getItem("token");
-
-
 //트레이너카드에 포켓몬 ID 배열 맵으로 반환
 async function fetchSprites(ids) {
   if (!ids || ids.length === 0) return {};
@@ -52,6 +49,23 @@ export async function initPostDetail(postId) {
   const commentJson = await loadDetailComment(postId);
   post = postJson?.data ?? null;
   comments = Array.isArray(commentJson?.data) ? commentJson.data : [];
+
+  if (!post) {
+    const contentArea = document.getElementById("postDetailContent");
+    if (contentArea) {
+      contentArea.innerHTML = `
+        <div class="text-center py-20 text-gray-400">
+          <p class="text-lg font-bold">게시글을 불러오지 못했어요.</p>
+          <button onclick="location.href='/board'"
+                  class="mt-4 px-4 py-2 bg-[#05B29F] text-white rounded-lg">
+            게시판으로 돌아가기
+          </button>
+        </div>
+      `;
+    }
+    return;
+  }
+
   const contentArea = document.getElementById("postDetailContent");
   const commentArea = document.getElementById("commentSection");
 
@@ -85,7 +99,7 @@ async function setupCommentEvents(postId) {
       if (!text.trim()) {
         return;
       }
-      if (token) {
+      if (localStorage.getItem('token')) {
         postComment(postId, text);
       } else {
         return await showModal("비로그인 상태", "로그인이 필요한 서비스 입니다.", "danger");
@@ -178,31 +192,24 @@ function toggleEditMode(commentId) {
   document.getElementById(`cancel-btn-${commentId}`).addEventListener('click', () => location.reload());
 }
 
-// 수정 취소
-function cancelEditMode(commentId, originalContent) {
-  location.reload();
-}
-
 async function saveEditComment(commentId, oldContent) {
   const newContent = document.getElementById(`edit-input-${commentId}`).value;
 
   if (!newContent.trim() || newContent === oldContent) {
     return location.reload();
   }
-  editComment(commentId);
+  editComment(commentId, newContent);
 };
 //댓글삭제
-window.handleDeleteComment = async (commentId) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    return;
-  }
+async function handleDeleteComment(commentId) {
+  if (!localStorage.getItem('token')) return;
   deleteCommnet(commentId);
-};
+}
 
-window.handleDeletePost = async (postId) => {
+async function handleDeletePost(postId) {
   deletePost(postId);
-};
-window.handleEditPost = (postId) => {
+}
+
+function handleEditPost(postId) {
   location.href = `/write-post?postId=${postId}`;
 }

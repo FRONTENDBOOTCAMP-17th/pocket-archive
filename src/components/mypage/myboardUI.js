@@ -17,12 +17,11 @@ export function getPostCardHTML(post) {
   const category = categoryMap[post.category] ?? post.category;
   const badgeClass = categoryColors[category] || 'text-gray-500 bg-gray-100';
   const isDraft = post.isPublished === false;
-  console.log('[getPostCardHTML]', post.postId, 'isPublished:', post.isPublished, 'isDraft:', isDraft);
 
   return `
     <div style="display:flex; align-items:center; gap:6px;">
       <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${escapeHtml(category)}</span>
-      ${isDraft ? `<span class="text-xs font-medium rounded-md text-gray-500 bg-gray-100" style="display:flex; height:24px; padding:4px 10px; justify-content:center; align-items:center;">임시저장</span>` : ''}
+      ${isDraft ? `<span class="text-xs font-medium rounded-md text-gray-500 bg-gray-100" style="display:flex; height:24px; padding:4px 10px; justify-content:center; align-items:center;">임시게시물</span>` : ''}
     </div>
     <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${escapeHtml(post.title)}</p>
     <div class="flex items-center gap-3" style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">

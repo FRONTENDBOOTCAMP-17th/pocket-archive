@@ -72,14 +72,25 @@ export async function initMyPocketmon() {
       grid.appendChild(wrapper.firstElementChild);
     }
   });
+
+  // 이벤트 위임: 그리드 컨테이너에 한 번만 등록
+  bindGridEvents(grid);
 }
 
-window.selectPokemon = async function (no) {
+function bindGridEvents(grid) {
+  if (!grid) return;
+  grid.addEventListener("click", async (e) => {
+    const target = e.target.closest("[data-action='select-pokemon']");
+    if (!target) return;
+    await openPokemonModal(Number(target.dataset.id));
+  });
+}
+
+async function openPokemonModal(no) {
   const modal = document.getElementById("pokemon-modal");
   const content = document.getElementById("pokemon-modal-content");
   if (!modal || !content) return;
 
-  // 로딩 표시 후 모달 열기
   content.innerHTML = `
     <div class="flex justify-center items-center py-20">
       <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -100,13 +111,7 @@ window.selectPokemon = async function (no) {
 
     if (!data) throw new Error("포켓몬 정보를 불러올 수 없습니다.");
 
-    const isBookmarked = myPocketmons.includes(no);
-    content.innerHTML = PokemonModalContent(
-      data,
-      p.name,
-      species,
-      isBookmarked,
-    );
+    content.innerHTML = PokemonModalContent(data, p.name, species);
   } catch (error) {
     console.error("모달 로드 실패:", error);
     content.innerHTML = `
@@ -115,4 +120,4 @@ window.selectPokemon = async function (no) {
       </div>
     `;
   }
-};
+}
