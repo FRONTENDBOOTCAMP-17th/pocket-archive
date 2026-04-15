@@ -1,14 +1,6 @@
-import { BoardDetailContent, CommentSection } from "./boardDetailUI.js";
-import {
-  postComment,
-  togglePostLike,
-  editComment,
-  deleteCommnet,
-  deletePost,
-  loadDetailPost,
-  loadDetailComment,
-} from "../../api/post.js";
-import {showModal} from "../modal.js";
+import { BoardDetailContent, CommentSection } from './boardDetailUI.js';
+import { postComment, togglePostLike, editComment, deleteCommnet, deletePost, loadDetailPost, loadDetailComment } from '../../api/post.js';
+import { showModal } from '../modal.js';
 
 // 페이지 이동 시 이전 리스너를 정리하기 위한 컨트롤러
 let _commentClickController = null;
@@ -57,7 +49,7 @@ export async function initPostDetail(postId) {
   comments = Array.isArray(commentJson?.data) ? commentJson.data : [];
 
   if (!post) {
-    const contentArea = document.getElementById("postDetailContent");
+    const contentArea = document.getElementById('postDetailContent');
     if (contentArea) {
       contentArea.innerHTML = `
         <div class="text-center py-20 text-gray-400">
@@ -72,8 +64,8 @@ export async function initPostDetail(postId) {
     return;
   }
 
-  const contentArea = document.getElementById("postDetailContent");
-  const commentArea = document.getElementById("commentSection");
+  const contentArea = document.getElementById('postDetailContent');
+  const commentArea = document.getElementById('commentSection');
 
   if (contentArea) {
     let spriteMap = {};
@@ -83,11 +75,7 @@ export async function initPostDetail(postId) {
       spriteMap = await fetchSprites(post.preset.pocketmons);
     }
 
-    contentArea.innerHTML = BoardDetailContent(
-      post,
-      currentUserId,
-      spriteMap
-    );
+    contentArea.innerHTML = BoardDetailContent(post, currentUserId, spriteMap);
   }
 
   if (commentArea) {
@@ -98,19 +86,19 @@ export async function initPostDetail(postId) {
 }
 
 async function setupCommentEvents(postId, signal) {
-  const submitBtn = document.getElementById("submitComment");
+  const submitBtn = document.getElementById('submitComment');
   if (submitBtn) {
     submitBtn.onclick = async () => {
       const input = document.getElementById('commentInput');
       const text = input.value;
       if (!text.trim()) return;
       if (!localStorage.getItem('token')) {
-        return await showModal("비로그인 상태", "로그인이 필요한 서비스 입니다.", "danger");
+        return await showModal('비로그인 상태', '로그인이 필요한 서비스 입니다.', 'danger');
       }
       try {
         await postComment(postId, text);
         input.value = '';
-        location.reload();
+        await initPostDetail(postId);
       } catch (error) {
         console.error(error);
       }
@@ -118,30 +106,34 @@ async function setupCommentEvents(postId, signal) {
   }
 
   // data-action 이벤트 위임 — signal로 페이지 이동 시 자동 제거
-  document.addEventListener('click', async (e) => {
-    const action = e.target.dataset.action;
-    if (!action) return;
+  document.addEventListener(
+    'click',
+    async (e) => {
+      const action = e.target.dataset.action;
+      if (!action) return;
 
-    if (action === 'edit-comment') {
-      const commentId = e.target.dataset.commentId;
-      toggleEditMode(commentId);
-    }
+      if (action === 'edit-comment') {
+        const commentId = e.target.dataset.commentId;
+        toggleEditMode(commentId);
+      }
 
-    if (action === 'delete-comment') {
-      const commentId = e.target.dataset.commentId;
-      await handleDeleteComment(commentId);
-    }
+      if (action === 'delete-comment') {
+        const commentId = e.target.dataset.commentId;
+        await handleDeleteComment(commentId);
+      }
 
-    if (action === 'edit-post') {
-      const pid = e.target.dataset.postId;
-      handleEditPost(pid);
-    }
+      if (action === 'edit-post') {
+        const pid = e.target.dataset.postId;
+        handleEditPost(pid);
+      }
 
-    if (action === 'delete-post') {
-      const pid = e.target.dataset.postId;
-      await handleDeletePost(pid);
-    }
-  }, { signal });
+      if (action === 'delete-post') {
+        const pid = e.target.dataset.postId;
+        await handleDeletePost(pid);
+      }
+    },
+    { signal },
+  );
 }
 
 async function setupLikeEvent(postId) {
@@ -156,19 +148,13 @@ async function setupLikeEvent(postId) {
         const ok = await togglePostLike(postId);
 
         if (ok) {
-          const emojiSpan = likeBtn.querySelector("span:first-of-type");
-          const countSpan = likeBtn.querySelector("span:last-of-type");
-          const isCurrentlyLiked = emojiSpan?.textContent.includes("❤️");
-          const currentCount = parseInt(
-            countSpan?.textContent.trim() || "0",
-            10,
-          );
+          const emojiSpan = likeBtn.querySelector('span:first-of-type');
+          const countSpan = likeBtn.querySelector('span:last-of-type');
+          const isCurrentlyLiked = emojiSpan?.textContent.includes('❤️');
+          const currentCount = parseInt(countSpan?.textContent.trim() || '0', 10);
 
-          if (emojiSpan) emojiSpan.textContent = isCurrentlyLiked ? "🤍" : "❤️";
-          if (countSpan)
-            countSpan.textContent = isCurrentlyLiked
-              ? Math.max(0, currentCount - 1)
-              : currentCount + 1;
+          if (emojiSpan) emojiSpan.textContent = isCurrentlyLiked ? '🤍' : '❤️';
+          if (countSpan) countSpan.textContent = isCurrentlyLiked ? Math.max(0, currentCount - 1) : currentCount + 1;
         } else {
           console.error('좋아요 실패');
         }
