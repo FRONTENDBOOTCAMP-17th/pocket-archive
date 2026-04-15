@@ -1,7 +1,7 @@
 import { writePost, publishPost, loadEditPost, loadPreset as fetchPresets, editPost, uploadImg } from '../../api/post.js';
 import { showModal } from '../modal.js';
 
-import { categoryMap } from '../../utils/boardConstants';
+import { categoryMap, reverseCategoryMap } from '../../utils/boardConstants';
 
 let uploadImgUrl = '';
 let loadPreset = [];
@@ -13,7 +13,7 @@ async function submitPost({ title, category, content, preset }) {
   const postId = data.data?.postId;
 
   if (postId) {
-    publishPost(postId);
+    await publishPost(postId);
   }
   return data;
 }
@@ -29,7 +29,7 @@ export async function initWrite() {
   }
   container.innerHTML = `
     <div class="flex w-full flex-col items-start shrink-0 rounded-2xl bg-white shadow" style="padding: 32px; gap: 32px;">
-      <button id="write-back-btn" class="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-500 hover:bg-[#05B29F]/10 hover:text-[#05B29F] transition-all text-sm font-bold">
+      <button id="write-back-btn" class="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-500 hover:bg-[#05B29F]/10 hover:text-[#05B29F] transition-all text-sm font-bold w-fit">
         <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
         </svg>
@@ -40,10 +40,9 @@ export async function initWrite() {
 
       <div class="flex flex-col w-full" style="gap: 24px;">
 
-        <!-- 카테고리 -->
         <div class="flex flex-col" style="gap: 8px;">
           <p class="text-sm font-semibold text-[#1a3a35]">카테고리</p>
-          <select id="write-category" class="w-full rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] bg-white outline-none cursor-pointer" style="height: 44px; padding: 0 12px;">
+          <select id="write-category" class="w-full h-11 px-3 rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] bg-white outline-none cursor-pointer focus:border-[#05B29F]">
             <option value="">카테고리를 선택하세요</option>
             <option value="자유게시판">자유게시판</option>
             <option value="질문게시판">질문게시판</option>
@@ -52,34 +51,28 @@ export async function initWrite() {
           </select>
         </div>
 
-        <!-- 제목 -->
         <div class="flex flex-col" style="gap: 8px;">
           <p class="text-sm font-semibold text-[#1a3a35]">제목</p>
           <input id="write-title" type="text" placeholder="제목을 입력하세요"
-            class="w-full rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] placeholder-[#9CA3AF] outline-none"
-            style="height: 44px; padding: 0 12px;" />
+            class="w-full h-11 px-3 rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] placeholder-[#9CA3AF] outline-none focus:border-[#05B29F]" />
         </div>
 
-        <!-- 파티 프리셋 -->
         <div class="flex flex-col" style="gap: 8px;">
           <p class="text-sm font-semibold text-[#1a3a35]">나의 파티 프리셋 불러오기 <span class="text-[#9CA3AF] font-normal whitespace-nowrap">(선택)</span></p>
-          <select id="write-party-preset" class="w-full rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] bg-white outline-none cursor-pointer" style="height: 44px; padding: 0 12px;">
+          <select id="write-party-preset" class="w-full h-11 px-3 rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] bg-white outline-none cursor-pointer focus:border-[#05B29F]">
             <option value="">프리셋을 선택하세요</option>
           </select>
         </div>
 
-        <!-- 내용 -->
         <div class="flex flex-col" style="gap: 8px;">
           <p class="text-sm font-semibold text-[#1a3a35]">내용</p>
           <textarea id="write-content" placeholder="내용을 입력하세요"
-            class="w-full rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] placeholder-[#9CA3AF] outline-none resize-none"
-            style="height: 180px; padding: 12px;"></textarea>
+            class="w-full h-45 p-3 rounded-lg border border-[#D1D5DC] text-sm text-[#1a3a35] placeholder-[#9CA3AF] outline-none resize-none focus:border-[#05B29F]"></textarea>
         </div>
 
-        <!-- 이미지 첨부 -->
         <div class="flex flex-col" style="gap: 8px;" >
           <p class="text-sm font-semibold text-[#1a3a35]">이미지 첨부 <span class="text-[#9CA3AF] font-normal">(선택)</span></p>
-          <label  for="write-image" class="flex flex-col items-center justify-center w-full cursor-pointer rounded-[10px] border border-dashed border-[#D1D5DC] text-[#9CA3AF] hover:bg-gray-50 transition-colors" style="height: 152px; gap: 8px;">
+          <label for="write-image" class="flex flex-col items-center justify-center w-full h-38 gap-2 cursor-pointer rounded-[10px] border border-dashed border-[#D1D5DC] text-[#9CA3AF] hover:bg-gray-50 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
             </svg>
@@ -91,30 +84,26 @@ export async function initWrite() {
         </div>
       </div>
 
-      <!-- 하단 버튼 -->
-      <div class="flex w-full" style="gap: 16px;">
+      <div class="flex w-full gap-4">
         
         
         ${
           postId
             ? `<button
               id="edit-submit-btn"
-              class="flex-1 rounded-lg bg-[#05B29F] text-white text-sm font-semibold hover:bg-[#049e8d] transition-colors"
-              style="height: 48px;"
+              class="flex-1 h-12 rounded-lg bg-[#05B29F] text-white text-sm font-semibold hover:bg-[#049e8d] transition-all"
             >
               수정
             </button>`
             : ` <button
                   id="write-middle-btn"
-                  class="flex-1 rounded-lg border border-[#D1D5DC] text-sm text-[#4B5563] hover:bg-gray-50 transition-colors"
-                  style="height: 48px;"
+                  class="flex-1 h-12 rounded-lg border border-[#D1D5DC] text-sm text-[#4B5563] hover:bg-gray-50 transition-all"
                 >
                   임시 저장
                 </button>
               <button
               id="write-submit-btn"
-              class="flex-1 rounded-lg bg-[#05B29F] text-white text-sm font-semibold hover:bg-[#049e8d] transition-colors"
-              style="height: 48px;"
+              class="flex-1 h-12 rounded-lg bg-[#05B29F] text-white text-sm font-semibold hover:bg-[#049e8d] transition-all"
             >
               작성 완료
             </button>`
@@ -139,6 +128,17 @@ export async function initWrite() {
 
   // 파티 프리셋 목록 로드
   loadPreset = await fetchPresets();
+
+  const presetSelect = document.getElementById('write-party-preset');
+  if (presetSelect && loadPreset && loadPreset.length > 0) {
+    loadPreset.forEach((item) => {
+      const option = document.createElement('option');
+      option.value = item.partyId;
+      option.textContent = item.deckname || `프리셋 ${item.partyId}`;
+      presetSelect.appendChild(option);
+    });
+  }
+
   // 작성글 수정 값 넘겨주기
   if (postData && postId) {
     document.getElementById('write-title').value = postData.title || '';
@@ -168,16 +168,24 @@ export async function initWrite() {
     if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
     if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
 
-    const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
-    await editPost(postId, {
-      title,
-      content,
-      category: apiCategory,
-      preset,
-      uploadImgUrl,
-      postData,
-      presets: loadPreset,
-    });
+    const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
+    try {
+      await editPost(postId, {
+        title,
+        content,
+        category: apiCategory,
+        preset,
+        uploadImgUrl,
+        postData,
+        presets: loadPreset,
+      });
+      await showModal('성공', '게시글이 수정되었습니다.');
+      history.pushState(null, '', `/board/${postId}`);
+      window.loadPage();
+    } catch (error) {
+      console.error(error);
+      await showModal('오류', '게시글 수정 중 오류가 발생했습니다.', 'danger');
+    }
   });
   // 폼 제출 (글작성 , 수정)
   // 임시 저장 — writePost만 호출, publishPost 생략 → isPublished: false 상태 유지
@@ -192,9 +200,10 @@ export async function initWrite() {
     if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
 
     try {
-      const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
+      const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
       const selectedPreset = loadPreset.find((item) => item.partyId === Number(preset));
       await writePost(title, apiCategory, content, selectedPreset, uploadImgUrl);
+      await showModal('성공', '임시 저장이 완료되었습니다.');
       history.pushState(null, '', '/board');
       window.loadPage();
     } catch (error) {
@@ -214,8 +223,9 @@ export async function initWrite() {
     if (!content) return await showModal('내용 미작성', '내용을 입력해주세요.', 'danger');
 
     try {
-      const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
+      const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
       await submitPost({ title, category: apiCategory, content, preset });
+      await showModal('성공', '게시글이 등록되었습니다.');
       history.pushState(null, '', '/board');
       window.loadPage();
     } catch (error) {

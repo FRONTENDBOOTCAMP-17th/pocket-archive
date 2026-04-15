@@ -1,8 +1,7 @@
 import { login } from '../../api/user.js';
 import { Login } from './loginUI.js';
-import { showModal } from '../../modal.js';
+import { showModal } from '../modal.js';
 export { Login };
-
 
 export function initLogin() {
   var pwd = document.getElementById('pwd');

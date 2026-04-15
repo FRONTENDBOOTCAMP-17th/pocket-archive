@@ -43,32 +43,34 @@ export function Header() {
     </div>
   </div>
 
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
+  <div class="fixed top-0 -right-80 w-80 h-screen bg-white shadow-[0_25px_50px_rgba(0,0,0,0.25)] transition-all duration-300 z-40 flex flex-col" id="sidebar">
+    <div class="flex justify-between p-5 font-bold border-b border-gray-200">
       <span>메뉴</span>
-      <button id="closeBtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M17.9925 5.99707L5.9975 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M5.9975 5.99707L17.9925 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg></button>
+      <button id="closeBtn" class="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center active:scale-90">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M17.9925 5.99707L5.9975 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.9975 5.99707L17.9925 17.9921" stroke="#364153" stroke-width="1.99917" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
 
     <div class="sidebar-nav">
-        <a href="/" data-page="home">포켓몬 도감</a>
-        <a href="/board" data-page="board">게시판</a>
-        <a href="/myparty" data-page="myparty">나의 파티 만들기</a>
-        <a href="/mypage" data-page="mypage">마이페이지</a>
-        <div style="display: flex; flex-direction: row;">
-          <img src="https://img.icons8.com/?size=100&id=vQOFSUMXPpGA&format=png&color=000000" alt="Login Icon" style="width: 24px; height: 24px; margin:12px 0px 12px 12px;"/>
+        <a href="/" data-page="home" class="py-4 px-5 block no-underline text-[#333]">포켓몬 도감</a>
+        <a href="/board" data-page="board" class="py-4 px-5 block no-underline text-[#333]">게시판</a>
+        <a href="/myparty" data-page="myparty" class="py-4 px-5 block no-underline text-[#333]">나의 파티 만들기</a>
+        <a href="/mypage" data-page="mypage" class="py-4 px-5 block no-underline text-[#333]">마이페이지</a>
+        <div class="flex flex-row">
+          <img src="https://img.icons8.com/?size=100&id=vQOFSUMXPpGA&format=png&color=000000" alt="Login Icon" class="w-6 h-6 my-3 ml-3"/>
           ${
             isLoggedin
-              ? `<a class="logout-btn" style="color: #e7000b; cursor:pointer; padding: 12px;">로그아웃</a>`
-              : `<a href="/login" data-page="login" style="color: #e7000b;">로그인</a>`
+              ? `<a class="logout-btn text-[#e7000b] cursor-pointer p-3">로그아웃</a>`
+              : `<a href="/login" data-page="login" class="text-[#e7000b] p-3">로그인</a>`
           }
         </div>
     </div>
   </div>
 
-  <div class="overlay" id="overlay"></div>
+  <div class="fixed top-0 left-0 w-full h-full bg-black/40 opacity-0 pointer-events-none transition-opacity duration-300 z-10" id="overlay"></div>
 </header>
   `;
 }
