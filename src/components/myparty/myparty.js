@@ -89,7 +89,7 @@ async function loadPartyPresets() {
     presets = list.map((p) => ({
       apiId:      p.partyId,
       name:       p.deckname,
-      gender:     "man",
+      gender:     p.gender || "man",
       pokemonIds: p.pocketmons,
       party:      p.pocketmons.map((id) => pokemons.find((pk) => pk.id === Number(id)) || null),
     }));

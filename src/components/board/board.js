@@ -7,11 +7,11 @@ import { showModal } from '../modal.js';
 const getPosts = async () => {
   try {
     const data = await loadPosts();
-    const posts = data.data?.content ?? data.data ?? dummyData;
-    return Array.isArray(posts) ? posts : dummyData;
+    const posts = data.data?.content ?? data.data;
+    return Array.isArray(posts) ? posts : [];
   } catch (error) {
     console.error("Error fetching posts:", error);
-    return dummyData;
+    return [];
   }
 };
 

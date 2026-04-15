@@ -3,23 +3,22 @@ export function TrainerCard({ gender = 'man', party = [] }) {
 
   //이미지 위 슬롯 위치 설정
   const slotPositions = [
-    { top: '35%', left: '4%' },
-    { top: '35%', left: '25%' },
-    { top: '35%', left: '46%' },
-    { top: '54%', left: '4%' },
-    { top: '54%', left: '25%' },
-    { top: '54%', left: '46%' },
+    { twPos: 'top-[35%] left-[4%]' },
+    { twPos: 'top-[35%] left-[25%]' },
+    { twPos: 'top-[35%] left-[46%]' },
+    { twPos: 'top-[54%] left-[4%]' },
+    { twPos: 'top-[54%] left-[25%]' },
+    { twPos: 'top-[54%] left-[46%]' },
   ];
 
   return `
     <div class="w-full max-w-150">
-      
+
       <!-- 성별 선택 -->
-      <div class=" mb-3 flex justify-end">
+      <div class="mb-3 flex justify-end">
         <select
           id="gender-select"
-          class="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none"
-          style="padding:8px 20px; font-size:14px;"
+          class="rounded-lg border border-gray-300 px-5 py-2 text-sm outline-none"
         >
           <option value="man" ${gender === 'man' ? 'selected' : ''}>남자 트레이너</option>
           <option value="woman" ${gender === 'woman' ? 'selected' : ''}>여자 트레이너</option>
@@ -28,7 +27,7 @@ export function TrainerCard({ gender = 'man', party = [] }) {
 
       <!-- 카드 -->
       <div class="relative w-full rounded-lg overflow-hidden">
-        
+
         <!-- 트레이너 이미지 -->
         <img src="${img}" class="block w-full h-auto select-none" />
 
@@ -40,15 +39,9 @@ export function TrainerCard({ gender = 'man', party = [] }) {
             return `
               <button
                   type="button"
-                  class="slot absolute transition-all ${
+                  class="slot absolute w-1/5 h-[17%] ${pos.twPos} transition-all ${
                     pokemon ? 'bg-white/20' : 'bg-white/10 border-2 border-dashed border-gray-300'
                   } hover:bg-white/40 hover:border-teal-400 rounded-lg backdrop-blur-sm"
-                  style="
-                    top:${pos.top};
-                    left:${pos.left};
-                    width:20%;
-                    height:17%;
-                  "
                   data-index="${i}"
                 >
                 ${

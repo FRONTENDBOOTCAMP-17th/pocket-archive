@@ -1,9 +1,7 @@
 import { register, checkNickname, checkLoginId } from '../../api/user.js';
 import { Register } from './registerUI.js';
-import { showModal } from '../../modal.js';
+import { showModal } from '../modal.js';
 export { Register };
-
-
 
 export function initRegister() {
   let validNickname = false;

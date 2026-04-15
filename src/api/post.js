@@ -25,79 +25,45 @@ export async function togglePostLike(postId) {
 }
 
 export async function postComment(postId, text) {
-  if (getToken()) {
-    try {
-      const res = await fetch(`${BASE_URL}/posts/${postId}/comments`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: text,
-        }),
-      });
-
-      document.getElementById("commentInput").value = "";
-      location.reload();
-    } catch (error) {
-      console.error(error);
-    }
-  } else {
-    return;
-  }
+  const res = await fetch(`${BASE_URL}/posts/${postId}/comments`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content: text }),
+  });
+  if (!res.ok) throw new Error("댓글 작성 실패");
+  return res.json();
 }
 //댓글 수정
 export async function editComment(commentId, content) {
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content }),
-    });
-
-    if (res.ok) {
-      location.reload();
-    } else {
-      console.log("수정에 실패했습니다.");
-    }
-  } catch (error) {
-    console.error(error);
-  }
+  const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content }),
+  });
+  if (!res.ok) throw new Error("댓글 수정 실패");
+  return res.json();
 }
 //댓글삭제
 export async function deleteCommnet(commentId) {
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    });
-
-    if (res.ok) {
-      location.reload();
-    }
-  } catch (error) {
-    console.error("댓글 삭제 에러:", error);
-  }
+  const res = await fetch(`${BASE_URL}/comments/${commentId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  if (!res.ok) throw new Error("댓글 삭제 실패");
 }
 //게시물 삭제
 export async function deletePost(postId) {
-  try {
-    const res = await fetch(`${BASE_URL}/posts/${postId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${getToken()}` },
-    });
-    if (res.ok) {
-      location.href = "/board";
-    }
-  } catch (error) {
-    console.error(error);
-  }
+  const res = await fetch(`${BASE_URL}/posts/${postId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  if (!res.ok) throw new Error("게시글 삭제 실패");
 }
 export async function loadDetailPost(postId) {
   try {
@@ -201,15 +167,7 @@ export async function loadPreset() {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
     const data = await res.json();
-    const presets = Array.isArray(data) ? data : (data.data ?? []);
-    const select = document.getElementById("write-party-preset");
-    presets.forEach((preset) => {
-      const option = document.createElement("option");
-      option.value = preset.partyId;
-      option.textContent = preset.deckname;
-      select.appendChild(option);
-    });
-    return presets;
+    return Array.isArray(data) ? data : (data.data ?? []);
   } catch (e) {
     console.warn("파티 프리셋 로드 실패:", e);
     return [];
@@ -257,10 +215,9 @@ export async function editPost(
       const errorData = await editRes.json();
       throw new Error(errorData.message || "수정 실패");
     }
-    history.pushState(null, "", `/board/${postId}`);
-    window.loadPage();
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 

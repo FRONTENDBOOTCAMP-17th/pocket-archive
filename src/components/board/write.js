@@ -1,7 +1,7 @@
 import { writePost, publishPost, loadEditPost, loadPreset as fetchPresets, editPost, uploadImg } from '../../api/post.js';
 import { showModal } from '../modal.js';
 
-import { categoryMap } from '../../utils/boardConstants';
+import { categoryMap, reverseCategoryMap } from '../../utils/boardConstants';
 
 let uploadImgUrl = '';
 let loadPreset = [];
@@ -13,7 +13,7 @@ async function submitPost({ title, category, content, preset }) {
   const postId = data.data?.postId;
 
   if (postId) {
-    publishPost(postId);
+    await publishPost(postId);
   }
   return data;
 }
@@ -168,16 +168,23 @@ export async function initWrite() {
     if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
     if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
 
-    const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
-    await editPost(postId, {
-      title,
-      content,
-      category: apiCategory,
-      preset,
-      uploadImgUrl,
-      postData,
-      presets: loadPreset,
-    });
+    const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
+    try {
+      await editPost(postId, {
+        title,
+        content,
+        category: apiCategory,
+        preset,
+        uploadImgUrl,
+        postData,
+        presets: loadPreset,
+      });
+      history.pushState(null, '', `/board/${postId}`);
+      window.loadPage();
+    } catch (error) {
+      console.error(error);
+      await showModal('오류', '게시글 수정 중 오류가 발생했습니다.', 'danger');
+    }
   });
   // 폼 제출 (글작성 , 수정)
   // 임시 저장 — writePost만 호출, publishPost 생략 → isPublished: false 상태 유지
@@ -192,7 +199,7 @@ export async function initWrite() {
     if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
 
     try {
-      const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
+      const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
       const selectedPreset = loadPreset.find((item) => item.partyId === Number(preset));
       await writePost(title, apiCategory, content, selectedPreset, uploadImgUrl);
       history.pushState(null, '', '/board');
@@ -214,7 +221,7 @@ export async function initWrite() {
     if (!content) return await showModal('내용 미작성', '내용을 입력해주세요.', 'danger');
 
     try {
-      const apiCategory = categoryMap[selectedCategory] ?? selectedCategory;
+      const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
       await submitPost({ title, category: apiCategory, content, preset });
       history.pushState(null, '', '/board');
       window.loadPage();

@@ -7,8 +7,8 @@ function formatDate(dateStr) {
 
 export function getBoardContainerHTML() {
   return `
-    <div id="my-postlist" style="display:flex; flex-direction:column; gap:16px;">
-      <p style="text-align:center; padding:40px; color:#4a7a72;">불러오는 중...</p>
+    <div id="my-postlist" class="flex flex-col gap-4">
+      <p class="text-center py-10 text-[#4a7a72]">불러오는 중...</p>
     </div>
   `;
 }
@@ -19,16 +19,16 @@ export function getPostCardHTML(post) {
   const isDraft = post.isPublished === false;
 
   return `
-    <div style="display:flex; align-items:center; gap:6px;">
-      <span class="text-xs font-medium rounded-md ${badgeClass}" style="display:flex; width:80px; height:24px; padding:4px 10px; justify-content:center; align-items:center; text-align:center;">${escapeHtml(category)}</span>
-      ${isDraft ? `<span class="text-xs font-medium rounded-md text-gray-500 bg-gray-100" style="display:flex; height:24px; padding:4px 10px; justify-content:center; align-items:center;">임시게시물</span>` : ''}
+    <div class="flex items-center gap-1.5">
+      <span class="text-xs font-medium rounded-md ${badgeClass} flex w-20 h-6 py-1 px-2.5 justify-center items-center text-center">${escapeHtml(category)}</span>
+      ${isDraft ? `<span class="text-xs font-medium rounded-md text-gray-500 bg-gray-100 flex h-6 py-1 px-2.5 justify-center items-center">임시게시물</span>` : ''}
     </div>
-    <p style="color:#101828; font-size:18px; font-style:normal; font-weight:400; line-height:28px;">${escapeHtml(post.title)}</p>
-    <div class="flex items-center gap-3" style="color:#6A7282; font-size:14px; font-style:normal; font-weight:400; line-height:20px;">
+    <p class="text-[#101828] text-lg font-normal leading-7">${escapeHtml(post.title)}</p>
+    <div class="flex items-center gap-3 text-[#6A7282] text-sm font-normal leading-5">
       <span>${escapeHtml(post.nickname ?? post.user ?? '')}</span>
       <span>${formatDate(post.createdAt ?? post.date)}</span>
     </div>
-    <div class="flex items-center gap-4 mt-3 text-xs text-[#6a7282]" style="border-top: 1.108px solid #F3F4F6; padding-top: 12px; width: 100%;">
+    <div class="flex items-center gap-4 mt-3 text-xs text-[#6a7282] border-t border-[#F3F4F6] pt-3 w-full">
       <span class="flex items-center gap-1">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path d="M1.37468 8.232C1.31912 8.08232 1.31912 7.91767 1.37468 7.768C1.91581 6.4559 2.83435 5.33402 4.01386 4.5446C5.19336 3.75517 6.58071 3.33374 8.00001 3.33374C9.41932 3.33374 10.8067 3.75517 11.9862 4.5446C13.1657 5.33402 14.0842 6.4559 14.6253 7.768C14.6809 7.91767 14.6809 8.08232 14.6253 8.232C14.0842 9.54409 13.1657 10.666 11.9862 11.4554C10.8067 12.2448 9.41932 12.6663 8.00001 12.6663C6.58071 12.6663 5.19336 12.2448 4.01386 11.4554C2.83435 10.666 1.91581 9.54409 1.37468 8.232Z" stroke="#6A7282" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>

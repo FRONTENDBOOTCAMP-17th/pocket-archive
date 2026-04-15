@@ -1,243 +1,74 @@
-<style>
-  .myparty-trainer-grid {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    padding: 0 32px 32px 32px;
-    gap: 0;
-  }
-
-  .myparty-trainer-card-area {
-    padding: 24px;
-    margin-right: 32px;
-    border-radius: 16px;
-    border: 1px solid #f0fbf5;
-    background: #f0fbf5af;
-  }
-
-  .myparty-right-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  /* 포켓몬 목록 스크롤 컨테이너 */
-  .myparty-pokemon-scroll {
-    height: 600px;
-    overflow-y: auto;
-    padding: 0 32px 32px 32px;
-    /* 스크롤바 스타일 */
-    scrollbar-width: thin;
-    scrollbar-color: #d1d5db transparent;
-  }
-  .myparty-pokemon-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-  .myparty-pokemon-scroll::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 999px;
-  }
-
-  /* 카드 그리드  */
-  .myparty-pokemon-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 기본 4열 */
-    gap: 16px;
-  }
-
-  /* 태블릿 */
-  @media (max-width: 1280px) {
-    .myparty-pokemon-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (max-width: 1024px) {
-    .myparty-trainer-grid {
-      grid-template-columns: 1fr;
-      padding: 0 20px 24px 20px;
-    }
-    .myparty-trainer-card-area {
-      margin-right: 0;
-      margin-bottom: 20px;
-    }
-    .myparty-pokemon-scroll {
-      padding: 0 20px 24px 20px;
-      height: 500px;
-    }
-    .myparty-pokemon-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  /* 모바일 */
-  @media (max-width: 768px) {
-    .myparty-trainer-grid {
-      grid-template-columns: 1fr;
-      padding: 0 16px 20px 16px;
-    }
-    .myparty-trainer-card-area {
-      margin-right: 0;
-      margin-bottom: 16px;
-    }
-    .myparty-pokemon-scroll {
-      padding: 0 16px 20px 16px;
-      height: 400px;
-    }
-    .myparty-pokemon-grid {
-      grid-template-columns: repeat(2, 1fr); /* 모바일 2열 */
-    }
-    .myparty-section-header {
-      padding: 20px 16px 16px 16px !important;
-    }
-    .myparty-page-wrapper {
-      padding: 20px 12px !important;
-    }
-
-    #pokemon-search {
-      padding: 0 16px 16px 16px;
-    }
-  }
-
-  @media (max-width: 400px) {
-    .myparty-pokemon-grid {
-      grid-template-columns: repeat(1, 1fr); /* 최소 2열 유지 */
-    }
-  }
-</style>
-
-<div
-  class="myparty-page-wrapper"
-  style="
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding: 32px 24px;
-    max-width: 1353px;
-    margin: 0 auto;
-  "
->
+<div class="flex flex-col gap-6 px-6 py-8 max-w-450 mx-auto max-[768px]:px-3 max-[768px]:py-5">
   <!-- 제목 -->
-  <div style="display: flex; flex-direction: column; text-align: left">
+  <div class="flex flex-col text-left">
     <h1 class="text-3xl font-bold text-[#1a3a35]">나만의 파티 만들기</h1>
-    <p class="text-sm text-[#5a8a82]" style="margin-top: 4px">
-      포획한 포켓몬 중 최대 6마리의 포켓몬을 선택하여 나만의 트레이너 카드를
-      만들어보세요
-    </p>
+    <p class="text-sm text-[#5a8a82] mt-1">포획한 포켓몬 중 최대 6마리의 포켓몬을 선택하여 나만의 트레이너 카드를 만들어보세요</p>
   </div>
 
   <!-- 트레이너 카드 섹션 -->
-  <div
-    class="bg-white rounded-2xl shadow-sm border border-gray-100"
-    style="overflow: hidden"
-  >
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     <!-- 타이틀 -->
-    <div
-      class="myparty-section-header"
-      style="
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 32px 32px 24px 32px;
-      "
-    >
+    <div class="flex items-center gap-2 px-8 pt-8 pb-6 max-[768px]:px-4 max-[768px]:pt-5 max-[768px]:pb-4">
       <span class="text-teal-400 text-lg">✦</span>
       <h2 class="text-2xl font-black text-slate-900">트레이너 카드 미리보기</h2>
     </div>
 
     <!-- 2열 → 모바일 1열 그리드 -->
-    <div class="myparty-trainer-grid">
+    <div class="grid grid-cols-[1fr_280px] px-8 pb-8 max-[1024px]:grid-cols-1 max-[1024px]:px-5 max-[1024px]:pb-6 max-[768px]:px-4 max-[768px]:pb-5">
       <!-- 카드 미리보기 -->
-      <div class="myparty-trainer-card-area">
-        <p
-          class="text-sm font-medium text-slate-400"
-          style="margin-bottom: 16px"
-        >
-          선택된 포켓몬:
-        </p>
+      <div class="p-6 mr-8 rounded-2xl border border-[#f0fbf5] bg-[#f0fbf5af] max-[1024px]:mr-0 max-[1024px]:mb-5 max-[768px]:mb-4">
+        <p class="text-sm font-medium text-slate-400 mb-4">선택된 포켓몬:</p>
         <div id="trainer-card-root"></div>
       </div>
 
       <!-- 오른쪽(모바일: 아래) 패널 -->
-      <div class="myparty-right-panel">
+      <div class="flex flex-col gap-5">
         <!-- 버튼 -->
-        <div style="display: flex; gap: 12px">
+        <div class="flex gap-3">
           <button
             id="resetBtn"
-            class="flex-1 flex items-center justify-center gap-1.5 border border-gray-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
-            style="padding: 10px 16px"
+            class="flex-1 flex items-center justify-center gap-1.5 border border-gray-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition px-4 py-2.5"
           >
             <span>↻</span> 초기화
           </button>
-          <button
-            id="saveBtn"
-            class="flex-1 bg-teal-500 text-white rounded-xl text-sm font-semibold hover:bg-teal-600 transition"
-            style="padding: 10px 16px"
-          >
+          <button id="saveBtn" class="flex-1 bg-teal-500 text-white rounded-xl text-sm font-semibold hover:bg-teal-600 transition px-4 py-2.5">
             완성
           </button>
         </div>
 
         <!-- 저장된 파티 -->
         <div>
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              padding: 4px 4px 12px 4px;
-            "
-          >
-            <span class="text-sm font-semibold text-slate-600"
-              >저장된 나의 파티</span
-            >
-            <span
-              id="preset-count"
-              class="text-xs text-slate-400 bg-slate-100 rounded-full"
-              style="padding: 2px 8px"
-              >0 / 3</span
-            >
+          <div class="flex items-center justify-content-between pb-3 px-1">
+            <span class="text-sm font-semibold text-slate-600 flex-1">저장된 나의 파티</span>
+            <span id="preset-count" class="text-xs text-slate-400 bg-slate-100 rounded-full px-2 py-0.5">0 / 3</span>
           </div>
-          <div
-            id="preset-list"
-            style="display: flex; flex-direction: column; gap: 8px"
-          ></div>
+          <div id="preset-list" class="flex flex-col gap-2"></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- 북마크 포켓몬 섹션 -->
-  <div
-    class="bg-white rounded-2xl shadow-sm border border-gray-100"
-    style="overflow: hidden"
-  >
-    <div
-      class="myparty-section-header"
-      style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 32px 32px 24px 32px;
-      "
-    >
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="flex justify-between items-center px-8 pt-8 pb-6 max-[768px]:px-4 max-[768px]:pt-5 max-[768px]:pb-4">
       <h2 class="text-2xl font-black text-slate-900">포획한 포켓몬 선택</h2>
       <span id="count" class="text-sm text-slate-400">0 / 6 선택됨</span>
     </div>
 
     <!-- 검색창 -->
-    <div style="padding: 0 32px 16px 32px">
+    <div class="px-8 pb-4 max-[768px]:px-4">
       <input
         id="pokemon-search"
         type="text"
         placeholder="포켓몬 이름 또는 도감 번호로 검색"
-        class="w-full rounded-xl border border-gray-200 text-sm text-slate-700 outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition"
-        style="padding: 12px 16px"
+        class="w-full rounded-xl border border-gray-200 text-sm text-slate-700 outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition px-4 py-3"
       />
     </div>
 
-    <div class="myparty-pokemon-scroll">
-      <div id="pokemon-list" class="myparty-pokemon-grid"></div>
+    <div
+      class="h-150 overflow-y-auto px-8 pb-8 [scrollbar-width:thin] [scrollbar-color:#d1d5db_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full max-[1024px]:px-5 max-[1024px]:pb-6 max-[1024px]:h-125 max-[768px]:px-4 max-[768px]:pb-5 max-[768px]:h-100"
+    >
+      <div id="pokemon-list" class="grid grid-cols-4 gap-4 max-[1280px]:grid-cols-3 max-[768px]:grid-cols-2 max-[400px]:grid-cols-1"></div>
     </div>
   </div>
-
 </div>
