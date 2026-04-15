@@ -79,6 +79,7 @@ async function loadPage() {
 
     // HTML을 먼저 삽입한 후 초기화
     document.getElementById('content').innerHTML = html;
+    window.scrollTo(0, 0);
 
     if (current === 'board' && page.includes('board.html')) {
       const { initBoard } = await import('./components/board/board.js');

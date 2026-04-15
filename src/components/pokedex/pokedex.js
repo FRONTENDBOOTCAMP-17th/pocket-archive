@@ -30,7 +30,6 @@ export async function initPokedex() {
   }
 
   filteredPokemon = [...allPokemon];
-  // 로그인이 되어있으면 실행
   const isLoggedIn = localStorage.getItem("token");
   if (isLoggedIn) {
     myPocketMons = await loadPoketmons();
@@ -42,17 +41,23 @@ export async function initPokedex() {
   document
     .getElementById("pokemon-modal-close")
     ?.addEventListener("click", () => {
-      document.getElementById("pokemon-modal")?.classList.add("hidden");
+      const m = document.getElementById("pokemon-modal");
+      m?.classList.add("hidden"); m?.classList.remove("flex");
     });
   document
     .getElementById("pokemon-modal-overlay")
     ?.addEventListener("click", () => {
-      document.getElementById("pokemon-modal")?.classList.add("hidden");
+      const m = document.getElementById("pokemon-modal");
+      m?.classList.add("hidden"); m?.classList.remove("flex");
     });
 
   setupSearch();
   renderSidebar();
-  renderGrid(1);
+  await renderGrid(1);
+
+  // 이벤트 위임: 그리드 + 사이드바 각 컨테이너에 한 번만 등록
+  bindGridEvents();
+  bindSidebarEvents();
 }
 
 function setupSearch() {
@@ -105,17 +110,13 @@ async function renderGrid(page) {
 function renderPagination() {
   const pag = document.getElementById("pokedexPagination");
   const total = Math.ceil(filteredPokemon.length / ITEMS_PER_PAGE);
-  //아이디값을 못불러오면 함수 리턴 해버림
-  if (!pag) {
-    return;
-  }
-  // 나누기값이 1이거나 그 밑값이면 pagenation 빈값
+  if (!pag) return;
   if (total <= 1) {
-    return (pag.innerHTML = "");
+    pag.innerHTML = "";
+    return;
   }
 
   pag.innerHTML = Pagination(currentPage, total);
-  //클릭 이벤트
   pag.onclick = (e) => {
     const btn = e.target.closest(".page-btn") || e.target.closest("#jumpBtn");
     if (btn) {
@@ -128,7 +129,6 @@ function renderPagination() {
   });
 }
 
-// 비동기로 해야함 이거 비동기로 안하면 저희 페이지네이션 움직일때마다 데이터 받아오는거 생각해야함
 async function movePage(p) {
   const total = Math.ceil(filteredPokemon.length / ITEMS_PER_PAGE);
   const page = Math.max(1, Math.min(total, parseInt(p) || 1));
@@ -138,19 +138,53 @@ async function movePage(p) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// 전역 윈도우 함수 (왼쪽에 포켓몬 사이드바안에 있는 포켓몬 no. 어쩌고 클릭하면 실행되는 함수임)
-window.selectPokemon = async function (no) {
+// ─── 이벤트 위임 ────────────────────────────────────────────
+function bindGridEvents() {
+  const grid = document.getElementById("pokemonGrid");
+  if (!grid) return;
+
+  grid.addEventListener("click", async (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+
+    const action = target.dataset.action;
+    const id = Number(target.dataset.id);
+
+    if (action === "select-pokemon") {
+      await openPokemonModal(id);
+    } else if (action === "poketmon-reg") {
+      e.stopPropagation();
+      await registerPokemon(id);
+    } else if (action === "poketmon-delete") {
+      e.stopPropagation();
+      await deletePokemonBookmark(id);
+    }
+  });
+}
+
+function bindSidebarEvents() {
+  const sidebar = document.getElementById("sidebarList");
+  if (!sidebar) return;
+
+  sidebar.addEventListener("click", async (e) => {
+    const target = e.target.closest("[data-action='select-pokemon']");
+    if (!target) return;
+    await openPokemonModal(Number(target.dataset.id));
+  });
+}
+
+// ─── 로컬 액션 함수 ──────────────────────────────────────────
+async function openPokemonModal(no) {
   const modal = document.getElementById("pokemon-modal");
   const content = document.getElementById("pokemon-modal-content");
   if (!modal || !content) return;
 
-  // 로딩 표시 후 모달 열기
   content.innerHTML = `
     <div class="flex justify-center items-center py-20">
       <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
     </div>
   `;
-  modal.classList.remove("hidden");
+  modal.classList.remove("hidden"); modal.classList.add("flex");
 
   try {
     const p = allPokemon.find((item) => item.no === no);
@@ -163,13 +197,7 @@ window.selectPokemon = async function (no) {
 
     if (!data) throw new Error("포켓몬 정보를 불러올 수 없습니다.");
 
-    const isBookmarked = myPocketMons.includes(no);
-    content.innerHTML = PokemonModalContent(
-      data,
-      p.name,
-      species,
-      isBookmarked,
-    );
+    content.innerHTML = PokemonModalContent(data, p.name, species);
   } catch (error) {
     console.error("모달 로드 실패:", error);
     content.innerHTML = `
@@ -178,19 +206,16 @@ window.selectPokemon = async function (no) {
       </div>
     `;
   }
-};
+}
 
-window.poketmonReg = async function (event, id) {
-  event.stopPropagation(); // 카드 클릭 이벤트 전파 방지
+async function registerPokemon(id) {
   await poketmonReg(id);
-
   myPocketMons.push(id);
   renderGrid(currentPage);
-};
-window.poketmonDelete = async function (event, id) {
-  event.stopPropagation(); // 카드 클릭 이벤트 전파 방지
-  await poketmonDelete(id);
+}
 
+async function deletePokemonBookmark(id) {
+  await poketmonDelete(id);
   myPocketMons = myPocketMons.filter((item) => item !== id);
   renderGrid(currentPage);
-};
+}

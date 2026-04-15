@@ -26,7 +26,7 @@ export function PokemonViewCard(data, koName) {
   const img = data.sprites.other["official-artwork"].front_default;
   return `
     <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col border border-gray-100 overflow-hidden h-fit w-full">
-      <div onclick="selectPokemon(${data.id})" class="relative h-44 flex items-center justify-center bg-[#F7F9F8] transition-colors shrink-0" >
+      <div data-action="select-pokemon" data-id="${data.id}" class="relative h-44 flex items-center justify-center bg-[#F7F9F8] transition-colors shrink-0 cursor-pointer">
         <img src="${img}" class="w-28 h-28 object-contain drop-shadow-md">
       </div>
       <div class="flex flex-col gap-4" style="padding: 10px;">

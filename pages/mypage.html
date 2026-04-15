@@ -2,7 +2,7 @@
   <!-- 포켓몬 상세 모달 -->
   <div id="pokemon-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div id="pokemon-modal-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative z-10 w-full mx-8" style="max-width: 789px;">
+    <div class="relative z-10 w-full mx-8" style="max-width: 789px">
       <button
         id="pokemon-modal-close"
         style="
@@ -17,43 +17,17 @@
           z-index: 9999;
           padding: 0;
           display: block;
-        ">
+        "
+      >
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="11" fill="#FF6B6B"/>
-          <path d="M8.4 17L12 13.4L15.6 17L17 15.6L13.4 12L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4L10.6 12L7 15.6L8.4 17ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22ZM12 20C14.2333 20 16.125 19.225 17.675 17.675C19.225 16.125 20 14.2333 20 12C20 9.76667 19.225 7.875 17.675 6.325C16.125 4.775 14.2333 4 12 4C9.76667 4 7.875 4.775 6.325 6.325C4.775 7.875 4 9.76667 4 12C4 14.2333 4.775 16.125 6.325 17.675C7.875 19.225 9.76667 20 12 20Z" fill="white"/>
+          <circle cx="12" cy="12" r="11" fill="#FF6B6B" />
+          <path
+            d="M8.4 17L12 13.4L15.6 17L17 15.6L13.4 12L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4L10.6 12L7 15.6L8.4 17ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22ZM12 20C14.2333 20 16.125 19.225 17.675 17.675C19.225 16.125 20 14.2333 20 12C20 9.76667 19.225 7.875 17.675 6.325C16.125 4.775 14.2333 4 12 4C9.76667 4 7.875 4.775 6.325 6.325C4.775 7.875 4 9.76667 4 12C4 14.2333 4.775 16.125 6.325 17.675C7.875 19.225 9.76667 20 12 20Z"
+            fill="white"
+          />
         </svg>
       </button>
       <div id="pokemon-modal-content"></div>
-    </div>
-  </div>
-
-  <!-- 로그아웃 확인 모달 -->
-  <div id="logout-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
-    <div id="logout-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-    <div
-      class="relative bg-white rounded-2xl shadow-xl"
-      style="width: 100%; max-width: 360px; margin: 0 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px"
-    >
-      <div>
-        <h3 class="text-lg font-black text-slate-900">로그아웃</h3>
-        <p class="text-sm text-slate-400" style="margin-top: 4px">로그아웃 하시겠습니까?</p>
-      </div>
-      <div style="display: flex; gap: 8px">
-        <button
-          id="logout-modal-cancel"
-          class="flex-1 rounded-xl text-sm font-semibold transition"
-          style="padding: 10px 16px; border: 1px solid #d1d5db; background: #fff; color: #6a7282; cursor: pointer"
-        >
-          취소
-        </button>
-        <button
-          id="logout-modal-confirm"
-          class="flex-1 rounded-xl text-white text-sm font-semibold transition"
-          style="padding: 10px 16px; background: #e7000b; cursor: pointer"
-        >
-          로그아웃
-        </button>
-      </div>
     </div>
   </div>
 
@@ -198,10 +172,18 @@
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" fill="none">
             <g clip-path="url(#clip0_405_18)">
-              <path d="M15 28.5C22.4558 28.5 28.5 22.4558 28.5 15C28.5 7.54416 22.4558 1.5 15 1.5C7.54416 1.5 1.5 7.54416 1.5 15C1.5 22.4558 7.54416 28.5 15 28.5Z" stroke="currentColor" stroke-width="3"></path>
+              <path
+                d="M15 28.5C22.4558 28.5 28.5 22.4558 28.5 15C28.5 7.54416 22.4558 1.5 15 1.5C7.54416 1.5 1.5 7.54416 1.5 15C1.5 22.4558 7.54416 28.5 15 28.5Z"
+                stroke="currentColor"
+                stroke-width="3"
+              ></path>
               <path d="M1.5 15H9.75" stroke="currentColor" stroke-width="3"></path>
               <path d="M20.25 15H28.5" stroke="currentColor" stroke-width="3"></path>
-              <path d="M15 18.75C17.0711 18.75 18.75 17.0711 18.75 15C18.75 12.9289 17.0711 11.25 15 11.25C12.9289 11.25 11.25 12.9289 11.25 15C11.25 17.0711 12.9289 18.75 15 18.75Z" stroke="currentColor" stroke-width="3"></path>
+              <path
+                d="M15 18.75C17.0711 18.75 18.75 17.0711 18.75 15C18.75 12.9289 17.0711 11.25 15 11.25C12.9289 11.25 11.25 12.9289 11.25 15C11.25 17.0711 12.9289 18.75 15 18.75Z"
+                stroke="currentColor"
+                stroke-width="3"
+              ></path>
             </g>
           </svg>
           <p>내가 지닌 포켓몬</p>

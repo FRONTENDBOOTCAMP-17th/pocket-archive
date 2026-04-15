@@ -1,4 +1,5 @@
 import { withdraw } from '../../api/user.js';
+import { showConfirm } from '../modal.js';
 import { initMyInfo } from './myinfo.js';
 import { initMyBoard } from './myboard.js';
 import { initMyPocketmon } from './mypocketmon.js';
@@ -42,23 +43,13 @@ export function init() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // 로그아웃 모달
-  const logoutModal = document.getElementById('logout-modal');
-  btnLogout.addEventListener('click', () => {
-    logoutModal.classList.remove('hidden');
-    logoutModal.classList.add('flex');
-  });
-  document.getElementById('logout-modal-cancel').addEventListener('click', () => {
-    logoutModal.classList.add('hidden');
-    logoutModal.classList.remove('flex');
-  });
-  document.getElementById('logout-modal-overlay').addEventListener('click', () => {
-    logoutModal.classList.add('hidden');
-    logoutModal.classList.remove('flex');
-  });
-  document.getElementById('logout-modal-confirm').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    window.location.href = '/';
+  // 로그아웃
+  btnLogout.addEventListener('click', async () => {
+    const ok = await showConfirm('로그아웃', '로그아웃 하시겠습니까?');
+    if (ok) {
+      localStorage.removeItem('token');
+      window.location.href = '/';
+    }
   });
 
   // 회원탈퇴 모달
