@@ -1,33 +1,22 @@
 import './style.css';
 import { Header } from './components/header.js';
 import { Footer } from './components/footer.js';
-import { Login, initLogin } from './components/Auth/login.js';
-import { Register, initRegister } from './components/Auth/register.js';
+import { Login, initLogin } from './components/auth/login.js';
+import { Register, initRegister } from './components/auth/register.js';
 import { initPokedex } from './components/pokedex/pokedex.js';
 import { initPostDetail } from './components/board/boardDetail.js';
-
-console.log('포켓아카이브 실행중');
 
 const app = document.getElementById('app');
 
 app.innerHTML = `
   ${Header()}
-  <main class="main">
-    <div id="content" class="content"></div>
+  <main class="flex-1 min-h-[calc(100vh-200px)] grid grid-cols-[1fr_10fr_1fr] py-10">
+    <div id="content" class="col-start-2 w-full min-w-0"></div>
   </main>
   ${Footer()}
 `;
 
-const menuBtn = document.getElementById('menuBtn');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-
-if (menuBtn) {
-  menuBtn.addEventListener('click', () => {
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-  });
-}
+initSidebar();
 
 async function loadPage() {
   try {
@@ -49,8 +38,8 @@ async function loadPage() {
     if (!document.getElementById('content')) {
       app.innerHTML = `
         ${Header()}
-        <main class="main">
-          <div id="content" class="content"></div>
+        <main class="flex-1 min-h-[calc(100vh-200px)] grid grid-cols-[1fr_10fr_1fr] py-10">
+          <div id="content" class="col-start-2 w-full min-w-0"></div>
         </main>
         ${Footer()}
       `;
@@ -90,14 +79,11 @@ async function loadPage() {
 
     // HTML을 먼저 삽입한 후 초기화
     document.getElementById('content').innerHTML = html;
+    window.scrollTo(0, 0);
 
     if (current === 'board' && page.includes('board.html')) {
       const { initBoard } = await import('./components/board/board.js');
       initBoard();
-    }
-
-    if (current === 'mypage') {
-      import('./components/mypage/my.js');
     }
 
     if (page.includes('pokedex.html')) {
@@ -105,7 +91,7 @@ async function loadPage() {
     }
 
     if (page.includes('detailPost.html')) {
-      initPostDetail(postId || 2);
+      initPostDetail(postId);
     }
 
     if (page.includes('writePost.html')) {
@@ -114,7 +100,7 @@ async function loadPage() {
     }
 
     if (page.includes('myparty.html')) {
-      const { init } = await import('./scripts/myparty.js');
+      const { init } = await import('./components/myparty/myparty.js');
       init();
     }
     if (page.includes('mypage.html')) {
@@ -148,10 +134,10 @@ function setActiveMenu(current) {
   const links = document.querySelectorAll('.sidebar-nav a');
 
   links.forEach((link) => {
-    link.classList.remove('active');
+    link.classList.remove('bg-[#cde5ec]', 'rounded-xl', 'font-bold');
 
     if (link.dataset.page === current) {
-      link.classList.add('active');
+      link.classList.add('bg-[#cde5ec]', 'rounded-xl', 'font-bold');
     }
   });
 }
@@ -165,23 +151,26 @@ function initSidebar() {
 
   if (!menuBtn || !sidebar || !overlay) return;
 
+  function openSidebar() {
+    sidebar.classList.remove('-right-80');
+    sidebar.classList.add('right-0');
+    overlay.classList.remove('opacity-0', 'pointer-events-none');
+    overlay.classList.add('opacity-100', 'pointer-events-auto');
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('right-0');
+    sidebar.classList.add('-right-80');
+    overlay.classList.remove('opacity-100', 'pointer-events-auto');
+    overlay.classList.add('opacity-0', 'pointer-events-none');
+  }
+
   // 열기
-  menuBtn.addEventListener('click', () => {
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-  });
+  menuBtn.addEventListener('click', openSidebar);
 
   // 닫기 버튼
-  closeBtn?.addEventListener('click', () => {
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-  });
+  closeBtn?.addEventListener('click', closeSidebar);
 
   // 배경 클릭
-  overlay.addEventListener('click', () => {
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-  });
+  overlay.addEventListener('click', closeSidebar);
 }
-
-initSidebar();

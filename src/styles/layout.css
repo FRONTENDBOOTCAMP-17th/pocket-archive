@@ -1,19 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(180deg, #d4f0e2 0%, #f0fbf5 100%);
-  font-family: "Galmuri11";
-  overflow-x: hidden;
-}
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
 
 /* =========================
    HEADER
@@ -46,6 +31,14 @@ body {
 .logo {
   font-weight: bold;
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo img {
+  height: 55px;
+  width: auto;
 }
 
 .nav {
@@ -74,8 +67,18 @@ body {
   font-family: Galmuri11;
 }
 
+.logout-btn {
+  background: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #05b29f;
+  font-family: Galmuri11;
+}
+
 /* =========================
-   HEADER ICONS (추가)
+   HEADER ICONS
 ========================= */
 .header-icons {
   display: flex;
@@ -89,26 +92,6 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-}
-
-/* =========================
-   MAIN
-========================= */
-.main {
-  flex: 1;
-  min-height: calc(100vh - 200px);
-
-  display: grid;
-
-  grid-template-columns: 1fr 10fr 1fr;
-
-  padding: 40px 0;
-}
-
-.content {
-  grid-column: 2;
-  width: 100%;
-  min-width: 0;
 }
 
 /* =========================
@@ -145,103 +128,6 @@ body {
     font-weight: 400;
     line-height: 20px;
   }
-}
-
-/* =========================
-   SIDEBAR
-========================= */
-.sidebar {
-  position: fixed;
-  top: 0;
-  right: -320px;
-  width: 320px;
-  height: 100vh;
-  background: #fff;
-
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  transition: 0.3s;
-  z-index: 1000;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar.active {
-  right: 0;
-}
-
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  font-weight: bold;
-
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.sidebar-nav a {
-  padding: 16px 20px;
-  display: block;
-  text-decoration: none;
-  color: #333;
-  .active {
-    background: #cde5ec;
-    border-radius: 12px;
-    font-weight: bold;
-  }
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  padding: 20px;
-  text-align: center;
-  font-size: 12px;
-  color: #888;
-}
-
-.sidebar-nav a.active {
-  background: #cde5ec;
-  border-radius: 12px;
-  font-weight: bold;
-}
-
-#closeBtn {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-}
-
-#closeBtn:active {
-  transform: scale(0.9);
-}
-
-/* =========================
-   OVERLAY
-========================= */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  background: rgba(0, 0, 0, 0.4);
-
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s;
-  z-index: 10;
-}
-
-.overlay.active {
-  opacity: 1;
-  pointer-events: all;
 }
 
 /* =========================
