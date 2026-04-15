@@ -1,29 +1,9 @@
 import { register, checkNickname, checkLoginId } from '../../api/user.js';
 import { Register } from './registerUI.js';
+import { showModal } from '../../modal.js';
 export { Register };
 
-function showModal(title, desc, { type = 'error', onConfirm } = {}) {
-  const modal = document.getElementById('register-modal');
-  const confirmBtn = document.getElementById('register-modal-confirm');
-  document.getElementById('register-modal-title').textContent = title;
-  document.getElementById('register-modal-desc').textContent = desc;
-  confirmBtn.className =
-    type === 'success'
-      ? 'w-full rounded-xl bg-[#00BBA7] text-white text-sm font-semibold hover:bg-[#009e8d] transition'
-      : 'w-full rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition';
-  confirmBtn.style.padding = '10px 16px';
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
 
-  const close = () => {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    if (onConfirm) onConfirm();
-  };
-
-  confirmBtn.addEventListener('click', close, { once: true });
-  document.getElementById('register-modal-overlay').addEventListener('click', close, { once: true });
-}
 
 export function initRegister() {
   let validNickname = false;
@@ -71,15 +51,11 @@ export function initRegister() {
       if (!token) throw new Error('토큰 정보 없음');
       localStorage.setItem('token', token);
       if (userId != null) localStorage.setItem('userId', String(userId));
-      showModal('회원가입 성공', '메인페이지로 이동합니다.', {
-        type: 'success',
-        onConfirm: () => location.replace('/'),
-      });
+      await showModal('회원가입 성공', '메인페이지로 이동합니다.');
+      location.replace('/');
     } catch (error) {
       console.error(error);
-      isSubmitting = false;
-      if (signupBtn) signupBtn.disabled = false;
-      showModal('오류', '회원가입에 실패했어요. 다시 시도해주세요.');
+      await showModal('오류', '회원가입에 실패했어요. 다시 시도해주세요.', 'danger');
     }
   };
 
