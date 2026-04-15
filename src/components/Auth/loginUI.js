@@ -1,22 +1,6 @@
 export function Login() {
   return `
     <main class="w-screen min-h-screen flex flex-col items-center justify-center gap-5" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFF 50%, #FFF7ED 100%)">
-    <!-- 에러 커스텀 에러 모달 -->
-      <div id="login-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
-        <div id="login-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-2xl shadow-xl"
-          style="width:100%; max-width:360px; margin:0 16px; padding:24px; display:flex; flex-direction:column; gap:20px;">
-          <div>
-            <h3 id="login-modal-title" class="text-lg font-black text-slate-900">알림</h3>
-            <p id="login-modal-desc" class="text-sm text-slate-400" style="margin-top:4px;"></p>
-          </div>
-          <button id="login-modal-confirm"
-            class="w-full rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition"
-            style="padding:10px 16px;">
-            확인
-          </button>
-        </div>
-      </div>
 
       <!-- icon & header -->
       <div class="flex flex-col items-center gap-2">
