@@ -1,10 +1,10 @@
 import './style.css';
-import { Header } from './components/header.js';
-import { Footer } from './components/footer.js';
-import { Login, initLogin } from './components/auth/login.js';
-import { Register, initRegister } from './components/auth/register.js';
-import { initPokedex } from './components/pokedex/pokedex.js';
-import { initPostDetail } from './components/board/boardDetail.js';
+import { Header } from './components/header';
+import { Footer } from './components/footer';
+import { Login, initLogin } from './components/auth/login';
+import { Register, initRegister } from './components/auth/register';
+import { initPokedex } from './components/pokedex/pokedex';
+import { initPostDetail } from './components/board/boardDetail';
 
 const app = document.getElementById('app');
 
