@@ -3,7 +3,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const getToken = () => localStorage.getItem('token');
 
 export async function loadPosts() {
-  const response = await fetch(`${BASE_URL}/posts`, {
+  const response = await fetch(`${BASE_URL}/posts?size=1000`, {
     method: 'GET',
   });
   if (!response.ok) throw new Error('Failed to fetch posts');
