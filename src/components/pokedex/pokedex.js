@@ -4,6 +4,7 @@ import {
   Pagination,
   PokemonModalContent,
 } from "./pokedexUI.js";
+import { guardFnByKey } from "../../utils/guardFn.js";
 import {
   fetchPokemonDetail,
   fetchPokemonSpecies,
@@ -143,6 +144,9 @@ function bindGridEvents() {
   const grid = document.getElementById("pokemonGrid");
   if (!grid) return;
 
+  const guardedRegister = guardFnByKey(registerPokemon);
+  const guardedDelete = guardFnByKey(deletePokemonBookmark);
+
   grid.addEventListener("click", async (e) => {
     const target = e.target.closest("[data-action]");
     if (!target) return;
@@ -154,10 +158,10 @@ function bindGridEvents() {
       await openPokemonModal(id);
     } else if (action === "poketmon-reg") {
       e.stopPropagation();
-      await registerPokemon(id);
+      await guardedRegister(id);
     } else if (action === "poketmon-delete") {
       e.stopPropagation();
-      await deletePokemonBookmark(id);
+      await guardedDelete(id);
     }
   });
 }

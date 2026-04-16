@@ -1,5 +1,6 @@
 import { getMe, updateMe, checkNickname, getMyPosts, getMyPocketmons } from '../../api/user.js';
 import { getMyInfoHTML } from './myinfoUI.js';
+import { guardFn } from '../../utils/guardFn.js';
 
 export async function initMyInfo() {
   const content = document.getElementById('mypage-content');
@@ -86,7 +87,7 @@ export async function initMyInfo() {
     nicknameMsg.style.display = 'none';
   });
 
-  checkNicknameBtn.addEventListener('click', async () => {
+  checkNicknameBtn.addEventListener('click', guardFn(async () => {
     const nickname = nicknameInput.value.trim();
     if (!nickname) {
       nicknameMsg.style.display = 'block';
@@ -110,9 +111,9 @@ export async function initMyInfo() {
       console.error(e);
       showModal('오류', '중복 확인 중 오류가 발생했습니다.');
     }
-  });
+  }));
 
-  document.getElementById('edit-btn').addEventListener('click', async () => {
+  document.getElementById('edit-btn').addEventListener('click', guardFn(async () => {
     if (!isEditing) {
       isEditing = true;
       nicknameInput.disabled = false;
@@ -145,5 +146,5 @@ export async function initMyInfo() {
       console.error(e);
       showModal('오류', '저장 중 오류가 발생했습니다.');
     }
-  });
+  }));
 }
