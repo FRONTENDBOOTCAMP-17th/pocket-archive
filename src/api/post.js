@@ -67,6 +67,9 @@ export async function loadDetailPost(postId) {
   try {
     const postRes = await fetch(`${BASE_URL}/posts/${postId}`, {
       method: 'GET',
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
     });
     if (!postRes.ok) {
       throw new Error('게시물 불러오기 실패');
