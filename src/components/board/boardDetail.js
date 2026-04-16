@@ -1,6 +1,7 @@
 import { BoardDetailContent, CommentSection } from './boardDetailUI.js';
 import { postComment, togglePostLike, editComment, deleteCommnet, deletePost, loadDetailPost, loadDetailComment } from '../../api/post.js';
 import { showModal } from '../modal.js';
+import { guardFn, guardFnByKey } from '../../utils/guardFn.js';
 
 // 페이지 이동 시 이전 리스너를 정리하기 위한 컨트롤러
 let _commentClickController = null;
@@ -87,7 +88,7 @@ export async function initPostDetail(postId) {
 async function setupCommentEvents(postId, signal) {
   const submitBtn = document.getElementById('submitComment');
   if (submitBtn) {
-    submitBtn.onclick = async () => {
+    submitBtn.onclick = guardFn(async () => {
       const input = document.getElementById('commentInput');
       const text = input.value;
       if (!text.trim()) return;
@@ -101,10 +102,12 @@ async function setupCommentEvents(postId, signal) {
       } catch (error) {
         console.error(error);
       }
-    };
+    });
   }
 
   // data-action 이벤트 위임 — signal로 페이지 이동 시 자동 제거
+  const guardedDeleteComment = guardFnByKey(handleDeleteComment);
+  const guardedDeletePost = guardFnByKey(handleDeletePost);
   document.addEventListener(
     'click',
     async (e) => {
@@ -112,23 +115,19 @@ async function setupCommentEvents(postId, signal) {
       if (!action) return;
 
       if (action === 'edit-comment') {
-        const commentId = e.target.dataset.commentId;
-        toggleEditMode(commentId);
+        toggleEditMode(e.target.dataset.commentId);
       }
 
       if (action === 'delete-comment') {
-        const commentId = e.target.dataset.commentId;
-        await handleDeleteComment(commentId);
+        await guardedDeleteComment(e.target.dataset.commentId);
       }
 
       if (action === 'edit-post') {
-        const pid = e.target.dataset.postId;
-        handleEditPost(pid);
+        handleEditPost(e.target.dataset.postId);
       }
 
       if (action === 'delete-post') {
-        const pid = e.target.dataset.postId;
-        await handleDeletePost(pid);
+        await guardedDeletePost(e.target.dataset.postId);
       }
     },
     { signal },
@@ -139,12 +138,8 @@ async function setupLikeEvent(postId) {
   const likeBtn = document.getElementById('post-like-btn');
   if (!likeBtn) return;
 
-  let isInFlight = false;
-
-  likeBtn.onclick = async () => {
-    if (!localStorage.getItem('token') || isInFlight) return;
-    isInFlight = true;
-
+  likeBtn.onclick = guardFn(async () => {
+    if (!localStorage.getItem('token')) return;
     try {
       const ok = await togglePostLike(postId);
 
@@ -161,10 +156,8 @@ async function setupLikeEvent(postId) {
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      isInFlight = false;
     }
-  };
+  });
 }
 
 // 수정 모드 전환
@@ -193,7 +186,7 @@ function toggleEditMode(commentId) {
 
   btnGroup.replaceChildren(saveBtn, cancelBtn);
 
-  saveBtn.addEventListener('click', () => saveEditComment(commentId, originalContent));
+  saveBtn.addEventListener('click', guardFn(() => saveEditComment(commentId, originalContent)));
   cancelBtn.addEventListener('click', () => location.reload());
 }
 

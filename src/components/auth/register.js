@@ -1,6 +1,7 @@
 import { register, checkNickname, checkLoginId } from '../../api/user.js';
 import { Register } from './registerUI.js';
 import { showModal } from '../modal.js';
+import { guardFn } from '../../utils/guardFn.js';
 export { Register };
 
 export function initRegister() {
@@ -62,7 +63,7 @@ export function initRegister() {
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
-  document.getElementById('checkNicknameBtn').onclick = async function () {
+  document.getElementById('checkNicknameBtn').onclick = guardFn(async () => {
     const nicknameVal = nickname.value.trim();
     if (!nicknameVal) return;
     try {
@@ -74,9 +75,9 @@ export function initRegister() {
       console.error(error);
     }
     updateButtonState();
-  };
+  });
 
-  document.getElementById('checkIdBtn').onclick = async function () {
+  document.getElementById('checkIdBtn').onclick = guardFn(async () => {
     const idVal = id.value.trim();
     if (!idVal) return;
     try {
@@ -88,7 +89,7 @@ export function initRegister() {
       console.error(error);
     }
     updateButtonState();
-  };
+  });
 
   nickname.oninput = () => {
     validNickname = false;
