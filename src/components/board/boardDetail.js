@@ -137,31 +137,34 @@ async function setupCommentEvents(postId, signal) {
 
 async function setupLikeEvent(postId) {
   const likeBtn = document.getElementById('post-like-btn');
-  const userToken = localStorage.getItem('token');
+  if (!likeBtn) return;
 
-  if (likeBtn) {
-    likeBtn.onclick = async () => {
-      if (!userToken) return;
+  let isInFlight = false;
 
-      try {
-        const ok = await togglePostLike(postId);
+  likeBtn.onclick = async () => {
+    if (!localStorage.getItem('token') || isInFlight) return;
+    isInFlight = true;
 
-        if (ok) {
-          const emojiSpan = likeBtn.querySelector('span:first-of-type');
-          const countSpan = likeBtn.querySelector('span:last-of-type');
-          const isCurrentlyLiked = emojiSpan?.textContent.includes('❤️');
-          const currentCount = parseInt(countSpan?.textContent.trim() || '0', 10);
+    try {
+      const ok = await togglePostLike(postId);
 
-          if (emojiSpan) emojiSpan.textContent = isCurrentlyLiked ? '🤍' : '❤️';
-          if (countSpan) countSpan.textContent = isCurrentlyLiked ? Math.max(0, currentCount - 1) : currentCount + 1;
-        } else {
-          console.error('좋아요 실패');
-        }
-      } catch (error) {
-        console.error(error);
+      if (ok) {
+        const emojiSpan = likeBtn.querySelector('span:first-of-type');
+        const countSpan = likeBtn.querySelector('span:last-of-type');
+        const isCurrentlyLiked = emojiSpan?.textContent.includes('❤️');
+        const currentCount = parseInt(countSpan?.textContent.trim() || '0', 10);
+
+        if (emojiSpan) emojiSpan.textContent = isCurrentlyLiked ? '🤍' : '❤️';
+        if (countSpan) countSpan.textContent = isCurrentlyLiked ? Math.max(0, currentCount - 1) : currentCount + 1;
+      } else {
+        console.error('좋아요 실패');
       }
-    };
-  }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      isInFlight = false;
+    }
+  };
 }
 
 // 수정 모드 전환

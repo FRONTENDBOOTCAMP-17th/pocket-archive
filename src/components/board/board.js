@@ -121,8 +121,12 @@ export async function initBoard() {
       pagination.appendChild(pageBtn);
     } else {
       // Desktop: Show only 3 page numbers
-      const start = Math.max(1, page - 1);
-      const end = Math.min(totalPages, page + 1);
+      let start = Math.max(1, page - 1);
+      let end = Math.min(totalPages, page + 1);
+      if (end - start < 2) {
+        if (start === 1) end = Math.min(totalPages, start + 2);
+        else start = Math.max(1, end - 2);
+      }
       for (let i = start; i <= end; i++) {
         const pageBtn = document.createElement('button');
         pageBtn.textContent = i;
