@@ -4,8 +4,10 @@ export function Login() {
 
       <!-- icon & header -->
       <div class="flex flex-col items-center gap-2">
-        <img src="/assets/pocketarchive.png" alt="포켓아카이브" class="h-25 w-auto" />
-        <h1 class="text-xl font-bold text-[#1a3a35]">포켓 아카이브</h1>
+        <a href="/" data-page="home" class="flex flex-col items-center gap-2 no-underline">
+          <img src="/assets/pocketarchive.png" alt="포켓아카이브" class="h-25 w-auto" />
+          <h1 class="text-xl font-bold text-[#1a3a35]">포켓 아카이브</h1>
+        </a>
         <p class="text-xs text-[#5a8a82] tracking-widest text-center">포켓몬 트레이너 커뮤니티에<br class="hidden max-[315px]:block"> 오신 것을 환영합니다!</p>
       </div>
 
