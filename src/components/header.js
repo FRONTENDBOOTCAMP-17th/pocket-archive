@@ -63,7 +63,7 @@ export function Header() {
           <img src="https://img.icons8.com/?size=100&id=vQOFSUMXPpGA&format=png&color=000000" alt="Login Icon" class="w-6 h-6 my-3 ml-3"/>
           ${
             isLoggedin
-              ? `<a class="logout-btn text-[#e7000b] cursor-pointer p-3">로그아웃</a>`
+              ? `<a class="logout-btn cursor-pointer p-3">로그아웃</a>`
               : `<a href="/login" data-page="login" class="text-[#e7000b] p-3">로그인</a>`
           }
         </div>

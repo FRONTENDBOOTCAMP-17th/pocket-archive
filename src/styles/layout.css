@@ -130,6 +130,18 @@
   }
 }
 
+/* 사이드바 로그아웃 버튼 스타일 초기화 */
+.sidebar-nav .logout-btn {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 12px 20px;
+  color: #05b29f;
+  font-family: inherit;
+  font-size: 16px;
+  display: inline-block;
+}
+
 /* =========================
    TABLET
 ========================= */
