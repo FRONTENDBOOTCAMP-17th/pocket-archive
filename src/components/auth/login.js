@@ -52,9 +52,9 @@ async function checkStuff() {
   try {
     const result = await login(login_id.value, password.value);
     const token = result.data?.token;
+    const userId = result.data?.user?.userId;
     if (!token) throw new Error('토큰 정보 없음');
     localStorage.setItem('token', token);
-    const userId = result.data?.userId ?? result.data?.id;
     if (userId != null) localStorage.setItem('userId', String(userId));
     location.replace('/');
   } catch (error) {
