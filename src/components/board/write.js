@@ -160,81 +160,94 @@ export async function initWrite() {
   const guard = createSharedGuard();
 
   //수정 로직
-  document.getElementById('edit-submit-btn')?.addEventListener('click', guard(async () => {
-    const title = document.getElementById('write-title')?.value.trim();
-    const content = document.getElementById('write-content')?.value.trim();
-    const selectedCategory = document.getElementById('write-category')?.value;
-    const preset = document.getElementById('write-party-preset').value;
+  document.getElementById('edit-submit-btn')?.addEventListener(
+    'click',
+    guard(async () => {
+      const title = document.getElementById('write-title')?.value.trim();
+      const content = document.getElementById('write-content')?.value.trim();
+      const selectedCategory = document.getElementById('write-category')?.value;
+      const preset = document.getElementById('write-party-preset').value;
 
-    if (!title) return await showModal('제목 미입력', '제목을 입력해주세요.', 'danger');
-    if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
-    if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
+      if (!title) return await showModal('제목 미입력', '제목을 입력해주세요.', 'danger');
+      if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
+      if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
 
-    const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
-    try {
-      await editPost(postId, {
-        title,
-        content,
-        category: apiCategory,
-        preset,
-        uploadImgUrl,
-        postData,
-        presets: loadPreset,
-      });
-      await showModal('성공', '게시글이 수정되었습니다.');
-      history.pushState(null, '', `/board/${postId}`);
-      window.loadPage();
-    } catch (error) {
-      console.error(error);
-      await showModal('오류', '게시글 수정 중 오류가 발생했습니다.', 'danger');
-    }
-  }));
+      const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
+      try {
+        await editPost(postId, {
+          title,
+          content,
+          category: apiCategory,
+          preset,
+          uploadImgUrl,
+          postData,
+          presets: loadPreset,
+        });
+        await showModal('성공', '게시글이 수정되었습니다.');
+        history.pushState(null, '', `/board/${postId}`);
+        window.loadPage();
+      } catch (error) {
+        console.error(error);
+        await showModal('오류', '게시글 수정 중 오류가 발생했습니다.', 'danger');
+      }
+    }),
+  );
   // 폼 제출 (글작성 , 수정)
   // 임시 저장 — writePost만 호출, publishPost 생략 → isPublished: false 상태 유지
-  document.getElementById('write-middle-btn')?.addEventListener('click', guard(async () => {
-    const title = document.getElementById('write-title')?.value.trim();
-    const content = document.getElementById('write-content')?.value.trim();
-    const selectedCategory = document.getElementById('write-category')?.value;
-    const preset = document.getElementById('write-party-preset').value;
+  document.getElementById('write-middle-btn')?.addEventListener(
+    'click',
+    guard(async () => {
+      const title = document.getElementById('write-title')?.value.trim();
+      const content = document.getElementById('write-content')?.value.trim();
+      const selectedCategory = document.getElementById('write-category')?.value;
+      const preset = document.getElementById('write-party-preset').value;
 
-    if (!title) return await showModal('제목 미입력', '제목을 입력해주세요.', 'danger');
-    if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
-    if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
+      if (!title) return await showModal('제목 미입력', '제목을 입력해주세요.', 'danger');
+      if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
+      if (!content) return await showModal('내용 미입력', '내용을 입력해주세요.', 'danger');
 
-    try {
-      const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
-      const selectedPreset = loadPreset.find((item) => item.partyId === Number(preset));
-      await writePost(title, apiCategory, content, selectedPreset, uploadImgUrl);
-      await showModal('성공', '임시 저장이 완료되었습니다.');
-      history.pushState(null, '', '/board');
-      window.loadPage();
-    } catch (error) {
-      console.error(error);
-      await showModal('오류', '임시저장 중 오류가 발생했습니다.', 'danger');
-    }
-  }));
+      try {
+        const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
+        const selectedPreset = loadPreset.find((item) => item.partyId === Number(preset));
+        await writePost(title, apiCategory, content, selectedPreset, uploadImgUrl);
+        await showModal('성공', '임시 저장이 완료되었습니다.');
+        history.pushState(null, '', '/board');
+        window.loadPage();
+      } catch (error) {
+        console.error(error);
+        await showModal('오류', '임시저장 중 오류가 발생했습니다.', 'danger');
+      }
+    }),
+  );
 
-  document.getElementById('write-submit-btn')?.addEventListener('click', guard(async () => {
-    const title = document.getElementById('write-title')?.value.trim();
-    const content = document.getElementById('write-content')?.value.trim();
-    const selectedCategory = document.getElementById('write-category')?.value;
-    const preset = document.getElementById('write-party-preset').value;
+  document.getElementById('write-submit-btn')?.addEventListener(
+    'click',
+    guard(async () => {
+      const btn = document.getElementById('write-submit-btn');
+      const title = document.getElementById('write-title')?.value.trim();
+      const content = document.getElementById('write-content')?.value.trim();
+      const selectedCategory = document.getElementById('write-category')?.value;
+      const preset = document.getElementById('write-party-preset').value;
 
-    if (!title) return await showModal('제목 미입력', '제목을 입력해주세요.', 'danger');
-    if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
-    if (!content) return await showModal('내용 미작성', '내용을 입력해주세요.', 'danger');
+      if (!title) return await showModal('제목 미입력', '제목을 입력해주세요.', 'danger');
+      if (!selectedCategory) return await showModal('카테고리 미선택', '카테고리를 선택해주세요.', 'danger');
+      if (!content) return await showModal('내용 미작성', '내용을 입력해주세요.', 'danger');
 
-    try {
-      const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
-      await submitPost({ title, category: apiCategory, content, preset });
-      await showModal('성공', '게시글이 등록되었습니다.');
-      history.pushState(null, '', '/board');
-      window.loadPage();
-    } catch (error) {
-      console.error(error);
-      await showModal('오류', '게시글 작성 중 오류가 발생했습니다.', 'danger');
-    }
-  }));
+      btn.disabled = true;
+
+      try {
+        const apiCategory = reverseCategoryMap[selectedCategory] ?? selectedCategory;
+        await submitPost({ title, category: apiCategory, content, preset });
+        await showModal('성공', '게시글이 등록되었습니다.');
+        history.pushState(null, '', '/board');
+        window.loadPage();
+      } catch (error) {
+        console.error(error);
+        btn.disabled = false;
+        await showModal('오류', '게시글 작성 중 오류가 발생했습니다.', 'danger');
+      }
+    }),
+  );
   document.getElementById('write-image').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) {
