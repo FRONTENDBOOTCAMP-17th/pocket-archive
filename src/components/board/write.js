@@ -1,7 +1,7 @@
 import { writePost, publishPost, loadEditPost, loadPreset as fetchPresets, editPost, uploadImg } from '../../api/post.js';
 import { showModal } from '../modal.js';
-
 import { categoryMap, reverseCategoryMap } from '../../utils/boardConstants';
+import { createSharedGuard } from '../../utils/guardFn.js';
 
 let uploadImgUrl = '';
 let loadPreset = [];
@@ -157,8 +157,10 @@ export async function initWrite() {
       uploadImgUrl = postData.imgUrl;
     }
   }
+  const guard = createSharedGuard();
+
   //수정 로직
-  document.getElementById('edit-submit-btn')?.addEventListener('click', async () => {
+  document.getElementById('edit-submit-btn')?.addEventListener('click', guard(async () => {
     const title = document.getElementById('write-title')?.value.trim();
     const content = document.getElementById('write-content')?.value.trim();
     const selectedCategory = document.getElementById('write-category')?.value;
@@ -186,10 +188,10 @@ export async function initWrite() {
       console.error(error);
       await showModal('오류', '게시글 수정 중 오류가 발생했습니다.', 'danger');
     }
-  });
+  }));
   // 폼 제출 (글작성 , 수정)
   // 임시 저장 — writePost만 호출, publishPost 생략 → isPublished: false 상태 유지
-  document.getElementById('write-middle-btn')?.addEventListener('click', async () => {
+  document.getElementById('write-middle-btn')?.addEventListener('click', guard(async () => {
     const title = document.getElementById('write-title')?.value.trim();
     const content = document.getElementById('write-content')?.value.trim();
     const selectedCategory = document.getElementById('write-category')?.value;
@@ -210,9 +212,9 @@ export async function initWrite() {
       console.error(error);
       await showModal('오류', '임시저장 중 오류가 발생했습니다.', 'danger');
     }
-  });
+  }));
 
-  document.getElementById('write-submit-btn')?.addEventListener('click', async () => {
+  document.getElementById('write-submit-btn')?.addEventListener('click', guard(async () => {
     const title = document.getElementById('write-title')?.value.trim();
     const content = document.getElementById('write-content')?.value.trim();
     const selectedCategory = document.getElementById('write-category')?.value;
@@ -232,7 +234,7 @@ export async function initWrite() {
       console.error(error);
       await showModal('오류', '게시글 작성 중 오류가 발생했습니다.', 'danger');
     }
-  });
+  }));
   document.getElementById('write-image').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) {

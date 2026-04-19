@@ -1,5 +1,6 @@
 import { withdraw } from '../../api/user.js';
 import { showConfirm } from '../modal.js';
+import { guardFn } from '../../utils/guardFn.js';
 import { initMyInfo } from './myinfo.js';
 import { initMyBoard } from './myboard.js';
 import { initMyPocketmon } from './mypocketmon.js';
@@ -72,7 +73,7 @@ export function init() {
   });
   document.getElementById('withdraw-modal-cancel').addEventListener('click', closeWithdrawModal);
   document.getElementById('withdraw-modal-overlay').addEventListener('click', closeWithdrawModal);
-  document.getElementById('withdraw-modal-confirm').addEventListener('click', async () => {
+  document.getElementById('withdraw-modal-confirm').addEventListener('click', guardFn(async () => {
     const password = withdrawPassword.value.trim();
     if (!password) {
       withdrawMsg.textContent = '비밀번호를 입력해주세요.';
@@ -94,7 +95,7 @@ export function init() {
       withdrawMsg.textContent = '탈퇴 처리 중 오류가 발생했습니다.';
       withdrawMsg.classList.remove('hidden');
     }
-  });
+  }));
 
   // 기본 탭: 내 정보
   initMyInfo();

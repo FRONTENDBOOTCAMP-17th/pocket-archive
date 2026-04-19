@@ -1,4 +1,5 @@
 import { showModal, showConfirm, showPrompt } from "../modal.js";
+import { guardFn, guardFnByKey } from "../../utils/guardFn.js";
 import {
   renderTrainerCardUI,
   renderCount,
@@ -234,7 +235,7 @@ function bindActionButtons() {
     renderPresets();
   });
 
-  document.getElementById("saveBtn")?.addEventListener("click", async () => {
+  document.getElementById("saveBtn")?.addEventListener("click", guardFn(async () => {
     if (party.filter(Boolean).length === 0) {
       await showModal("포켓몬 미선택", "포켓몬을 하나 이상 선택해주세요.");
       return;
@@ -256,7 +257,7 @@ function bindActionButtons() {
       const name = await showPrompt("파티 이름 저장", "나만의 파티 이름을 입력해주세요");
       if (name) await savePreset(name);
     }
-  });
+  }));
 }
 
 function bindPresetEvents() {
@@ -264,7 +265,7 @@ function bindPresetEvents() {
     btn.addEventListener("click", () => loadPreset(Number(btn.dataset.loadIndex))),
   );
   document.querySelectorAll("[data-delete-index]").forEach((btn) =>
-    btn.addEventListener("click", () => deletePreset(Number(btn.dataset.deleteIndex))),
+    btn.addEventListener("click", guardFn(() => deletePreset(Number(btn.dataset.deleteIndex)))),
   );
   document.querySelectorAll("[data-new-slot]").forEach((btn) =>
     btn.addEventListener("click", () => {
@@ -293,12 +294,7 @@ function loadPreset(index) {
 
 // ─── 북마크 삭제 이벤트 위임 ────────────────────────────────
 function bindBookmarkEvents() {
-  listEl.addEventListener("click", async (e) => {
-    const target = e.target.closest("[data-action='poketmon-delete']");
-    if (!target) return;
-    e.stopPropagation();
-
-    const id = Number(target.dataset.id);
+  const guardedDelete = guardFnByKey(async (id) => {
     try {
       await deleteBookmark(id);
       pokemons = pokemons.filter((p) => p.id !== id);
@@ -309,5 +305,12 @@ function bindBookmarkEvents() {
       console.error("북마크 삭제 에러:", err);
       await showModal("삭제 실패", "북마크 삭제에 실패했습니다.");
     }
+  });
+
+  listEl.addEventListener("click", async (e) => {
+    const target = e.target.closest("[data-action='poketmon-delete']");
+    if (!target) return;
+    e.stopPropagation();
+    await guardedDelete(Number(target.dataset.id));
   });
 }
